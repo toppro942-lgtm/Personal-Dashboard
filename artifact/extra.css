@@ -1,0 +1,78 @@
+/* ===== Health & Finanzen — gleiche Token wie der Trainingsteil ===== */
+body{background:var(--bg)}
+.lead{font-size:12px;color:var(--mut);line-height:1.8;max-width:62ch;margin-bottom:4px}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+margin:22px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--bd)}
+.sechead h2{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--dim);
+text-transform:uppercase;font-weight:400}
+.sechead .hmeta{font-family:var(--mono);font-size:9px;color:var(--dim)}
+.hmeta{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.3px}
+
+.frm{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;background:var(--s1);
+border:1px solid var(--bd);border-radius:9px;padding:14px 16px}
+.fld{display:flex;flex-direction:column;gap:5px;flex:1 1 130px;min-width:0}
+.fld>label{font-family:var(--mono);font-size:8px;letter-spacing:1.6px;color:var(--dim);text-transform:uppercase}
+.fld input,.fld select{background:#0a0a0a;border:1px solid var(--bd);border-radius:6px;color:var(--tx);
+font-family:var(--mono);font-size:12px;padding:8px 10px;width:100%;font-variant-numeric:tabular-nums}
+.fld input:focus-visible,.fld select:focus-visible,.btn:focus-visible,.txcat:focus-visible,.txdel:focus-visible{
+outline:2px solid var(--blu);outline-offset:1px}
+.btn{background:var(--s2);border:1px solid var(--bd);color:var(--tx);font-family:var(--mono);font-size:10px;
+letter-spacing:1.2px;text-transform:uppercase;padding:9px 15px;border-radius:6px;cursor:pointer}
+.btn:hover{border-color:var(--mut);color:var(--wh)}
+.btn.go{background:#0d1a26;border-color:#2b5c8a;color:#a8cbec}
+
+/* Health-Karten: Kennzahl fuehrt, Verlauf stuetzt */
+.hgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.hcard{background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:13px 15px 9px;
+display:flex;flex-direction:column;gap:3px}
+.hcard>header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.hlabel{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--m)}
+.hvalue{font-family:var(--srf);font-size:27px;color:var(--wh);line-height:1.15;font-variant-numeric:tabular-nums}
+.spark{width:100%;height:44px;display:block;margin-top:5px}
+
+/* KPI-Zeile: die vier Zahlen, um die es im Monat geht */
+.kpirow{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}
+.kpi{background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:13px 15px}
+.kpiv{font-family:var(--srf);font-size:23px;line-height:1.15;font-variant-numeric:tabular-nums;color:var(--wh)}
+.kpi.pos .kpiv{color:#4fb98a}.kpi.neg .kpiv{color:#d4695a}.kpi.neu .kpiv{color:#c9a94a}
+.kpil{font-family:var(--mono);font-size:8px;letter-spacing:1.6px;text-transform:uppercase;color:var(--dim);margin-top:5px}
+
+/* Budgets: der Zustand steht im Balken, nicht nur in der Zahl */
+.budgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:9px}
+.bud{background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:12px 14px;
+display:flex;flex-direction:column;gap:7px}
+.budhead{display:flex;justify-content:space-between;align-items:baseline;gap:9px;font-size:12px;color:var(--wh)}
+.budnum{font-family:var(--mono);font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.budof{color:var(--dim)}
+.budtrack{height:4px;background:#1c1c1c;border-radius:3px;overflow:hidden}
+.budfill{height:100%;border-radius:3px}
+.bud.ok .budfill{background:#2e9e6a}.bud.ok .budnum{color:#4fb98a}
+.bud.near .budfill{background:#b8922e}.bud.near .budnum{color:#c9a94a}
+.bud.over .budfill{background:#c94535}.bud.over .budnum{color:#d4695a}
+.bud.over{border-color:#4a2019}
+
+/* Buchungen: Liste, keine Karten — sie sind gleichrangig */
+.txrow{display:grid;grid-template-columns:52px 1fr 140px 104px 28px;gap:10px;align-items:center;
+padding:10px 6px;border-bottom:1px solid var(--bd)}
+.txrow:last-child{border-bottom:none}
+.txdate{font-family:var(--mono);font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums}
+.txmain{min-width:0}
+.txparty{font-size:12px;color:var(--wh);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.txcat{background:#0a0a0a;border:1px solid var(--bd);border-radius:5px;color:var(--mut);
+font-size:10px;padding:5px 6px;max-width:100%;font-family:var(--sans)}
+.txamt{font-family:var(--mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+.txamt.neg{color:#d4695a}.txamt.pos{color:#4fb98a}
+.txdel{background:none;border:none;color:var(--dim);cursor:pointer;font-size:12px;padding:4px;border-radius:4px}
+.txdel:hover{color:var(--red)}
+@media(max-width:620px){
+  .txrow{grid-template-columns:52px 1fr 96px;grid-template-areas:'d m a' '. c x';row-gap:7px}
+  .txdate{grid-area:d}.txmain{grid-area:m}.txamt{grid-area:a}.txcat{grid-area:c}.txdel{grid-area:x;justify-self:end}
+}
+.empty{font-size:12px;color:var(--mut);line-height:1.8;background:var(--s1);border:1px dashed var(--bd);
+border-radius:9px;padding:16px;max-width:62ch}
+.toast{position:fixed;left:50%;bottom:-90px;transform:translateX(-50%);background:var(--s2);
+border:1px solid var(--bd);border-left:3px solid var(--grn);border-radius:7px;padding:12px 17px;
+font-size:12px;color:var(--wh);z-index:300;max-width:92vw;transition:bottom .25s ease}
+.toast.on{bottom:24px}
+.toast.err{border-left-color:var(--red)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

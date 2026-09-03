@@ -1,0 +1,74 @@
+<!-- HEALTH -->
+<div id="t-health" class="tc"><div class="ct" id="hbody">
+  <div class="sechead" style="margin-top:0">
+    <h2>Health</h2><span class="hmeta" id="hcount">wird geladen …</span>
+  </div>
+  <p class="lead">Die objektive Gegenprobe zum Schlaf- und Trainingsplan. Was du hier einträgst,
+  steht auf jedem Gerät, auf dem du diese Seite öffnest.</p>
+
+  <div class="sechead"><h2>Wert eintragen</h2></div>
+  <form class="frm" id="hform">
+    <div class="fld" style="flex:0 0 150px"><label for="hday">Datum</label>
+      <input type="date" id="hday" name="day" required></div>
+    <div class="fld" style="flex:0 0 170px"><label for="hmetric">Was</label>
+      <select id="hmetric" name="metric">
+        <option value="steps">Schritte</option>
+        <option value="sleep_minutes">Schlaf in Minuten</option>
+        <option value="resting_hr">Ruhepuls</option>
+        <option value="active_kcal">Aktive Kalorien</option>
+        <option value="weight_kg">Gewicht in kg</option>
+        <option value="hrv_ms">HRV in ms</option>
+      </select></div>
+    <div class="fld" style="flex:0 0 120px"><label for="hval">Wert</label>
+      <input type="number" id="hval" name="value" step="any" required></div>
+    <button class="btn go" type="submit">Speichern</button>
+  </form>
+
+  <div class="sechead"><h2>Letzte 14 Tage</h2></div>
+  <div class="hgrid" id="hcards"></div>
+</div></div>
+
+<!-- FINANZEN -->
+<div id="t-fin" class="tc"><div class="ct" id="fbody">
+  <div class="sechead" style="margin-top:0">
+    <h2>Finanzen</h2>
+    <input type="month" id="fmonth" style="background:#0a0a0a;border:1px solid var(--bd);border-radius:6px;
+      color:var(--tx);font-family:var(--mono);font-size:11px;padding:6px 9px">
+  </div>
+  <div class="kpirow" id="fkpi"></div>
+
+  <div class="sechead"><h2>Buchung eintragen</h2></div>
+  <form class="frm" id="ftxform">
+    <div class="fld" style="flex:0 0 145px"><label for="ftxday">Datum</label>
+      <input type="date" id="ftxday" name="day" required></div>
+    <div class="fld" style="flex:0 0 115px"><label for="ftxamt">Betrag</label>
+      <input type="text" id="ftxamt" name="amount" inputmode="decimal" placeholder="-42,35" required></div>
+    <div class="fld"><label for="ftxparty">Wer</label>
+      <input type="text" id="ftxparty" name="party" placeholder="REWE"></div>
+    <div class="fld"><label for="ftxpurp">Wofür</label>
+      <input type="text" id="ftxpurp" name="purpose" placeholder="Wocheneinkauf"></div>
+    <div class="fld" style="flex:0 0 155px"><label for="ftxcat">Kategorie</label>
+      <select id="ftxcat" name="category"></select></div>
+    <button class="btn go" type="submit">Eintragen</button>
+  </form>
+  <p class="lead" style="margin-top:8px">Ausgaben mit Minus, Einnahmen ohne. Komma als Dezimaltrennzeichen.</p>
+
+  <div class="sechead"><h2>Kontoauszug hochladen</h2></div>
+  <form class="frm" id="fimport">
+    <div class="fld"><label for="fcsv">CSV-Export deiner Bank</label>
+      <input type="file" id="fcsv" accept=".csv,.txt"></div>
+    <button class="btn" type="submit">Einlesen</button>
+  </form>
+  <p class="lead" style="margin-top:8px">Spalten werden automatisch erkannt (DKB, Sparkasse, N26 und die
+  meisten anderen). Buchungen, die schon erfasst sind, werden übersprungen — du kannst denselben Export
+  gefahrlos zweimal hochladen.</p>
+
+  <div class="sechead"><h2>Budgets</h2></div>
+  <div class="budgrid" id="fbudget"></div>
+
+  <div class="sechead"><h2>Buchungen</h2></div>
+  <div id="ftx"></div>
+</div></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+

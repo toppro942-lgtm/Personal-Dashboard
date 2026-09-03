@@ -83,3 +83,33 @@ werden dafür bewusst auf `window` exponiert.
 1. Health-Quelle wählen: Fit-OAuth (befristet nutzbar) oder eine Android-Automation, die Health-Connect-Werte per `POST /api/health/metrics` pusht — die stabilere Variante.
 2. Korrelationsansicht: Schlafdauer gegen Trainingstag und Volumen.
 3. Wiederkehrende Buchungen als Regel-Templates statt Einzelerfassung.
+
+---
+
+## Zweite Fassung: Artifact mit eigener Datenbank
+
+`artifact/dashboard.html` ist eine Single-File-Fassung derselben Anwendung, veröffentlicht als
+Claude-Artifact. Sie braucht keinen Server: Health- und Finanzdaten liegen in der Artifact-Datenbank
+(`capabilities: {db: {}}`), sind auf allen Geräten desselben Kontos identisch und überstehen ein
+erneutes Veröffentlichen.
+
+```bash
+python3 build-artifact.py        # -> artifact/dashboard.html
+```
+
+Der Build zieht Plan-Markup, CSS und `plan-data.js`/`plan.js` aus `public/`, sodass beide Fassungen
+denselben Trainingsteil zeigen. Gepflegt werden nur die drei Artifact-eigenen Teile:
+
+| Datei | Inhalt |
+|---|---|
+| `artifact/store.js` | Health/Finanzen gegen `claude.use('db')` statt gegen die REST-API |
+| `artifact/extra.css` | Styles für Health- und Finanz-Tab |
+| `artifact/tabs.html` | Markup der beiden Tabs |
+
+Speicherlayout: `health/<YYYY-MM-DD>` je ein Dokument pro Tag, `finance/<YYYY-MM>` ein Dokument pro
+Monat mit allen Buchungen als Array (das Dokumentlimit von 5 000 wird so nie erreicht),
+`settings/main` für Kategorien und Zuordnungsregeln.
+
+**Unterschied zur Server-Fassung:** Google Fit entfällt — OAuth braucht ein Client-Secret und damit
+einen Server. In der Artifact-Fassung werden Health-Werte manuell erfasst; CSV-Import und
+Budget-Abgleich funktionieren vollständig.
