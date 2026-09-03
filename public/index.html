@@ -102,6 +102,36 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
 .morrow{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:8px;margin-bottom:7px;border:1px solid var(--bd);border-left:3px solid var(--grn)}
 .morn{width:24px;height:24px;border-radius:50%;background:#0a1f14;color:var(--grn);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mortxt{font-size:12px;color:var(--tx);line-height:1.5}
+
+/* --- Health / Finanzen --- */
+.btn{background:var(--s2);border:1px solid var(--bd);color:var(--tx);font-family:var(--mono);font-size:10px;
+letter-spacing:1px;text-transform:uppercase;padding:7px 12px;border-radius:5px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--mut);color:var(--wh)}
+.btn.danger{color:var(--red);border-color:#3a1a16}
+.btn.primary{background:#0e1a26;border-color:var(--blu);color:#9fc4e8}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.frm{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:13px 15px;margin-bottom:12px}
+.fld{display:flex;flex-direction:column;gap:4px;flex:1 1 120px;min-width:0}
+.fld label{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
+.fld input,.fld select{background:#0c0c0c;border:1px solid var(--bd);border-radius:5px;color:var(--tx);
+font-family:var(--mono);font-size:12px;padding:7px 9px;width:100%}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--blu)}
+.txrow{display:grid;grid-template-columns:44px 1fr 130px 96px 26px;gap:9px;align-items:center;
+background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:9px 11px;margin-bottom:5px}
+@media(max-width:600px){.txrow{grid-template-columns:44px 1fr 90px;grid-template-areas:'d m a' 'c c x'}
+.txrow .txcat{grid-area:c}.txrow .txdel{grid-area:x}}
+.txdate{font-family:var(--mono);font-size:10px;color:var(--dim)}
+.txparty{font-size:12px;color:var(--wh);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.txmain{min-width:0}
+.txcat{background:#0c0c0c;border:1px solid var(--bd);border-radius:4px;color:var(--mut);font-size:10px;padding:4px 5px;max-width:100%}
+.txamt{font-family:var(--mono);font-size:12px;text-align:right;font-weight:500}
+.txdel{background:none;border:none;color:var(--dim);cursor:pointer;font-size:12px}
+.txdel:hover{color:var(--red)}
+.toast{position:fixed;left:50%;bottom:-70px;transform:translateX(-50%);background:var(--s2);border:1px solid var(--bd);
+border-left:3px solid var(--grn);border-radius:6px;padding:11px 16px;font-size:12px;color:var(--wh);
+transition:bottom .25s;z-index:200;max-width:90vw}
+.toast.on{bottom:22px}
+.toast.err{border-left-color:var(--red)}
 </style>
 </head>
 <body>
@@ -110,13 +140,15 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
   <div class="hl">Trainings-Dashboard · Final</div>
   <h1>Sharms · HIIT · Upper A/B · Lower</h1>
   <div class="tabs">
-    <button class="tb on" onclick="tab('plan',this)">Trainingstage</button>
-    <button class="tb" onclick="tab('vol',this)">Volumen</button>
-    <button class="tb" onclick="tab('food',this)">Ernährung</button>
-    <button class="tb" onclick="tab('sleep',this)">Schlaf</button>
-    <button class="tb" onclick="tab('mob',this)">Mobility</button>
-    <button class="tb" onclick="tab('eve',this)">Abend</button>
-    <button class="tb" onclick="tab('mor',this)">Morgen</button>
+    <button class="tb on" data-tab="plan">Trainingstage</button>
+    <button class="tb" data-tab="vol">Volumen</button>
+    <button class="tb" data-tab="food">Ernährung</button>
+    <button class="tb" data-tab="sleep">Schlaf</button>
+    <button class="tb" data-tab="mob">Mobility</button>
+    <button class="tb" data-tab="eve">Abend</button>
+    <button class="tb" data-tab="mor">Morgen</button>
+    <button class="tb" data-tab="health">Health</button>
+    <button class="tb" data-tab="fin">Finanzen</button>
   </div>
 </div></div>
 
@@ -275,18 +307,79 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
   </div>
 </div>
 
-<script>
-const AC={mo:'#7a5ab5',di:'#c94535',mi:'#b8922e',do:'#2e9e6a',fr:'#3a7bbf',sa:'#b8922e',so:'#2e9e6a'};
-const DAYS=[
- {id:'mo',s:'MO',n:'Sharms'},{id:'di',s:'DI',n:'HIIT'},{id:'mi',s:'MI',n:'Upper A'},
- {id:'do',s:'DO',n:'Rest'},{id:'fr',s:'FR',n:'Lower'},{id:'sa',s:'SA',n:'Upper B'},{id:'so',s:'SO',n:'Zone 2'}];
 
-const TG={C:{b:'#0e1a26',c:'#3a7bbf',t:'COMPOUND'},I:{b:'#1f1a0a',c:'#b8922e',t:'ISOLATION'},
-P:{b:'#260e0e',c:'#c94535',t:'PRIORITÄT'},G:{b:'#0a1f14',c:'#2e9e6a',t:'GESUNDHEIT'},
-K:{b:'#180e26',c:'#7a5ab5',t:'CORE'},A:{b:'#1a0e1a',c:'#7a5ab5',t:'ARMGESUND'},
-O:{b:'#181818',c:'#4f4f4f',t:'OPTIONAL'},X:{b:'#261a0e',c:'#b86830',t:'SPEZIAL'},
-N:{b:'#181818',c:'#757575',t:'INFO'}};
+<!-- HEALTH -->
+<div id="t-health" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Health-Daten</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:16px">
+    Objektive Gegenprobe zu Schlaf- und Trainingsplan. Quellen: manuelle Eingabe, Google Fit (deprecated)
+    oder beliebige Clients über <code>POST /api/health/metrics</code>.
+  </div>
 
-const S={
-mo:{lb:'MO · Sharms',ti:'Schultern · Arme · Core',ac:'#7a5ab5',du:'80–90 Min',rp:'RPE 7–9',rr:'5–16 Wdh',
-lg:'Schultern zuerst (Compound → Isolation), dann Arme, Core als Abschluss. Nach zwei Ruhetagen (SO Zone 2 + Erholung) sind die Schultern vollständig frisch. Die niedrigen Wiederholungszahlen (6–8) bei Shoulder Press und Seitheben setzen
+  <div class="ctl">Erfassen</div>
+  <form class="frm" id="hform">
+    <div class="fld"><label>Datum</label><input type="date" name="day" id="hday" required></div>
+    <div class="fld"><label>Metrik</label><select name="metric" required>
+      <option value="steps">Schritte</option>
+      <option value="resting_hr">Ruhepuls (bpm)</option>
+      <option value="sleep_minutes">Schlaf (Minuten)</option>
+      <option value="active_kcal">Aktive kcal</option>
+      <option value="weight_kg">Gewicht (kg)</option>
+      <option value="hrv_ms">HRV (ms)</option>
+    </select></div>
+    <div class="fld"><label>Wert</label><input type="number" name="value" step="any" required></div>
+    <button class="btn primary" type="submit">Speichern</button>
+  </form>
+
+  <div class="ctl">Letzte 14 Tage</div>
+  <div class="grid2" id="hcards"></div>
+
+  <div class="ctl">Google-Integration</div>
+  <div class="card" id="gstatus"></div>
+</div></div>
+
+<!-- FINANZEN -->
+<div id="t-fin" class="tc"><div class="ct">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+    <div>
+      <div style="font-family:var(--srf);font-size:19px;color:var(--wh)">Finanzübersicht</div>
+      <div style="font-size:12px;color:var(--dim)">Integer-Cent-Arithmetik · CSV-Import statt PSD2-Aggregator</div>
+    </div>
+    <div class="fld" style="flex:0 0 140px"><label>Monat</label><input type="month" id="fmonth"></div>
+  </div>
+
+  <div class="macro" id="fkpi"></div>
+
+  <div class="ctl">Buchung erfassen</div>
+  <form class="frm" id="ftxform">
+    <div class="fld" style="flex:0 0 130px"><label>Datum</label><input type="date" name="day" id="ftxday" required></div>
+    <div class="fld" style="flex:0 0 110px"><label>Betrag €</label><input type="text" name="amount" inputmode="decimal" placeholder="-42,35" required></div>
+    <div class="fld"><label>Gegenpartei</label><input type="text" name="party" placeholder="REWE"></div>
+    <div class="fld"><label>Zweck</label><input type="text" name="purpose"></div>
+    <div class="fld" style="flex:0 0 150px"><label>Kategorie</label><select name="category" id="ftxcat"></select></div>
+    <button class="btn primary" type="submit">Erfassen</button>
+  </form>
+
+  <div class="ctl">CSV-Import</div>
+  <form class="frm" id="fimport">
+    <div class="fld"><label>Datei</label><input type="file" id="fcsv" accept=".csv,.txt" required></div>
+    <div class="fld" style="flex:0 0 150px"><label>Bank-Profil</label><select id="fprofile">
+      <option value="generic">Generisch</option><option value="dkb">DKB</option>
+      <option value="sparkasse">Sparkasse</option><option value="n26">N26</option>
+    </select></div>
+    <button class="btn" type="submit">Importieren</button>
+  </form>
+  <div class="vn" style="margin:-6px 0 14px">Dubletten werden über einen Hash aus Konto, Datum, Betrag, Gegenpartei und Zweck erkannt — überlappende Exporte sind unkritisch.</div>
+
+  <div class="ctl">Budgets</div>
+  <div class="grid2" id="fbudget"></div>
+
+  <div class="ctl">Buchungen</div>
+  <div id="ftx"></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>
