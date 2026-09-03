@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trainings-Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+:root{--bg:#080808;--s1:#101010;--s2:#181818;--bd:#282828;--dim:#4f4f4f;--mut:#757575;
+--tx:#c5c5c5;--wh:#ececec;--red:#c94535;--blu:#3a7bbf;--grn:#2e9e6a;--yel:#b8922e;
+--pur:#7a5ab5;--org:#b86830;--mono:'DM Mono',monospace;--srf:'Instrument Serif',serif;--sans:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px}
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:18px 14px 0;position:sticky;top:0;z-index:100}
+.hi{max-width:760px;margin:0 auto}
+.hl{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--dim);text-transform:uppercase}
+h1{font-family:var(--srf);font-size:22px;color:var(--wh);font-weight:400;margin:3px 0 14px}
+.tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:-1px;overflow-x:auto}
+.tb{background:none;border:none;color:var(--dim);font-family:var(--mono);font-size:9px;letter-spacing:1.5px;
+padding:9px 13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;white-space:nowrap}
+.tb.on{color:var(--wh);border-bottom-color:var(--red)}
+.tc{display:none}.tc.on{display:block}
+.dbar{background:#0c0c0c;border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;position:sticky;top:0;z-index:90}
+.db{flex:1 0 auto;min-width:42px;background:none;border:none;border-bottom:2px solid transparent;padding:10px 4px;cursor:pointer}
+.dt{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:5px;text-align:center}
+.db.on .dt{color:#bbb}
+.dd{width:6px;height:6px;border-radius:50%;margin:0 auto 4px;opacity:.2}
+.db.on .dd{opacity:1}
+.dn{font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;text-align:center}
+.ct{max-width:760px;margin:0 auto;padding:16px 12px 40px}
+.sc{border-radius:8px;padding:15px 17px;margin-bottom:12px;border:1px solid var(--bd);border-top-width:3px;background:var(--s1)}
+.st{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.sdl{font-family:var(--mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.stt{font-family:var(--srf);font-size:18px;color:var(--wh)}
+.mb{display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+.mbg{font-family:var(--mono);font-size:9px;color:var(--mut);background:#1a1a1a;padding:2px 7px;border-radius:3px;white-space:nowrap}
+.sl{margin-top:11px;padding-top:11px;border-top:1px solid var(--bd);font-size:12px;color:#888;line-height:1.8}
+.nt{background:#0c0c0c;border:1px solid var(--bd);border-radius:6px;padding:9px 13px;margin-bottom:6px;display:flex;gap:9px}
+.ni{font-size:13px;flex-shrink:0;line-height:1.6}
+.ntx{font-size:11px;color:var(--mut);line-height:1.7}
+.esl{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin:12px 0 8px}
+.ec{background:var(--s2);border-radius:8px;margin-bottom:7px;overflow:hidden;border:1px solid var(--bd);transition:border-color .2s}
+.ec.op{border-color:var(--ac)}
+.eh{padding:13px 15px;cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.enr{display:flex;align-items:flex-start;gap:7px;flex-wrap:wrap;margin-bottom:3px}
+.en{font-size:13px;font-weight:600;color:var(--wh);line-height:1.3}
+.etg{font-family:var(--mono);font-size:8px;letter-spacing:.8px;padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0}
+.etr{font-size:11px;color:var(--dim);font-style:italic;line-height:1.4}
+.eb{display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0}
+.esb{font-family:var(--mono);font-size:9px;background:#1e1e1e;color:var(--tx);padding:2px 7px;border-radius:3px;white-space:nowrap}
+.echv{font-size:9px;color:var(--dim);transition:transform .2s}
+.ec.op .echv{transform:rotate(180deg)}
+.ebd{border-top:1px solid var(--bd);padding:13px 15px;display:none;flex-direction:column;gap:11px}
+.ec.op .ebd{display:flex}
+.mr{display:flex;gap:7px;flex-wrap:wrap}
+.mc{background:#1e1e1e;border-radius:4px;padding:5px 9px}
+.ml{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:1px}
+.mv{font-family:var(--mono);font-size:12px;color:var(--tx);font-weight:500}
+.ub{background:#0c0c0c;border-radius:6px;padding:12px 14px}
+.ubl{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px}
+.uc{font-size:12px;color:#bbb;line-height:1.75}
+.wl{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:7px}
+.wt{font-size:12px;color:#888;line-height:1.8}
+.unote{background:#1a1408;border-left:2px solid var(--yel);border-radius:4px;padding:8px 11px;font-size:11px;color:#c9a870;line-height:1.6;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:7px 6px;text-align:center;font-family:var(--mono);font-size:8px;letter-spacing:.7px;color:var(--dim);
+text-transform:uppercase;border-bottom:1px solid var(--bd);background:var(--s1);white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:9px 6px;text-align:center;font-family:var(--mono);border-bottom:1px solid var(--bd)}
+td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(--sans)}
+.vbw{height:3px;background:var(--bd);border-radius:2px;width:58px;margin-top:4px}
+.vb{height:100%;border-radius:2px}
+.vn{font-size:9px;color:var(--dim);margin-top:3px;line-height:1.35;font-family:var(--sans)}
+.lg{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+.lgi{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--mut)}
+.lgd{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.card{background:var(--s2);border-radius:8px;padding:14px 16px;margin-bottom:8px;border:1px solid var(--bd)}
+.ctl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin:16px 0 10px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+@media(max-width:520px){.mgrid{grid-template-columns:1fr}}
+.mday{background:var(--s2);border-radius:8px;padding:13px 15px;border:1px solid var(--bd);border-left-width:3px}
+.mdn{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.mdm{font-size:13px;color:var(--wh);font-weight:600;line-height:1.4;margin-bottom:6px}
+.mdt{font-size:10px;color:var(--mut);line-height:1.6}
+.mdtag{display:inline-block;font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:3px;margin:3px 3px 0 0}
+.macro{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:14px}
+.mac{background:var(--s2);border-radius:6px;padding:12px;text-align:center;border:1px solid var(--bd)}
+.macv{font-family:var(--srf);font-size:24px;color:var(--wh);line-height:1}
+.macl{font-family:var(--mono);font-size:8px;letter-spacing:1px;margin-top:4px;text-transform:uppercase}
+.macs{font-size:9px;color:var(--dim);margin-top:2px}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.tl{position:relative;padding-left:26px}
+.tl::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--bd)}
+.tlitem{position:relative;margin-bottom:14px}
+.tldot{position:absolute;left:-26px;top:3px;width:16px;height:16px;border-radius:50%;border:2px solid;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.tltime{font-family:var(--mono);font-size:10px;font-weight:600;margin-bottom:4px;letter-spacing:.5px}
+.tltitle{font-size:13px;font-weight:600;color:var(--wh);margin-bottom:6px}
+.tlbullet{font-size:11px;color:var(--mut);line-height:1.7;margin-bottom:4px;padding-left:4px}
+.tlbullet b{color:var(--tx);font-weight:600}
+.morrow{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:8px;margin-bottom:7px;border:1px solid var(--bd);border-left:3px solid var(--grn)}
+.morn{width:24px;height:24px;border-radius:50%;background:#0a1f14;color:var(--grn);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mortxt{font-size:12px;color:var(--tx);line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="hdr"><div class="hi">
+  <div class="hl">Trainings-Dashboard · Final</div>
+  <h1>Sharms · HIIT · Upper A/B · Lower</h1>
+  <div class="tabs">
+    <button class="tb on" onclick="tab('plan',this)">Trainingstage</button>
+    <button class="tb" onclick="tab('vol',this)">Volumen</button>
+    <button class="tb" onclick="tab('food',this)">Ernährung</button>
+    <button class="tb" onclick="tab('sleep',this)">Schlaf</button>
+    <button class="tb" onclick="tab('mob',this)">Mobility</button>
+    <button class="tb" onclick="tab('eve',this)">Abend</button>
+    <button class="tb" onclick="tab('mor',this)">Morgen</button>
+  </div>
+</div></div>
+
+<!-- PLAN -->
+<div id="t-plan" class="tc on">
+  <div class="dbar"><div style="display:flex;max-width:760px;margin:0 auto;width:100%" id="dbar"></div></div>
+  <div id="dc" class="ct"></div>
+</div>
+
+<!-- VOLUMEN -->
+<div id="t-vol" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Wochenvolumen</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
+    Zählung: <strong style="color:var(--tx)">3 Sets = 1 Warm-Up + 2 Arbeitssätze</strong> · 2 Sets = 2 Arbeitssätze · 4 Sets = 1W + 3 Arbeitssätze.
+    Nur Arbeitssätze zählen. Synergisten = Mitarbeit als Nicht-Primärmuskel.
+  </div>
+  <div style="overflow-x:auto"><table>
+    <thead><tr><th>Muskelgruppe</th><th>MO</th><th>MI</th><th>FR</th><th>SA</th><th>Syn.</th><th>Total</th><th>MAV</th></tr></thead>
+    <tbody id="vtb"></tbody>
+  </table></div>
+  <div class="lg">
+    <div class="lgi"><div class="lgd" style="background:var(--grn)"></div>Im MAV</div>
+    <div class="lgi"><div class="lgd" style="background:var(--yel)"></div>Unter MAV</div>
+    <div class="lgi"><div class="lgd" style="background:var(--red)"></div>Über MAV</div>
+  </div>
+  <div class="card" style="margin-top:18px;border-left:3px solid var(--grn)">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--grn);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">✓ Oberkörper vollständig im MAV</div>
+    <div style="font-size:12px;color:#999;line-height:1.8">
+      Alle Oberkörpermuskeln liegen im Maximum-Adaptive-Volume-Bereich. Besonders: <strong style="color:var(--wh)">Hintere Schulter jetzt bei 6 Sätzen</strong> — 2 direkt (Reverse Fliegende) + 4 indirekt durch T-Bar Rudern in Upper A und B. Damit ist die vorherige Unterversorgung gelöst.
+      Brust liegt bei 10 Sätzen (MI 4 + SA 6) im soliden Mittelfeld. Trizeps bei 8 direkt + 4 indirekt = 12.
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--blu)">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--blu);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">🏃 Beine — bewusst unter MAV</div>
+    <div style="font-size:12px;color:#999;line-height:1.8">
+      Quadrizeps (4), Hamstrings (4) und Waden (2) liegen unter dem klassischen MAV — das ist bei deinem Setup <strong style="color:var(--wh)">kein Problem</strong>. Durch Badminton, Beachvolleyball, Fußball, Wandern, Radfahren, Schlittschuh und Surfen erhalten die Beine kontinuierlich hohen Reiz aus multiplen Bewegungsmustern: Sprünge, Sprints, Richtungswechsel, Ausdauerbelastung.
+      Sportartspezifische Belastung ist für Beinmuskulatur funktional oft wertvoller als isoliertes Maschinenvolumen. Der Lower-Tag deckt die schweren Grundmuster ab (Beinpresse niedrige Wdh) — der Rest kommt aus dem Sport.
+    </div>
+  </div>
+</div></div>
+
+<!-- ERNÄHRUNG -->
+<div id="t-food" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Ernährungsplan</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:16px">
+    Optimiert für maximale Hypertrophie mit 18 Jahren: IGF-1-Stimulation über Dairy-Protein, ausreichender Kalorienüberschuss, Nährstoff-Timing um deine Trainingstage.
+  </div>
+
+  <div class="macro" id="macros"></div>
+
+  <div class="ctl">Wochenplan — Hauptmahlzeiten</div>
+  <div class="mgrid" id="mealgrid"></div>
+
+  <div class="ctl">Optimierungen zu deinem Plan</div>
+  <div id="foodtips"></div>
+
+  <div class="ctl">Nährstoff-Timing</div>
+  <div id="timing"></div>
+</div></div>
+
+<!-- SCHLAF -->
+<div id="t-sleep" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:10px">Schlaf & Regeneration</div>
+  <div class="card" style="background:#0a1a0e;border-color:var(--grn)">
+    <div style="font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--grn);text-transform:uppercase;margin-bottom:10px">🧬 Optimum mit 18 Jahren</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:#0d260f;border-radius:6px;padding:12px;text-align:center">
+        <div style="font-family:var(--srf);font-size:30px;color:var(--wh);line-height:1">9–10h</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grn);margin-top:4px;letter-spacing:1px">OPTIMAL ATHLET</div>
+      </div>
+      <div style="background:#111;border-radius:6px;padding:12px;text-align:center">
+        <div style="font-family:var(--srf);font-size:30px;color:var(--yel);line-height:1">8–9h</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--yel);margin-top:4px;letter-spacing:1px">MINIMUM</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#999;line-height:1.85">
+      Mit 18 ist der Schlafbedarf höher als je wieder: Das Gehirn ist in aktiver Entwicklung, und die GH-Ausschüttung — zu ~90 % im Tiefschlaf — ist maximal. Zusätzlich: Die <strong style="color:var(--wh)">mediale Clavicula-Epiphyse schließt erst mit ~25</strong>. Schlaf ist damit direkt relevant für dein verbleibendes Schulterbreiten-Wachstum.
+    </div>
+  </div>
+  <div class="ctl">Schlaf-Wochenplan</div>
+  <div class="mgrid" id="sgrid"></div>
+  <div class="ctl">Maßnahmen</div>
+  <div id="stips"></div>
+</div></div>
+
+<!-- MOBILITY -->
+<div id="t-mob" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Mobility-Routine</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:16px">
+    Täglich, nach warmem Duschen, vor dem Schlafen · 25 Min · Primär PNF (Contract-Relax)
+  </div>
+
+  <div class="macro" style="grid-template-columns:repeat(3,1fr)">
+    <div class="mac"><div class="macv" style="color:#7a5ab5">25</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
+    <div class="mac"><div class="macv" style="color:#7a5ab5">8s · 30s</div><div class="macl" style="color:#7a5ab5">An · Halten</div><div class="macs">×3 pro Muskel</div></div>
+    <div class="mac"><div class="macv" style="color:#7a5ab5">Abends</div><div class="macl" style="color:#7a5ab5">Timing</div><div class="macs">nach Dusche</div></div>
+  </div>
+
+  <div class="card" style="background:#0a1a0e;border-color:var(--grn);border-left-width:3px">
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--grn);text-transform:uppercase;margin-bottom:9px">Warum vor dem Schlafen</div>
+    <div style="font-size:12px;color:#999;line-height:1.8">
+      Cortisol ist abends niedrig, die Körpertemperatur nach dem Duschen erhöht, und der Parasympathikus ist bereits aktiv — diese drei Faktoren zusammen ergeben maximale Gewebeplastizität. Als Nebeneffekt wirkt die Routine selbst schlaffördernd: 4-7-8-Atmung und PNF-Dehnen senken den sympathischen Tonus weiter, bevor du ins Bett gehst.
+    </div>
+  </div>
+
+  <div class="ctl">Methode: PNF (Contract-Relax)</div>
+  <div class="card">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--tx)">
+      <span style="background:#1e1e1e;padding:4px 10px;border-radius:4px">1. Anspannen 8s</span>
+      <span style="color:var(--dim)">→</span>
+      <span style="background:#1e1e1e;padding:4px 10px;border-radius:4px">2. Loslassen</span>
+      <span style="color:var(--dim)">→</span>
+      <span style="background:#1e1e1e;padding:4px 10px;border-radius:4px">3. Tiefer sinken</span>
+      <span style="color:var(--dim)">→</span>
+      <span style="background:#1e1e1e;padding:4px 10px;border-radius:4px">4. 30s halten</span>
+      <span style="color:var(--dim)">→</span>
+      <span style="background:#1e1e1e;padding:4px 10px;border-radius:4px">× 3 Wiederholungen</span>
+    </div>
+  </div>
+
+  <div class="ctl">Ablauf</div>
+  <div id="mobseq"></div>
+
+  <div class="card" style="border-left:3px solid var(--red)">
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--red);text-transform:uppercase;margin-bottom:9px">⚠ Limit</div>
+    <div style="font-size:12px;color:#bbb;line-height:1.8">
+      <strong style="color:var(--wh)">Spannung = OK. Schmerz = Stop.</strong> Schmerz löst eine neurale Schutzreaktion aus, die den Fortschritt für mehrere Tage blockiert — der gegenteilige Effekt von dem, was du willst. Immer knapp unterhalb der Schmerzgrenze arbeiten.
+    </div>
+  </div>
+
+  <div class="ctl">Meilensteine</div>
+  <div id="mobmiles"></div>
+</div></div>
+
+<!-- ABENDROUTINE -->
+<div id="t-eve" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Abendroutine</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
+    Countdown zur Schlafenszeit — jeder Schritt bereitet Körper und Nervensystem gezielt auf Regeneration vor.
+  </div>
+  <div class="tl" id="evetl"></div>
+</div></div>
+
+<!-- MORGENROUTINE -->
+<div id="t-mor" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Morgenroutine</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
+    Feste Reihenfolge direkt ab dem Aufwachen — Struktur statt Entscheidungen, um den Tag mit Momentum zu starten.
+  </div>
+  <div id="morlist"></div>
+</div></div>
+
+<div style="text-align:center;padding:14px;border-top:1px solid var(--bd)">
+  <div style="font-size:8px;font-family:var(--mono);color:var(--dim);letter-spacing:.3px">
+    Israetel 2019 · Maeo 2021/22 · Schoenfeld 2010 · Mah 2011 · Hoppe 2004 · Res 2012
+  </div>
+</div>
+
+<script>
+const AC={mo:'#7a5ab5',di:'#c94535',mi:'#b8922e',do:'#2e9e6a',fr:'#3a7bbf',sa:'#b8922e',so:'#2e9e6a'};
+const DAYS=[
+ {id:'mo',s:'MO',n:'Sharms'},{id:'di',s:'DI',n:'HIIT'},{id:'mi',s:'MI',n:'Upper A'},
+ {id:'do',s:'DO',n:'Rest'},{id:'fr',s:'FR',n:'Lower'},{id:'sa',s:'SA',n:'Upper B'},{id:'so',s:'SO',n:'Zone 2'}];
+
+const TG={C:{b:'#0e1a26',c:'#3a7bbf',t:'COMPOUND'},I:{b:'#1f1a0a',c:'#b8922e',t:'ISOLATION'},
+P:{b:'#260e0e',c:'#c94535',t:'PRIORITÄT'},G:{b:'#0a1f14',c:'#2e9e6a',t:'GESUNDHEIT'},
+K:{b:'#180e26',c:'#7a5ab5',t:'CORE'},A:{b:'#1a0e1a',c:'#7a5ab5',t:'ARMGESUND'},
+O:{b:'#181818',c:'#4f4f4f',t:'OPTIONAL'},X:{b:'#261a0e',c:'#b86830',t:'SPEZIAL'},
+N:{b:'#181818',c:'#757575',t:'INFO'}};
+
+const S={
+mo:{lb:'MO · Sharms',ti:'Schultern · Arme · Core',ac:'#7a5ab5',du:'80–90 Min',rp:'RPE 7–9',rr:'5–16 Wdh',
+lg:'Schultern zuerst (Compound → Isolation), dann Arme, Core als Abschluss. Nach zwei Ruhetagen (SO Zone 2 + Erholung) sind die Schultern vollständig frisch. Die niedrigen Wiederholungszahlen (6–8) bei Shoulder Press und Seitheben setzen
