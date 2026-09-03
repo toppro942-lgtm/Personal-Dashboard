@@ -70,18 +70,16 @@ CSV-Profile: `generic`, `dkb`, `sparkasse`, `n26` (Header-Erkennung per Teilstri
 - Client-Secret liegt ausschließlich serverseitig. `.env` ist gitignored.
 - Static-Serving mit Path-Traversal-Schutz und `nosniff`.
 
-## Offener Punkt: fehlende Trainingsinhalte
+## Herkunft der Plan-Inhalte
 
-Der ursprüngliche Upload von `dashboard.html` war bei 20 116 Bytes **abgeschnitten** (Commit `d389b6b`) —
-die Datei endete mitten im String-Literal `S.mo.lg`, ohne `</script>`. Sie warf einen `SyntaxError`,
-sämtliche Tabs blieben leer. Die Render-Logik ist neu implementiert; die Inhalte ab diesem Punkt
-(Übungen, Ernährungs-, Schlaf-, Mobility-, Routinen-Daten) existieren in **keinem** Commit und wurden
-bewusst **nicht erfunden**. Betroffene Strukturen in `public/js/plan-data.js` sind leer und werden in der
-UI als fehlend markiert. Nachtragen: Arrays dort befüllen, Format siehe Kommentare.
+Der erste Upload von `dashboard.html` war bei 20 116 Bytes abgeschnitten (Commit `d389b6b`) und warf
+einen `SyntaxError`. Die vollständige Fassung (76 555 B) wurde nachgereicht und ist übernommen:
+Daten in `public/js/plan-data.js`, Render-Funktionen unverändert in `public/js/plan.js`, nur als
+ES-Modul gekapselt. Das Original-Markup nutzt inline `onclick` — die drei Handler `tab`, `day`, `tog`
+werden dafür bewusst auf `window` exponiert.
 
 ## Nächste Schritte
 
-1. Trainingsinhalte in `plan-data.js` nachtragen.
-2. Health-Quelle wählen: Fit-OAuth (befristet nutzbar) oder eine Android-Automation, die Health-Connect-Werte per `POST /api/health/metrics` pusht — die stabilere Variante.
-3. Korrelationsansicht: Schlafdauer gegen Trainingstag und Volumen.
-4. Wiederkehrende Buchungen als Regel-Templates statt Einzelerfassung.
+1. Health-Quelle wählen: Fit-OAuth (befristet nutzbar) oder eine Android-Automation, die Health-Connect-Werte per `POST /api/health/metrics` pusht — die stabilere Variante.
+2. Korrelationsansicht: Schlafdauer gegen Trainingstag und Volumen.
+3. Wiederkehrende Buchungen als Regel-Templates statt Einzelerfassung.

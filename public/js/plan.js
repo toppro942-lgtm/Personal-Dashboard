@@ -1,151 +1,194 @@
-import { AC, DAYS, TG, S, VOL, MACROS, MEALS, FOODTIPS, TIMING, SLEEP, SLEEPTIPS, MOBSEQ, MOBMILES, EVENING, MORNING } from './plan-data.js';
+/* Render-Engine der Plan-Tabs — unveraendert aus dashboard4.html uebernommen,
+   nur als ES-Modul gekapselt. Daten kommen aus plan-data.js. */
+import { AC, DAYS, TG, S, VOL, MEALS, FOODTIPS, TIMING, SLEEP, STIPS, MOBSEQ, MOBMILES, EVE, MOR, HYDRATION } from './plan-data.js';
 
-const $  = (s, r = document) => r.querySelector(s);
-const el = (t, c, h) => { const n = document.createElement(t); if (c) n.className = c; if (h != null) n.innerHTML = h; return n; };
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
-
-/* ---------- Tabs (Event-Delegation statt inline onclick) ---------- */
-export function initTabs() {
-  const bar = $('.tabs');
-  bar.addEventListener('click', e => {
-    const b = e.target.closest('.tb'); if (!b) return;
-    bar.querySelectorAll('.tb').forEach(x => x.classList.toggle('on', x === b));
-    document.querySelectorAll('.tc').forEach(x => x.classList.toggle('on', x.id === 't-' + b.dataset.tab));
-  });
+function renderDayBar(){
+  document.getElementById('dbar').innerHTML=DAYS.map((d,i)=>`
+    <button class="db${i===0?' on':''}" onclick="day('${d.id}',this)" style="border-bottom-color:${i===0?AC[d.id]:'transparent'}">
+      <div class="dt">${d.s}</div>
+      <div class="dd" style="background:${AC[d.id]};opacity:${i===0?1:.2}"></div>
+      <div class="dn" style="color:${i===0?AC[d.id]:'var(--dim)'}">${d.n}</div>
+    </button>`).join('');
 }
 
-/* ---------- Platzhalter für fehlende Inhalte ---------- */
-const missing = what => `<div class="unote">Keine Daten für <b>${esc(what)}</b>. Der Original-Upload von
-  <code>dashboard.html</code> war abgeschnitten; diese Inhalte fehlen im Repository.
-  Nachtragen in <code>public/js/plan-data.js</code>.</div>`;
-
-/* ---------- Trainingstage ---------- */
-let activeDay = DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1].id;
-
-function renderDayBar() {
-  const bar = $('#dbar'); bar.innerHTML = '';
-  for (const d of DAYS) {
-    const b = el('button', 'db' + (d.id === activeDay ? ' on' : ''));
-    b.innerHTML = `<div class="dt">${d.s}</div><div class="dd" style="background:${AC[d.id]}"></div><div class="dn">${esc(d.n)}</div>`;
-    b.onclick = () => { activeDay = d.id; renderDayBar(); renderDay(); };
-    bar.appendChild(b);
-  }
-}
-
-function exerciseCard(x) {
-  const g = TG[x.tag] || TG.N;
-  const c = el('div', 'ec');
-  c.style.setProperty('--ac', g.c);
-  const metrics = Object.entries(x.m || {})
-    .map(([k, v]) => `<div class="mc"><div class="ml">${esc(k)}</div><div class="mv">${esc(v)}</div></div>`).join('');
-  c.innerHTML = `
-    <div class="eh">
-      <div style="flex:1">
-        <div class="enr"><div class="en">${esc(x.n)}</div>
+function renderDay(id){
+  const d=S[id],ac=d.ac;
+  let h=`<div class="sc" style="border-top-color:${ac}">
+    <div class="st"><div>
+      <div class="sdl" style="color:${ac}">${d.lb}</div>
+      <div class="stt">${d.ti}</div></div>
+      <div class="mb">${[d.du,d.rp,d.rr].filter(x=>x!=='—').map(x=>`<div class="mbg">${x}</div>`).join('')}</div>
+    </div><div class="sl">${d.lg}</div></div>`;
+  d.nt.forEach(n=>h+=`<div class="nt"><div class="ni">${n.i}</div><div class="ntx">${n.t}</div></div>`);
+  h+=`<div class="esl">Übungen · antippen für Details</div>`;
+  d.ex.forEach((e,i)=>{
+    const g=TG[e.g],uid=`x${id}${i}`;
+    h+=`<div class="ec" id="${uid}" style="--ac:${ac}">
+      <div class="eh" onclick="tog('${uid}')">
+        <div style="flex:1;min-width:0">
+          <div class="enr"><span class="en">${e.n}</span>
           <span class="etg" style="background:${g.b};color:${g.c}">${g.t}</span></div>
-        ${x.tr ? `<div class="etr">${esc(x.tr)}</div>` : ''}
+          <div class="etr">${e.t}</div>
+        </div>
+        <div class="eb">
+          <div class="esb">${e.s}${e.r&&e.r!=='—'?' · '+e.r:''}</div>
+          ${e.rs?`<div class="esb" style="color:${ac}">⏱ ${e.rs}</div>`:''}
+          <div class="echv">▼</div>
+        </div>
       </div>
-      <div class="eb"><span class="esb">${esc(x.sets || '')}</span><span class="echv">▾</span></div>
-    </div>
-    <div class="ebd">
-      ${metrics ? `<div class="mr">${metrics}</div>` : ''}
-      ${x.u ? `<div class="ub"><div class="ubl" style="color:${g.c}">Ausführung</div><div class="uc">${esc(x.u)}</div></div>` : ''}
-      ${x.w ? `<div><div class="wl">Begründung</div><div class="wt">${esc(x.w)}</div></div>` : ''}
-      ${x.note ? `<div class="unote">${esc(x.note)}</div>` : ''}
-    </div>`;
-  c.querySelector('.eh').onclick = () => c.classList.toggle('op');
-  return c;
+      <div class="ebd">
+        ${e.w?`<div class="unote">📊 ${e.w}</div>`:''}
+        <div class="ub" style="border:1px solid ${ac}33">
+          <div class="ubl" style="color:${ac}">${e.w?'Ausführung & Warm-Up':'Anweisung'}</div>
+          <div class="uc">→ ${e.f}</div>
+        </div>
+        <div><div class="wl">Begründung</div><div class="wt">${e.y}</div></div>
+      </div></div>`;
+  });
+  document.getElementById('dc').innerHTML=h;
 }
 
-function renderDay() {
-  const d = S[activeDay], box = $('#dc'); box.innerHTML = '';
-  const head = el('div', 'sc');
-  head.style.borderTopColor = d.ac;
-  head.innerHTML = `<div class="st">
-      <div><div class="sdl" style="color:${d.ac}">${esc(d.lb)}</div><div class="stt">${esc(d.ti)}</div></div>
-      <div class="mb"><span class="mbg">${esc(d.du)}</span><span class="mbg">${esc(d.rp)}</span><span class="mbg">${esc(d.rr)}</span></div>
-    </div>${d.lg ? `<div class="sl">${esc(d.lg)}</div>` : ''}`;
-  box.appendChild(head);
-  if (!d.ex?.length) { box.insertAdjacentHTML('beforeend', missing(d.lb)); return; }
-  box.insertAdjacentHTML('beforeend', '<div class="esl">Übungen</div>');
-  d.ex.forEach(x => box.appendChild(exerciseCard(x)));
+function renderVol(){
+  document.getElementById('vtb').innerHTML=VOL.map(r=>{
+    const tot=r.mo+r.mi+r.fr+r.sa+r.syn,[lo,hi]=r.mav;
+    const ok=tot>=lo&&tot<=hi,over=tot>hi;
+    const col=over?'#c94535':ok?'#2e9e6a':r.sport?'#3a7bbf':'#b8922e';
+    const pct=Math.min(100,(tot/hi)*100);
+    return `<tr>
+      <td><div>${r.m}${r.sport?' <span style="color:#3a7bbf;font-size:9px">🏃</span>':''}</div>
+      <div class="vbw"><div class="vb" style="width:${pct}%;background:${col}"></div></div>
+      <div class="vn">${r.n}</div></td>
+      ${[r.mo,r.mi,r.fr,r.sa].map(v=>`<td style="color:${v>0?'var(--tx)':'var(--bd)'};${v>0?'font-weight:500':''}">${v>0?v:'—'}</td>`).join('')}
+      <td style="color:${r.syn>0?'var(--dim)':'var(--bd)'}">${r.syn>0?r.syn:'—'}</td>
+      <td style="color:${col};font-weight:700;font-size:14px">${tot}</td>
+      <td style="color:var(--dim);font-size:10px">${lo}–${hi}</td></tr>`;
+  }).join('');
 }
 
-/* ---------- Volumen ---------- */
-function renderVolume() {
-  const tb = $('#vtb'); tb.innerHTML = '';
-  for (const [name, mo, mi, fr, sa, syn, lo, hi, note] of VOL) {
-    const total = mo + mi + fr + sa + syn;
-    const col = total < lo ? 'var(--yel)' : total > hi ? 'var(--red)' : 'var(--grn)';
-    const pct = Math.min(100, Math.round(total / hi * 100));
-    tb.insertAdjacentHTML('beforeend', `<tr>
-      <td>${esc(name)}${note ? `<div class="vn">${esc(note)}</div>` : ''}</td>
-      <td>${mo || '·'}</td><td>${mi || '·'}</td><td>${fr || '·'}</td><td>${sa || '·'}</td><td>${syn || '·'}</td>
-      <td style="color:${col};font-weight:500">${total}
-        <div class="vbw"><div class="vb" style="width:${pct}%;background:${col}"></div></div></td>
-      <td style="color:var(--dim)">${lo}–${hi}</td></tr>`);
-  }
-}
+function renderFood(){
+  document.getElementById('macros').innerHTML=[
+    {v:'2,0–2,2',l:'g Protein/kg',c:'#c94535',s:'4–5 Mahlzeiten'},
+    {v:'4–6',l:'g KH/kg',c:'#b8922e',s:'Trainingstage höher'},
+    {v:'0,8–1,0',l:'g Fett/kg',c:'#2e9e6a',s:'Testosteron-Basis'},
+    {v:'+300–500',l:'kcal Überschuss',c:'#3a7bbf',s:'0,25–0,5 %/Woche'}
+  ].map(m=>`<div class="mac"><div class="macv" style="color:${m.c}">${m.v}</div>
+    <div class="macl" style="color:${m.c}">${m.l}</div><div class="macs">${m.s}</div></div>`).join('');
 
-/* ---------- generische Renderer ---------- */
-const noteList = (sel, arr, what) => {
-  const box = $(sel); if (!box) return;
-  box.innerHTML = arr.length
-    ? arr.map(n => `<div class="nt"><div class="ni">${esc(n.i)}</div><div class="ntx">${esc(n.t)}</div></div>`).join('')
-    : missing(what);
-};
-
-const dayGrid = (sel, arr, what) => {
-  const box = $(sel); if (!box) return;
-  if (!arr.length) { box.outerHTML = `<div id="${sel.slice(1)}">${missing(what)}</div>`; return; }
-  box.innerHTML = arr.map(m => `<div class="mday" style="border-left-color:${m.c || 'var(--bd)'}">
-      <div class="mdn" style="color:${m.c || 'var(--dim)'}">${esc(m.d)}</div>
-      <div class="mdm">${esc(m.m)}</div><div class="mdt">${esc(m.t)}</div>
-      ${(m.tags || []).map(t => `<span class="mdtag" style="background:#1e1e1e;color:${m.c || 'var(--mut)'}">${esc(t)}</span>`).join('')}
+  document.getElementById('mealgrid').innerHTML=MEALS.map(m=>`
+    <div class="mday" style="border-left-color:${m.c}">
+      <div class="mdn" style="color:${m.c}">${m.d} · ${m.tr}</div>
+      <div class="mdm">${m.m}</div>
+      <div>${m.tags.map(t=>`<span class="mdtag" style="background:${m.c}22;color:${m.c}">${t}</span>`).join('')}</div>
+      <div class="mdt" style="margin-top:8px">${m.o}</div>
     </div>`).join('');
-};
 
-function renderMacros() {
-  $('#macros').innerHTML = MACROS.map(m => `<div class="mac">
-      <div class="macv" style="color:${m.c}">${esc(m.v)}</div>
-      <div class="macl" style="color:${m.c}">${esc(m.l)}</div>
-      <div class="macs">${esc(m.s)}</div></div>`).join('');
+  document.getElementById('foodtips').innerHTML=FOODTIPS.map(t=>`
+    <div class="card" style="display:flex;gap:12px">
+      <div style="font-size:16px;flex-shrink:0;line-height:1.4">${t.i}</div>
+      <div><div style="font-size:12px;font-weight:600;color:var(--wh);margin-bottom:4px">${t.n}</div>
+      <div style="font-size:11px;color:var(--mut);line-height:1.75">${t.t}</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--grn);margin-top:5px">${t.s}</div></div>
+    </div>`).join('');
+
+  document.getElementById('timing').innerHTML=`<div class="card">${TIMING.map(t=>`
+    <div style="display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--bd)">
+      <div style="font-family:var(--mono);font-size:10px;color:${t.c};min-width:130px;flex-shrink:0">${t.t}</div>
+      <div style="font-size:11px;color:var(--mut);line-height:1.7">${t.d}</div>
+    </div>`).join('')}</div>`;
 }
 
-function renderMobility() {
-  const seq = $('#mobseq');
-  seq.innerHTML = MOBSEQ.length
-    ? MOBSEQ.map((s, i) => `<div class="morrow"><div class="morn">${i + 1}</div>
-        <div class="mortxt"><b>${esc(s.t)}</b> — ${esc(s.d)}</div></div>`).join('')
-    : missing('Mobility-Ablauf');
-  noteList('#mobmiles', MOBMILES, 'Mobility-Meilensteine');
+function renderSleep(){
+  document.getElementById('sgrid').innerHTML=SLEEP.map(d=>`
+    <div class="mday" style="border-left-color:${d.c}">
+      <div class="mdn" style="color:${d.c}">${d.d} · ${d.tr}</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">
+        <div style="font-family:var(--srf);font-size:24px;color:var(--wh)">↑ ${d.w}</div>
+        <div style="font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:3px;background:${d.c}22;color:${d.c}">${d.s}</div>
+      </div>
+      <div style="font-size:10px;color:var(--dim)">Zubettgeh-Ziel <strong style="color:var(--tx);font-family:var(--mono)">${d.b} Uhr</strong></div>
+    </div>`).join('');
+
+  document.getElementById('stips').innerHTML=STIPS.map(t=>`
+    <div class="card" style="display:flex;gap:12px">
+      <div style="font-size:16px;flex-shrink:0;line-height:1.4">${t.i}</div>
+      <div><div style="font-size:12px;font-weight:600;color:var(--wh);margin-bottom:4px">${t.n}</div>
+      <div style="font-size:11px;color:var(--mut);line-height:1.75">${t.t}</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--grn);margin-top:5px">${t.s}</div></div>
+    </div>`).join('');
 }
 
-function renderEvening() {
-  const tl = $('#evetl');
-  tl.innerHTML = EVENING.length
-    ? EVENING.map(e => `<div class="tlitem">
-        <div class="tldot" style="border-color:${e.c}"></div>
-        <div class="tltime" style="color:${e.c}">${esc(e.time)}</div>
-        <div class="tltitle">${esc(e.title)}</div>
-        ${(e.b || []).map(b => `<div class="tlbullet">${b}</div>`).join('')}</div>`).join('')
-    : missing('Abendroutine');
+function tab(id,b){
+  document.querySelectorAll('.tc').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on'));
+  document.getElementById('t-'+id).classList.add('on');b.classList.add('on');
 }
 
-function renderMorning() {
-  $('#morlist').innerHTML = MORNING.length
-    ? MORNING.map((t, i) => `<div class="morrow"><div class="morn">${i + 1}</div>
-        <div class="mortxt">${esc(t)}</div></div>`).join('')
-    : missing('Morgenroutine');
+function day(id,b){
+  document.querySelectorAll('.db').forEach(x=>{
+    x.classList.remove('on');x.style.borderBottomColor='transparent';
+    x.querySelector('.dd').style.opacity='.2';x.querySelector('.dn').style.color='var(--dim)';
+  });
+  b.classList.add('on');b.style.borderBottomColor=AC[id];
+  b.querySelector('.dd').style.opacity='1';b.querySelector('.dn').style.color=AC[id];
+  renderDay(id);
 }
+
+function tog(id){document.getElementById(id).classList.toggle('op')}
+
+function renderMob(){
+  document.getElementById('mobseq').innerHTML=MOBSEQ.map((s,i)=>`
+    <div class="ec" style="--ac:${s.c}">
+      <div style="padding:13px 15px;display:flex;gap:12px;align-items:flex-start">
+        <div style="width:22px;height:22px;border-radius:50%;background:${s.c}22;color:${s.c};display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;flex-shrink:0;margin-top:2px">${i+1}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--wh);margin-bottom:3px">${s.n}</div>
+          <div style="font-family:var(--mono);font-size:10px;color:${s.c};margin-bottom:6px">${s.x}</div>
+          <div style="font-size:11px;color:var(--mut);line-height:1.7">${s.d}</div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('mobmiles').innerHTML=`<div class="card"><div style="display:flex;flex-direction:column">
+    ${MOBMILES.map((m,i)=>`
+    <div style="display:flex;gap:12px;padding:10px 0;${i<MOBMILES.length-1?'border-bottom:1px solid var(--bd)':''}">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--pur);min-width:70px;flex-shrink:0">${m.m}</div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--wh);margin-bottom:3px">${m.t}</div>
+        <div style="font-size:11px;color:var(--mut);line-height:1.7">${m.d}</div>
+      </div>
+    </div>`).join('')}
+  </div></div>`;
+}
+
+function renderEve(){
+  document.getElementById('evetl').innerHTML=EVE.map(e=>`
+    <div class="tlitem">
+      <div class="tldot" style="border-color:${e.c};color:${e.c}"></div>
+      <div class="tltime" style="color:${e.c}">${e.t}</div>
+      <div class="tltitle">${e.ti}</div>
+      ${e.b.map(x=>`<div class="tlbullet">· ${x}</div>`).join('')}
+    </div>`).join('');
+}
+
+function renderMor(){
+  document.getElementById('morlist').innerHTML=MOR.map((m,i)=>`
+    <div class="morrow">
+      <div class="morn">${i+1}</div>
+      <div class="mortxt">${m}</div>
+    </div>`).join('')+`
+    <div class="card" style="margin-top:12px;border-left:3px solid var(--blu)">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--blu);text-transform:uppercase;margin-bottom:8px">💧 Hydration-Tracking</div>
+      <div style="font-size:11px;color:var(--mut);line-height:1.9">
+        ${HYDRATION.mor}<br>${HYDRATION.meal}<br>${HYDRATION.school}
+      </div>
+    </div>`;
+}
+
+/* Das Original-Markup nutzt inline onclick (tab/day/tog). Module haben kein
+   globales Scope, deshalb werden genau diese drei Handler exponiert. */
+Object.assign(window, { tab, day, tog });
 
 export function initPlan() {
-  initTabs();
-  renderDayBar(); renderDay(); renderVolume(); renderMacros();
-  dayGrid('#mealgrid', MEALS, 'Ernährungs-Wochenplan');
-  noteList('#foodtips', FOODTIPS, 'Ernährungs-Optimierungen');
-  noteList('#timing', TIMING, 'Nährstoff-Timing');
-  dayGrid('#sgrid', SLEEP, 'Schlaf-Wochenplan');
-  noteList('#stips', SLEEPTIPS, 'Schlaf-Maßnahmen');
-  renderMobility(); renderEvening(); renderMorning();
+  renderDayBar(); renderDay('mo'); renderVol(); renderFood();
+  renderSleep(); renderMob(); renderEve(); renderMor();
 }

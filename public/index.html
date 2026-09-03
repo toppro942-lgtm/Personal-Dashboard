@@ -102,7 +102,6 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
 .morrow{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:8px;margin-bottom:7px;border:1px solid var(--bd);border-left:3px solid var(--grn)}
 .morn{width:24px;height:24px;border-radius:50%;background:#0a1f14;color:var(--grn);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mortxt{font-size:12px;color:var(--tx);line-height:1.5}
-
 /* --- Health / Finanzen --- */
 .btn{background:var(--s2);border:1px solid var(--bd);color:var(--tx);font-family:var(--mono);font-size:10px;
 letter-spacing:1px;text-transform:uppercase;padding:7px 12px;border-radius:5px;cursor:pointer;text-decoration:none;display:inline-block}
@@ -140,15 +139,15 @@ transition:bottom .25s;z-index:200;max-width:90vw}
   <div class="hl">Trainings-Dashboard · Final</div>
   <h1>Sharms · HIIT · Upper A/B · Lower</h1>
   <div class="tabs">
-    <button class="tb on" data-tab="plan">Trainingstage</button>
-    <button class="tb" data-tab="vol">Volumen</button>
-    <button class="tb" data-tab="food">Ernährung</button>
-    <button class="tb" data-tab="sleep">Schlaf</button>
-    <button class="tb" data-tab="mob">Mobility</button>
-    <button class="tb" data-tab="eve">Abend</button>
-    <button class="tb" data-tab="mor">Morgen</button>
-    <button class="tb" data-tab="health">Health</button>
-    <button class="tb" data-tab="fin">Finanzen</button>
+    <button class="tb on" onclick="tab('plan',this)">Trainingstage</button>
+    <button class="tb" onclick="tab('vol',this)">Volumen</button>
+    <button class="tb" onclick="tab('food',this)">Ernährung</button>
+    <button class="tb" onclick="tab('sleep',this)">Schlaf</button>
+    <button class="tb" onclick="tab('mob',this)">Mobility</button>
+    <button class="tb" onclick="tab('eve',this)">Abend</button>
+    <button class="tb" onclick="tab('mor',this)">Morgen</button>
+    <button class="tb" onclick="tab('health',this)">Health</button>
+    <button class="tb" onclick="tab('fin',this)">Finanzen</button>
   </div>
 </div></div>
 
@@ -301,11 +300,6 @@ transition:bottom .25s;z-index:200;max-width:90vw}
   <div id="morlist"></div>
 </div></div>
 
-<div style="text-align:center;padding:14px;border-top:1px solid var(--bd)">
-  <div style="font-size:8px;font-family:var(--mono);color:var(--dim);letter-spacing:.3px">
-    Israetel 2019 · Maeo 2021/22 · Schoenfeld 2010 · Mah 2011 · Hoppe 2004 · Res 2012
-  </div>
-</div>
 
 
 <!-- HEALTH -->
@@ -379,6 +373,12 @@ transition:bottom .25s;z-index:200;max-width:90vw}
 </div></div>
 
 <div class="toast" id="toast"></div>
+
+<div style="text-align:center;padding:14px;border-top:1px solid var(--bd)">
+  <div style="font-size:8px;font-family:var(--mono);color:var(--dim);letter-spacing:.3px">
+    Israetel 2019 · Maeo 2021/22 · Schoenfeld 2010 · Mah 2011 · Hoppe 2004 · Res 2012
+  </div>
+</div>
 
 <script type="module" src="/js/app.js"></script>
 </body>
