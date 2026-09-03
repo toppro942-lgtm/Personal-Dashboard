@@ -38,9 +38,9 @@ async function loadWealth() {
     DB.collection('assets').limit(200).get(),
     DB.collection('wealth').orderBy('month', 'desc').limit(60).get()
   ]);
-  ASSETS = a.docs.map(d => d.data).sort((x, y) => KINDS.findIndex(k => k.id === x.kind) - KINDS.findIndex(k => k.id === y.kind));
+  ASSETS = a.docs.map(d => d.data()).sort((x, y) => KINDS.findIndex(k => k.id === x.kind) - KINDS.findIndex(k => k.id === y.kind));
   WEALTH = {};
-  for (const d of w.docs) WEALTH[d.data.month] = { v: d.data.v || {}, in: d.data.in || {} };
+  for (const d of w.docs) { const wd = d.data(); WEALTH[wd.month] = { v: wd.v || {}, in: wd.in || {} }; }
 }
 const saveMonthWealth = m => DB.doc('wealth/' + m).set({ month: m, ...(WEALTH[m] || { v:{}, in:{} }) });
 
