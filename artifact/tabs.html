@@ -6,23 +6,38 @@
   <p class="lead">Die objektive Gegenprobe zum Schlaf- und Trainingsplan. Was du hier einträgst,
   steht auf jedem Gerät, auf dem du diese Seite öffnest.</p>
 
-  <div class="sechead"><h2>Wert eintragen</h2></div>
+  <div class="sechead"><h2>Tag eintragen</h2></div>
   <form class="frm" id="hform">
-    <div class="fld" style="flex:0 0 150px"><label for="hday">Datum</label>
+    <div class="fld" style="flex:0 0 148px"><label for="hday">Datum</label>
       <input type="date" id="hday" name="day" required></div>
-    <div class="fld" style="flex:0 0 170px"><label for="hmetric">Was</label>
-      <select id="hmetric" name="metric">
-        <option value="steps">Schritte</option>
-        <option value="sleep_minutes">Schlaf in Minuten</option>
-        <option value="resting_hr">Ruhepuls</option>
-        <option value="active_kcal">Aktive Kalorien</option>
-        <option value="weight_kg">Gewicht in kg</option>
-        <option value="hrv_ms">HRV in ms</option>
-      </select></div>
-    <div class="fld" style="flex:0 0 120px"><label for="hval">Wert</label>
-      <input type="number" id="hval" name="value" step="any" required></div>
+    <div class="fld" style="flex:1 1 96px"><label for="h1">Schritte</label>
+      <input type="text" id="h1" name="steps" inputmode="numeric" placeholder="9840"></div>
+    <div class="fld" style="flex:1 1 96px"><label for="h2">Schlaf</label>
+      <input type="text" id="h2" name="sleep_minutes" placeholder="8:15"></div>
+    <div class="fld" style="flex:1 1 88px"><label for="h3">Ruhepuls</label>
+      <input type="text" id="h3" name="resting_hr" inputmode="numeric" placeholder="52"></div>
+    <div class="fld" style="flex:1 1 88px"><label for="h4">Aktive kcal</label>
+      <input type="text" id="h4" name="active_kcal" inputmode="numeric" placeholder="620"></div>
+    <div class="fld" style="flex:1 1 88px"><label for="h5">Gewicht</label>
+      <input type="text" id="h5" name="weight_kg" inputmode="decimal" placeholder="74,2"></div>
+    <div class="fld" style="flex:1 1 80px"><label for="h6">HRV</label>
+      <input type="text" id="h6" name="hrv_ms" inputmode="numeric" placeholder="68"></div>
     <button class="btn go" type="submit">Speichern</button>
   </form>
+  <p class="lead" style="margin-top:8px">Leere Felder werden übersprungen — du musst nie alles ausfüllen.
+  Schlaf geht als <b>8:15</b> oder als Minutenzahl.</p>
+
+  <div class="sechead"><h2>Aus Google Health übernehmen</h2></div>
+  <form class="frm" id="himport">
+    <div class="fld"><label for="hcsv">Export-Datei (CSV)</label>
+      <input type="file" id="hcsv" accept=".csv,.txt"></div>
+    <button class="btn" type="submit">Einlesen</button>
+  </form>
+  <p class="lead" style="margin-top:8px">Eine Webseite kann Health Connect nicht direkt auslesen — die
+  Schnittstelle existiert nur auf dem Handy selbst. Der Weg ist ein Export:
+  <b>takeout.google.com</b> → nur „Fit" auswählen → im Archiv die Datei
+  <i>Daily activity metrics.csv</i>. Spalten für Schritte, Kalorien, Puls, Gewicht, HRV und Schlaf
+  werden automatisch erkannt; übernommen werden die letzten 90 Tage.</p>
 
   <div class="sechead"><h2>Letzte 14 Tage</h2></div>
   <div class="hgrid" id="hcards"></div>
@@ -70,5 +85,43 @@
   <div id="ftx"></div>
 </div></div>
 
+
+<!-- VERMÖGEN -->
+<div id="t-wealth" class="tc"><div class="ct" id="wbody">
+  <div class="sechead" style="margin-top:0">
+    <h2>Vermögen</h2>
+    <input type="month" id="wmonth" aria-label="Monat"
+      style="background:#0a0a0a;border:1px solid var(--bd);border-radius:6px;color:var(--tx);
+             font-family:var(--mono);font-size:11px;padding:6px 9px">
+  </div>
+  <div class="kpirow" id="wkpi"></div>
+
+  <div class="sechead"><h2>Entwicklung</h2><span class="hmeta">Gesamtvermögen je Monat</span></div>
+  <div class="chart" id="wtrend"></div>
+
+  <div class="sechead"><h2>Woher die Veränderung kommt</h2></div>
+  <div class="chart" id="wfall"></div>
+  <p class="lead">Was du eingezahlt hast, steht fest. Die Marktbewegung ist der Rest der Veränderung —
+  also exakt das, was dein Geld ohne dein Zutun gewonnen oder verloren hat.</p>
+
+  <div class="sechead"><h2>Aufteilung</h2></div>
+  <div id="walloc"></div>
+
+  <div class="sechead"><h2>Monatswerte eintragen</h2></div>
+  <div id="wpos"></div>
+  <p class="lead" style="margin-top:10px">Zwei Zahlen je Position und Monat: was aktuell dort liegt,
+  und wie viel davon du in diesem Monat neu eingezahlt hast. Änderungen speichern beim Verlassen des Feldes.</p>
+
+  <div class="sechead"><h2>Position anlegen</h2></div>
+  <form class="frm" id="wposform">
+    <div class="fld"><label for="wname">Bezeichnung</label>
+      <input type="text" id="wname" name="name" placeholder="Trade Republic Depot" required></div>
+    <div class="fld" style="flex:0 0 175px"><label for="wkindsel">Anlageklasse</label>
+      <select id="wkindsel" name="kind"></select></div>
+    <button class="btn go" type="submit">Anlegen</button>
+  </form>
+</div></div>
+
+<div class="charttip" id="charttip" role="tooltip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

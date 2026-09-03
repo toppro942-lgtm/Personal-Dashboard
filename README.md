@@ -103,13 +103,33 @@ denselben Trainingsteil zeigen. Gepflegt werden nur die drei Artifact-eigenen Te
 | Datei | Inhalt |
 |---|---|
 | `artifact/store.js` | Health/Finanzen gegen `claude.use('db')` statt gegen die REST-API |
+| `artifact/wealth.js` | Vermögensmodell, Attribution und die drei Diagramme |
 | `artifact/extra.css` | Styles für Health- und Finanz-Tab |
 | `artifact/tabs.html` | Markup der beiden Tabs |
 
 Speicherlayout: `health/<YYYY-MM-DD>` je ein Dokument pro Tag, `finance/<YYYY-MM>` ein Dokument pro
 Monat mit allen Buchungen als Array (das Dokumentlimit von 5 000 wird so nie erreicht),
-`settings/main` für Kategorien und Zuordnungsregeln.
+`assets/<id>` je Vermögensposition, `wealth/<YYYY-MM>` die Monatswerte, `settings/main` für
+Kategorien und Zuordnungsregeln.
+
+### Vermögen: Zerlegung der Monatsveränderung
+
+Erfasst werden pro Position und Monat zwei Zahlen — Bestand und Einzahlung. Daraus folgt
+
+    Δ Gesamt = Einzahlungen + Marktbewegung
+
+wobei die Marktbewegung als Residuum bestimmt wird und damit definitionsgemäß exakt ist, nicht
+geschätzt. Das Diagramm zeigt die Bestandteile der *Veränderung* ab der Nulllinie, nicht eine Brücke
+zwischen den Absolutbeständen: bei 6 000 € Bestand wäre eine Veränderung von 340 € ein unsichtbarer
+Strich, und eine abgeschnittene Achse wäre die falsche Antwort darauf.
+
+Die kategoriale Palette der Anlageklassen ist gegen die dunkle Fläche `#101010` validiert
+(Helligkeitsband, Chroma, CVD-Trennung, Normalsicht-Abstand, Kontrast). Die ursprünglichen
+Projektfarben fielen durch: `--red` und `--org` liegen bei ΔE 7,8 und sind auch mit normalem
+Farbsehen kaum zu trennen.
 
 **Unterschied zur Server-Fassung:** Google Fit entfällt — OAuth braucht ein Client-Secret und damit
-einen Server. In der Artifact-Fassung werden Health-Werte manuell erfasst; CSV-Import und
-Budget-Abgleich funktionieren vollständig.
+einen Server. Health-Werte kommen hier aus manueller Eingabe oder aus einem Export
+(Google Takeout → `Daily activity metrics.csv`); die Spaltenerkennung deckt Schritte, Kalorien,
+Puls, Gewicht, HRV und Schlafdauer ab. Health Connect selbst hat keine Netzwerkschnittstelle und
+ist von keiner Webseite aus erreichbar — unabhängig von der gewählten Architektur.

@@ -76,3 +76,63 @@ font-size:12px;color:var(--wh);z-index:300;max-width:92vw;transition:bottom .25s
 .toast.on{bottom:24px}
 .toast.err{border-left-color:var(--red)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== Diagramme ===== */
+.chart{position:relative;background:var(--s1);border:1px solid var(--bd);border-radius:9px;
+padding:12px 14px 6px;overflow-x:auto}
+.chart svg{display:block;max-width:100%}
+.cgrid{stroke:#1f1f1f;stroke-width:1}
+.czero{stroke:#3a3a3a;stroke-width:1}
+.cconn{stroke:#3a3a3a;stroke-width:1;stroke-dasharray:2 2}
+.ctick{fill:var(--dim);font-family:var(--mono);font-size:9px}
+.clabel{fill:var(--tx);font-family:var(--mono);font-size:10px;font-weight:500}
+.ccross{stroke:#4a4a4a;stroke-width:1;stroke-dasharray:3 3;pointer-events:none}
+.wbar{cursor:default}
+.charttip{position:fixed;pointer-events:none;opacity:0;transition:opacity .12s;z-index:400;
+background:#161616;border:1px solid var(--bd);border-radius:6px;padding:8px 11px;
+display:flex;flex-direction:column;gap:2px;box-shadow:0 6px 20px rgba(0,0,0,.6)}
+.charttip.on{opacity:1}
+.charttip b{font-size:11px;color:var(--wh);font-weight:600}
+.tipv{font-family:var(--mono);font-size:13px;color:var(--wh);font-variant-numeric:tabular-nums}
+.tipd{font-family:var(--mono);font-size:10px;color:var(--mut)}
+
+/* Aufteilung: ein Balken, 2px Fläche zwischen den Segmenten */
+.allocbar{display:flex;height:26px;border-radius:5px;overflow:hidden;gap:2px;background:var(--bd);
+margin-bottom:12px}
+.allocseg{height:100%;min-width:3px}
+.alloclist{list-style:none;display:flex;flex-direction:column}
+.alloclist li{display:grid;grid-template-columns:12px 1fr 62px 104px;gap:10px;align-items:center;
+padding:9px 2px;border-bottom:1px solid var(--bd);font-size:12px}
+.alloclist li:last-child{border-bottom:none}
+.swatch{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.allocname{color:var(--wh);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.allocpct,.allocval{font-family:var(--mono);font-size:11px;text-align:right;
+font-variant-numeric:tabular-nums;color:var(--tx)}
+.allocpct{color:var(--mut)}
+
+/* Monatswerte: Tabelle, weil Zahlenspalten verglichen werden */
+.postab{background:var(--s1);border:1px solid var(--bd);border-radius:9px;overflow:hidden}
+.poshead,.posrow{display:grid;grid-template-columns:1fr 132px 132px 30px;gap:9px;align-items:center;
+padding:9px 13px}
+.poshead{border-bottom:1px solid var(--bd);background:#0c0c0c}
+.poshead span{font-family:var(--mono);font-size:8px;letter-spacing:1.4px;text-transform:uppercase;color:var(--dim)}
+.poshead span:nth-child(2),.poshead span:nth-child(3){text-align:right}
+.posrow{border-bottom:1px solid var(--bd)}
+.posrow:last-child{border-bottom:none}
+.posname{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--tx);min-width:0}
+.posname b{color:var(--wh);font-weight:600}
+.posin{background:#0a0a0a;border:1px solid var(--bd);border-radius:6px;color:var(--tx);
+font-family:var(--mono);font-size:12px;padding:7px 9px;text-align:right;width:100%;
+font-variant-numeric:tabular-nums}
+.posin:focus-visible{outline:2px solid var(--blu);outline-offset:1px}
+@media(max-width:640px){
+  .poshead{display:none}
+  .posrow{grid-template-columns:1fr 1fr 28px;grid-template-areas:'n n x' 'v i i';row-gap:8px}
+  .posname{grid-area:n}.posrow .posin:nth-of-type(1){grid-area:v}.posrow .posin:nth-of-type(2){grid-area:i}
+  .posrow .txdel{grid-area:x;justify-self:end}
+  .alloclist li{grid-template-columns:12px 1fr 92px;grid-template-areas:'s n v' '. . p';row-gap:2px}
+  .alloclist .swatch{grid-area:s}.allocname{grid-area:n}.allocval{grid-area:v}.allocpct{grid-area:p}
+}
+.chartnote{font-family:var(--mono);font-size:10px;color:var(--mut);text-align:center;
+padding:8px 0 4px;letter-spacing:.3px}
+.chartnote b{color:var(--tx);font-weight:500}

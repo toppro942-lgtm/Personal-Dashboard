@@ -10,6 +10,7 @@ import re, pathlib, sys
 ROOT = pathlib.Path(__file__).parent
 OUT  = ROOT / 'artifact'
 STORE = OUT / 'store.js'          # DB-Anbindung, gepflegt neben dieser Datei
+WEALTH = OUT / 'wealth.js'        # Vermoegensteil: Modell und Diagramme
 EXTRA = OUT / 'extra.css'         # Styles fuer Health/Finanzen
 TABS  = OUT / 'tabs.html'         # Markup der beiden neuen Tabs
 
@@ -41,7 +42,8 @@ FOOTER = """<div style="text-align:center;padding:16px;border-top:1px solid var(
 html = (f'<title>Sharms Dashboard</title>\n{FONTS}\n<style>\n{css}'
         f'{EXTRA.read_text(encoding="utf-8")}</style>\n\n'
         f'{body}{TABS.read_text(encoding="utf-8")}\n{FOOTER}\n\n'
-        f'<script>\n{data}\n{plan}\n{STORE.read_text(encoding="utf-8")}</script>\n')
+        f'<script>\n{data}\n{plan}\n{WEALTH.read_text(encoding="utf-8")}\n'
+        f'{STORE.read_text(encoding="utf-8")}</script>\n')
 
 (OUT / 'dashboard.html').write_text(html, encoding='utf-8')
 print(f'artifact/dashboard.html — {len(html):,} Bytes')

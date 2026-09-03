@@ -63,7 +63,7 @@ async function initStore() {
   catch { DB = null; }
 
   if (!DB) {
-    for (const id of ['hbody', 'fbody']) document.getElementById(id).innerHTML =
+    for (const id of ['hbody', 'fbody', 'wbody']) document.getElementById(id).innerHTML =
       `<div class="unote">Der Speicher dieser Seite ist hier nicht verfügbar. Die Trainings-Tabs
        funktionieren weiter; Health und Finanzen brauchen die gespeicherte Fassung dieser Seite —
        öffne sie über den Link, den Claude dir gegeben hat.</div>`;
@@ -71,8 +71,8 @@ async function initStore() {
   }
   try {
     await loadSettings();
-    await Promise.all([loadHealth(), loadMonth()]);
-    renderHealth(); renderFinance();
+    await Promise.all([loadHealth(), loadMonth(), loadWealth()]);
+    renderHealth(); renderFinance(); renderWealth();
   } catch (e) { toast('Daten konnten nicht geladen werden: ' + (e.message || e), true); }
 }
 
@@ -122,6 +122,51 @@ function renderHealth() {
     days ? `${days} erfasste ${days === 1 ? 'Tag' : 'Tage'}` : 'noch keine Einträge';
 }
 
+/* Spaltenerkennung fuer Google-Takeout ("Daily activity metrics.csv"),
+   Health-Sync-Exporte und einfache eigene Tabellen. Gesucht wird per
+   Teilstring, weil Google die Bezeichner regelmaessig umbenennt. */
+const HCOLS = {
+  steps:        ['step count','steps','schritte'],
+  active_kcal:  ['calories (kcal)','calories','kalorien'],
+  resting_hr:   ['min heart rate','resting heart','ruhepuls','average heart rate'],
+  weight_kg:    ['average weight','weight (kg)','weight','gewicht'],
+  hrv_ms:       ['heart rate variability','hrv'],
+  sleep_minutes:['sleeping duration','sleep duration','asleep','schlafdauer','sleep']
+};
+
+function importHealthCsv(text) {
+  const line = text.split('\n').find(l => l.trim()) || '';
+  const delim = [',', ';', '\t'].sort((a, b) => line.split(b).length - line.split(a).length)[0];
+  const rows = parseCsv(text, delim);
+  const hi = rows.findIndex(r => findCol(r, ['date','datum','tag','day']) >= 0);
+  if (hi < 0) return { error:'Keine Datumsspalte gefunden. Erwartet wird eine Tabelle mit einer Spalte „Date" oder „Datum" und je einer Spalte pro Messwert.' };
+  const h = rows[hi], di = findCol(h, ['date','datum','tag','day']);
+  const map = {};
+  for (const [metric, names] of Object.entries(HCOLS)) {
+    const i = findCol(h, names);
+    if (i >= 0) map[metric] = { i, ms: /duration|dauer/i.test(h[i]) && /\(ms\)|millis/i.test(h[i]) };
+  }
+  if (!Object.keys(map).length) return { error:'Datumsspalte gefunden, aber keine bekannten Messwerte. Unterstützt: Schritte, Kalorien, Puls, Gewicht, HRV, Schlaf.' };
+
+  const out = [];
+  for (const r of rows.slice(hi + 1)) {
+    const day = toIso(r[di]);
+    if (!day) continue;
+    const doc = { day };
+    for (const [metric, { i, ms }] of Object.entries(map)) {
+      const raw = String(r[i] ?? '').replace(',', '.').trim();
+      if (!raw) continue;
+      let v = Number(raw);
+      if (!Number.isFinite(v) || v === 0) continue;
+      if (metric === 'sleep_minutes') v = ms ? v / 60000 : (v > 1440 ? v / 60000 : v);
+      doc[metric] = Math.round(v * 10) / 10;
+    }
+    if (Object.keys(doc).length > 1) out.push(doc);
+  }
+  return out.length ? { rows: out, metrics: Object.keys(map) }
+                    : { error:'Datei gelesen, aber keine verwertbaren Zeilen gefunden.' };
+}
+
 async function saveMetric(day, metric, value) {
   const ref = DB.collection('health').doc(day);
   const snap = await ref.get();
@@ -132,6 +177,17 @@ async function saveMetric(day, metric, value) {
   if (i >= 0) HEALTH[i] = doc; else HEALTH.push(doc);
   HEALTH.sort((a, b) => a.day < b.day ? -1 : 1);
   renderHealth();
+}
+
+async function saveDay(day, values) {
+  const ref = DB.collection('health').doc(day);
+  const snap = await ref.get();
+  const doc = snap.exists ? { ...snap.data, day } : { day };
+  Object.assign(doc, values);
+  await ref.set(doc);
+  const i = HEALTH.findIndex(d => d.day === day);
+  if (i >= 0) HEALTH[i] = doc; else HEALTH.push(doc);
+  HEALTH.sort((a, b) => a.day < b.day ? -1 : 1);
 }
 
 /* ============================ FINANZEN ============================ */
@@ -289,13 +345,42 @@ function wireForms() {
   document.getElementById('hform').addEventListener('submit', async e => {
     e.preventDefault();
     if (!DB) return toast('Kein Speicher verfügbar', true);
-    const f = new FormData(e.target), v = Number(f.get('value'));
-    if (!Number.isFinite(v)) return toast('Bitte eine Zahl eintragen', true);
+    const f = new FormData(e.target), day = f.get('day'), vals = {};
+    for (const key of Object.keys(METRICS)) {
+      const raw = String(f.get(key) ?? '').replace(',', '.').trim();
+      if (!raw) continue;
+      /* Schlaf darf als 8:15 oder als 495 eingetragen werden. */
+      if (key === 'sleep_minutes' && raw.includes(':')) {
+        const [hh, mm] = raw.split(':');
+        vals[key] = (+hh) * 60 + (+mm || 0);
+      } else if (Number.isFinite(Number(raw))) vals[key] = Number(raw);
+    }
+    if (!Object.keys(vals).length) return toast('Mindestens einen Wert eintragen', true);
     try {
-      await saveMetric(f.get('day'), f.get('metric'), v);
-      e.target.querySelector('[name=value]').value = '';
-      toast('Gespeichert');
+      await saveDay(day, vals);
+      renderHealth();
+      e.target.querySelectorAll('input[type=text],input[type=number]').forEach(i => { i.value = ''; });
+      toast(`${Object.keys(vals).length} Wert${Object.keys(vals).length === 1 ? '' : 'e'} gespeichert`);
     } catch (err) { toast('Speichern fehlgeschlagen: ' + (err.message || err), true); }
+  });
+
+  document.getElementById('himport').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!DB) return toast('Kein Speicher verfügbar', true);
+    const file = document.getElementById('hcsv').files[0];
+    if (!file) return toast('Erst eine Datei auswählen', true);
+    const r = importHealthCsv(await file.text());
+    if (r.error) return toast(r.error, true);
+    try {
+      /* Nur die letzten 90 Tage uebernehmen: aeltere Werte helfen der
+         Auswertung nicht und wuerden das Dokumentbudget verbrauchen. */
+      const cutoff = new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 10);
+      const recent = r.rows.filter(d => d.day >= cutoff);
+      for (const d of recent) { const { day, ...v } = d; await saveDay(day, v); }
+      renderHealth(); e.target.reset();
+      toast(`${recent.length} Tage übernommen${r.rows.length > recent.length
+        ? ` · ${r.rows.length - recent.length} älter als 90 Tage übersprungen` : ''}`);
+    } catch (err) { toast('Import fehlgeschlagen: ' + (err.message || err), true); }
   });
 
   document.getElementById('fmonth').addEventListener('change', async e => {
@@ -344,4 +429,5 @@ function wireForms() {
 renderDayBar(); renderDay('mo'); renderVol(); renderFood();
 renderSleep(); renderMob(); renderEve(); renderMor();
 wireForms();
+wireWealth();
 initStore();
