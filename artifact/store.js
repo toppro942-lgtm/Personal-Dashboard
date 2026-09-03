@@ -58,22 +58,48 @@ function spark(points, color, w = 240, h = 44) {
 }
 
 /* ---------- Datenbank ---------- */
+/* Temporaeres Diagnose-Panel unten links. Zeigt, was der Client tatsaechlich
+   sieht (DB-Status, Monatsschluessel, Trefferzahlen) -- ohne das laesst sich
+   ein Lade-Bug, der nur auf einem bestimmten Geraet auftritt, nicht von hier
+   aus fassen. Entfernen, sobald der Fehler gefunden ist. */
+function debugPanel(lines) {
+  let el = document.getElementById('dbgpanel');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'dbgpanel';
+    el.style.cssText = 'position:fixed;left:6px;bottom:6px;z-index:999;max-width:94vw;'
+      + 'background:#000;border:1px solid #333;border-radius:6px;padding:8px 10px;'
+      + 'font-family:monospace;font-size:9px;line-height:1.6;color:#8f8;white-space:pre-wrap;'
+      + 'opacity:.92;pointer-events:none';
+    document.body.appendChild(el);
+  }
+  el.textContent = 'DEBUG  ' + lines.join('  ·  ');
+}
+
 async function initStore() {
+  let dbErr = null;
   try { DB = (typeof claude !== 'undefined' && claude.use) ? await claude.use('db') : null; }
-  catch { DB = null; }
+  catch (e) { DB = null; dbErr = e?.message || String(e); }
 
   if (!DB) {
+    debugPanel([`claude=${typeof claude}`, `use=${typeof claude?.use}`, `DB=null`, dbErr ? `err=${dbErr}` : 'kein Fehler geworfen']);
     for (const id of ['hbody', 'fbody', 'wbody']) document.getElementById(id).innerHTML =
       `<div class="unote">Der Speicher dieser Seite ist hier nicht verfügbar. Die Trainings-Tabs
        funktionieren weiter; Health und Finanzen brauchen die gespeicherte Fassung dieser Seite —
        öffne sie über den Link, den Claude dir gegeben hat.</div>`;
     return;
   }
-  try {
-    await loadSettings();
-    await Promise.all([loadHealth(), loadMonth(), loadWealth()]);
-    renderHealth(); renderFinance(); renderWealth();
-  } catch (e) { toast('Daten konnten nicht geladen werden: ' + (e.message || e), true); }
+
+  const settled = await Promise.allSettled([
+    loadSettings().then(() => 'settings ok'),
+    loadHealth().then(() => `health ok (${HEALTH.length})`),
+    loadMonth().then(() => `finance[${MONTH}] ok (${TX.length} tx, exists=${financeDocExisted})`),
+    loadWealth().then(() => `wealth ok (${Object.keys(WEALTH).length} monate, ${ASSETS.length} positionen)`)
+  ]);
+  debugPanel(settled.map(r => r.status === 'fulfilled' ? r.value : `FEHLER: ${r.reason?.message || r.reason}`));
+
+  try { renderHealth(); renderFinance(); renderWealth(); }
+  catch (e) { toast('Anzeigen fehlgeschlagen: ' + (e.message || e), true); debugPanel([`render throw: ${e.message || e}`]); }
 }
 
 async function loadSettings() {
@@ -88,8 +114,10 @@ async function loadHealth() {
   HEALTH = snap.docs.map(d => d.data).sort((a, b) => a.day < b.day ? -1 : 1);
 }
 
+let financeDocExisted = null;
 async function loadMonth() {
   const snap = await DB.doc('finance/' + MONTH).get();
+  financeDocExisted = snap.exists;
   TX = snap.exists ? (snap.data.tx || []) : [];
 }
 const saveMonth = () => DB.doc('finance/' + MONTH).set({ month: MONTH, tx: TX });
