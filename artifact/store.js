@@ -93,7 +93,7 @@ async function initStore() {
   const settled = await Promise.allSettled([
     loadSettings().then(() => 'settings ok'),
     loadHealth().then(() => `health ok (${HEALTH.length})`),
-    loadMonth().then(() => `finance[${MONTH}] ok (${TX.length} tx, exists=${financeDocExisted})`),
+    loadMonth().then(() => `finance[${MONTH}] ok (${TX.length} tx, exists=${financeDocExisted}, raw=${financeRawJson})`),
     loadWealth().then(() => `wealth ok (${Object.keys(WEALTH).length} monate, ${ASSETS.length} positionen)`)
   ]);
   debugPanel(settled.map(r => r.status === 'fulfilled' ? r.value : `FEHLER: ${r.reason?.message || r.reason}`));
@@ -114,10 +114,11 @@ async function loadHealth() {
   HEALTH = snap.docs.map(d => d.data).sort((a, b) => a.day < b.day ? -1 : 1);
 }
 
-let financeDocExisted = null;
+let financeDocExisted = null, financeRawJson = '';
 async function loadMonth() {
   const snap = await DB.doc('finance/' + MONTH).get();
   financeDocExisted = snap.exists;
+  try { financeRawJson = JSON.stringify(snap.data ?? null).slice(0, 200); } catch (e) { financeRawJson = 'stringify-fehler: ' + e.message; }
   TX = snap.exists ? (snap.data.tx || []) : [];
 }
 const saveMonth = () => DB.doc('finance/' + MONTH).set({ month: MONTH, tx: TX });
