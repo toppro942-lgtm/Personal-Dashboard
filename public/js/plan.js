@@ -171,11 +171,14 @@ function renderEve(){
 }
 
 function renderMor(){
-  document.getElementById('morlist').innerHTML=MOR.map((m,i)=>`
-    <div class="morrow">
+  document.getElementById('morlist').innerHTML=MOR.map((m,i)=>{
+    const txt = typeof m==='string' ? m : m.t;
+    const sub = typeof m==='object' && m.sub ? m.sub : null;
+    return `<div class="morrow">
       <div class="morn">${i+1}</div>
-      <div class="mortxt">${m}</div>
-    </div>`).join('')+`
+      <div class="mortxt">${txt}${sub?`<ul class="substep">${sub.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</div>
+    </div>`;
+  }).join('')+`
     <div class="card" style="margin-top:12px;border-left:3px solid var(--blu)">
       <div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--blu);text-transform:uppercase;margin-bottom:8px">💧 Hydration-Tracking</div>
       <div style="font-size:11px;color:var(--mut);line-height:1.9">
@@ -184,11 +187,29 @@ function renderMor(){
     </div>`;
 }
 
+/* Grooming: reines Nachschlagewissen. Bewusst als Text-Sektionen und nicht
+   als Checkliste -- was taeglich abzuhaken ist, steht in den Routine-Tabs. */
+function renderGroom(){
+  document.getElementById('groomlist').innerHTML=GROOM.map(g=>`
+    <section class="gsec" style="--gc:${g.c}">
+      <div class="gsect">${g.t}</div>
+      <div class="glead">${g.lead}</div>
+      ${(g.sub||[]).map(b=>`
+        <div class="gblock">
+          <div class="gh">${b.h}</div>
+          <ul class="gl">${b.li.map(x=>`<li>${x}</li>`).join('')}</ul>
+        </div>`).join('')}
+      ${g.quote?`<div class="gquote"><div class="gqh">${g.quote.h}</div><div class="gqt">\u201E${g.quote.t}\u201C</div></div>`:''}
+      ${g.warn?`<div class="gwarn">${g.warn}</div>`:''}
+      ${g.note?`<div class="gnote">${g.note}</div>`:''}
+    </section>`).join('');
+}
+
 /* Das Original-Markup nutzt inline onclick (tab/day/tog). Module haben kein
    globales Scope, deshalb werden genau diese drei Handler exponiert. */
 Object.assign(window, { tab, day, tog });
 
 export function initPlan() {
   renderDayBar(); renderDay('mo'); renderVol(); renderFood();
-  renderSleep(); renderMob(); renderEve(); renderMor();
+  renderSleep(); renderMob(); renderEve(); renderMor(); renderGroom();
 }

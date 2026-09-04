@@ -339,6 +339,8 @@ export const STIPS=[
 
 export const MOBSEQ=[
 {n:'4-7-8 Atmung',x:'× 4',d:'Neurale Entspannung als Einstieg. 4 Sek einatmen, 7 Sek halten, 8 Sek ausatmen. Senkt den sympathischen Tonus, bevor die eigentliche Dehnarbeit beginnt.',c:'#7a5ab5'},
+{n:'Thorakale Extension',x:'2 Min über der Rolle',d:'Rolle quer unter die Brustwirbelsäule, Hände hinter dem Kopf, kontrolliert nach hinten öffnen und wandern. Gegenmaßnahme zum nach vorn rotierten Schultergürtel und eingesunkenen Brustkorb — vor dem Dehnen, weil eine aufgerichtete BWS alle folgenden Positionen sauberer macht.',c:'#c94535'},
+{n:'Kinn-Retraktion',x:'3 × 10',d:'Kinn gerade nach hinten schieben (\'Doppelkinn machen\'), Blick bleibt waagerecht, kein Nicken. Arbeitet direkt gegen die Kopfvorschubhaltung — bei langem Hals ist deren optischer Effekt überproportional groß.',c:'#3a7bbf'},
 {n:'Hüftflexoren',x:'Kniender Ausfallschritt PNF × 3/Seite + liegender Quad-Stretch 2×45s',d:'Kniender Ausfallschritt mit PNF-Protokoll (8s an, 30s halten, ×3), danach liegender Quad-Stretch als statischer Abschluss.',c:'#c94535'},
 {n:'Hamstrings',x:'Liegend mit Band PNF × 3/Seite + Vorwärtsbeuge 2×60s',d:'Liegende Position mit Band für kontrollierten Widerstand im PNF-Zyklus, danach Vorwärtsbeuge zur beidseitigen Integration.',c:'#b8922e'},
 {n:'Adduktoren',x:'Grätsch-Sitz 2×90s + Schmetterling PNF × 3',d:'Grätsch-Sitz als lange statische Haltung, danach Schmetterling-Position im PNF-Zyklus für die mediale Oberschenkelmuskulatur.',c:'#2e9e6a'},
@@ -359,14 +361,15 @@ b:['<b>Nährstoffversorgung:</b> 30–40g Casein. Sichert die Muskelproteinsynth
 {t:'T-60 Min',ti:'Nervensystem-Modulation',c:'#b8922e',
 b:['<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Minoxidil:</b> Erst nach vollständigem Trocknen der Kopfhaut (20–30 Min lufttrocknen) auftragen.']},
 {t:'T-45 Min',ti:'Physische Optimierung',c:'#2e9e6a',
-b:['<b>Dehnen:</b> Gezielte Mobilisation zur muskulären Entspannung — deine PNF-Routine.','<b>Atemkontrolle:</b> 5 Minuten tiefe Bauchatmung. Schaltet das System aktiv in den parasympathischen Modus.']},
+b:['<b>Dehnen + Haltung:</b> Gezielte Mobilisation zur muskulären Entspannung — deine PNF-Routine, eingeleitet durch thorakale Extension und Kinn-Retraktion.','<b>Atemkontrolle:</b> 5 Minuten tiefe Bauchatmung. Schaltet das System aktiv in den parasympathischen Modus.']},
 {t:'T-25 Min',ti:'Hygienische Präzision',c:'#3a7bbf',
-b:['<b>Früher ins Bad:</b> weniger Überwindung später, kürzerer Weg bis ins Bett.','<b>10 Minuten Routine:</b> Zahnhygiene inkl. Zahnseide für systemische Entzündungsminimierung, Toilettengang.','Diesen Zeitraum für absolute mentale Stille nutzen.']},
+b:['<b>Früher ins Bad:</b> weniger Überwindung später, kürzerer Weg bis ins Bett.','<b>10 Minuten Routine:</b> Zahnhygiene inkl. Zahnseide für systemische Entzündungsminimierung, Toilettengang.','<b>Haut — Cleanser:</b> Gel-Cleanser, danach vollständig trocken tupfen.','<b>Haut — EpiDuo:</b> erbsengroß aufs ganze Gesicht, ausdrücklich erst auf trockene Haut. Feucht aufgetragen steigt die Reizung deutlich.','<b>Bei Trockenheit:</b> Feuchtigkeitscreme mit Ceramiden + Niacinamid dünn davor und danach (Sandwich-Methode).','Diesen Zeitraum für absolute mentale Stille nutzen.']},
 {t:'T-15 Min',ti:'Umfeld-Optimierung',c:'#7a5ab5',
 b:['<b>Stoßlüften:</b> Maximaler Sauerstoffaustausch.','<b>Temperatursturz:</b> Raum auf 16–18 °C bringen. Kühle Umgebung essentiell für die Testosteron-Ausschüttung.','<b>Licht-Eliminierung:</b> Absolute Dunkelheit.']},
 {t:'T-0 Min',ti:'Regeneration',c:'#2e9e6a',
-b:['<b>Schlaf:</b> Vollständige Systemabschaltung. Wachstum und Hormonproduktion laufen auf Hochtouren.']}];
+b:['<b>Zahnschutz:</b> Boxer-Mundschutz einsetzen — letzter Handgriff, nach der kompletten Zahnhygiene.','<b>Schlaf:</b> Vollständige Systemabschaltung. Wachstum und Hormonproduktion laufen auf Hochtouren.']}];
 
+/* Eintraege sind entweder ein String oder {t, sub:[]} mit Unterschritten. */
 export const MOR=[
 'Direkt aufstehen',
 'Bett machen',
@@ -375,10 +378,16 @@ export const MOR=[
 'Wasser trinken + Sonne/Licht bekommen',
 'Nervous System Release (springen, schwingen)',
 'Frühstück herrichten',
-'Hygiene',
+{t:'Hygiene + Haut',sub:[
+ 'Gel-Cleanser, lauwarm — derselbe wie abends',
+ 'Sonnenschutz LSF 50, chemisch-leicht oder Hybrid. Täglich, auch bewölkt — Pflicht, solange EpiDuo läuft, und der einzige Wirkstoff mit garantiertem Langzeiteffekt']},
 'Frühstück genießen + Supplements',
 'Journaling — was ich glaube und warum, Zukunftsplanung, Dankbarkeit',
-'Klo + Haare stylen',
+{t:'Klo + Haare stylen',sub:[
+ 'Handtuchtrocken: Sea Salt Spray oder Volumenmousse in den Ansatz',
+ 'Föhnen auf mittlerer Stufe, Kopf vorgebeugt, danach mit den Fingern in Zielrichtung',
+ 'Matte Clay oder Fiber, haselnussgroß, in den Handflächen komplett verreiben, von hinten nach vorne einarbeiten — nie von oben auftragen',
+ 'Kein Gel, kein Wax mit Glanz: Glanz lässt feines Haar dünner wirken']},
 'Spaziergang / Fahrrad draußen'];
 
 export const HYDRATION={
@@ -386,3 +395,64 @@ mor:'1,5L Flasche → soll bis Mittags leer sein',
 meal:'Zu jeder Mahlzeit 1–2 Gläser',
 school:'1L Flasche in der Schule'
 };
+
+/* Grooming-Tab: Nachschlagewissen, das nicht in eine Tagesroutine gehoert.
+   Die taeglich auszufuehrenden Schritte stehen bewusst NICHT hier, sondern in
+   MOR (Haut morgens, Haare), EVE (Haut abends) und MOBSEQ (Haltung) --
+   eine Quelle pro Schritt, damit nichts auseinanderlaeuft.
+   Struktur: {t, c, lead, sub:[{h, li:[]}], quote:{h,t}, warn, note} */
+export const GROOM=[
+{t:'Haut',c:'#3a7bbf',
+ lead:'Milde entzündliche Akne, Talgporen, Rötung. Vier Produkte, nicht mehr — jeder zusätzliche Wirkstoff erhöht nur das Reizrisiko, ohne den Verlauf zu beschleunigen.',
+ sub:[
+  {h:'Morgens',li:['Sanfter Gel-Cleanser, pH-hautneutral, tensidarm','Sonnenschutz LSF 50, chemisch-leicht oder Hybrid']},
+  {h:'Abends',li:['Gleicher Cleanser','EpiDuo, erbsengroß aufs ganze Gesicht','Bei Trockenheit: Feuchtigkeitscreme mit Ceramiden + Niacinamid, dünn, davor und danach (Sandwich-Methode)']},
+  {h:'Rasur',li:['Alle 3–4 Tage glatt — der Bartwuchs ist zu licht für Konturenarbeit','Mit Kornrichtung, Rasierhobel oder 3-Klingen','Danach ausschließlich Feuchtigkeitspflege, kein alkoholhaltiges Aftershave auf entzündeter Haut']}],
+ warn:'Nicht machen: Peelingtücher, Alkohol-Gesichtswasser, Ausdrücken, Zink-Eigenmedikation.',
+ note:'Wenn nach 12 Wochen keine Besserung eintritt: Hautarzt — nicht Produktwechsel.'},
+
+{t:'Haare',c:'#b8922e',
+ lead:'Feines, glattes Haar. Hier entscheidet das Produkt mehr als die Technik — die Reihenfolge steht als Schritt in der Morgenroutine.',
+ sub:[
+  {h:'Ablauf',li:['Handtuchtrocken: Sea Salt Spray oder Volumenmousse in den Ansatz','Föhnen auf mittlerer Stufe, Kopf vorgebeugt, danach mit den Fingern in Zielrichtung','Matte Clay oder Fiber, haselnussgroß, in den Handflächen komplett verreiben, von hinten nach vorne einarbeiten — nicht von oben auftragen']}],
+ quote:{h:'Barbier-Ansage — wörtlich vorlesen',t:'Low Taper an den Seiten, Ansatz unter der Schläfe, 0,5 auf 1,5 auslaufend, Ohren bedeckt lassen. Oben 7 cm, stark texturiert mit Point Cutting, Fransenkante nach vorn getragen. Nacken weich auslaufend, keine Blocklinie.'},
+ warn:'Kein Gel, kein Wax mit Glanz. Glanz lässt feines Haar dünner wirken.'},
+
+{t:'Augenbrauen',c:'#7a5ab5',
+ lead:'Die gerade Grundform ist bei langem Gesicht funktional richtig — ein hoher Bogen würde die Vertikale zusätzlich betonen. Form beibehalten, nicht in einen Bogen zwingen.',
+ sub:[
+  {h:'Entfernen',li:['Streuhaare am Nasenrücken zwischen den Brauen','Einzelne Haare deutlich unterhalb der Brauenlinie am Lid','Sonst nichts']},
+  {h:'Nicht entfernen',li:['Haare oberhalb der Braue. Der obere Rand definiert die Dicke — wer dort zupft, verliert Substanz und bekommt eine dünne Linie']},
+  {h:'Grenzen',li:['Startpunkt: senkrecht über dem inneren Augenwinkel','Endpunkt: diagonale Linie Nasenflügel–äußerer Augenwinkel','Liegt aktuell etwa dort — kein Handlungsbedarf']},
+  {h:'Methode',li:['Pinzette, einzeln, bei Tageslicht','Kein Threading — nimmt zu viel weg, die Form ist bereits korrekt','Trimmen mit Kamm und Schere nur bei Haaren über 1 cm']},
+  {h:'Der eigentliche Hebel: Kontrast',li:['Brauengel oder Seife transparent, Haare nach oben-außen gekämmt → sofort mehr Dichte-Eindruck, null Risiko','Henna oder Brauenfarbe, maximal einen halben Ton dunkler als das Haar (aschbraun, nie schwarz oder rotstichig), beim Friseur, hält 3–4 Wochen']}],
+ warn:'Zu dunkel gefärbt wirkt es bei heller Haut sofort aufgesetzt. Im Zweifel die Gel-Variante.',
+ note:'Formal sind die Brauen in Ordnung — das Defizit ist farblich, nicht geometrisch.'},
+
+{t:'Bart',c:'#b86830',
+ lead:'Aktuell: nein. Blonder, lückenhafter Oberlippenflaum liest sich nicht als Bart, sondern als ungepflegter Rest. Sauber rasiert wirkt die Kieferlinie klarer.',
+ sub:[
+  {h:'Neu bewerten mit 21–23',li:['Falls Wangendichte dazukommt: kurzer Vollbart, 5–8 mm','Hohe Halslinie, zwei Finger über dem Adamsapfel','Wangenlinie natürlich belassen, nicht rasieren']}],
+ note:'Ein Bart wäre ein echter Hebel — er verbreitert das untere Gesichtsdrittel. Derzeit nur biologisch nicht verfügbar.'},
+
+{t:'Kleidung & Farbe',c:'#2e9e6a',
+ lead:'Kühl-heller Typ. Die Farbwahl liefert den Kontrast, den das Gesicht selbst nicht mitbringt.',
+ sub:[
+  {h:'Tragen',li:['Marine, Petrol, Waldgrün, Bordeaux, kühles Grau, reines Weiß','Schwarz als Akzent, nicht als Grundton']},
+  {h:'Meiden',li:['Beige, Camel, Sand, Blassgelb, Hellbraun','Sie liegen farblich zu nah an der eigenen Haut und lassen fahl wirken']},
+  {h:'Ausschnitt & Kragen',li:['Langer, schlanker Hals → höher schließender Rundhals, Henley, Polo mit stehendem Kragen, im Winter feiner Rollkragen','Kein tiefer V-Ausschnitt, keine weiten Rundhälse — beide verlängern den Hals weiter']},
+  {h:'Silhouette',li:['Die Schulterbreite ist der limitierende Faktor, nicht das Gewicht','Schulternaht sitzt auf dem Schulterknochen, nicht darüber hinaus','Overshirts, Harringtons, Bomberjacken; feste Stoffe wie Oxford, Denim, Cord statt weicher Jerseys','Horizontale Elemente oben: Streifen, Kontrastkragen']},
+  {h:'Passform Hose',li:['Straight Leg oder Slim Straight, Saum knapp auf dem Schuh','Kein Skinny, kein Baggy','Weite Sweatpants sind bei 188 cm Schlanktyp die schlechteste Wahl: sie verschlucken die Beine und verstärken Länge ohne Masse']}]},
+
+{t:'Haltung & Fotos',c:'#c94535',
+ lead:'Kopf leicht vorgeschoben, Schultern nach vorn rotiert, Brustkorb dadurch eingesunken. Bei langem Hals ist der Effekt überproportional sichtbar — der größte optische Einzelfaktor, noch vor Frisur und Brille.',
+ sub:[
+  {h:'Im Training',li:['Zugvolumen zu Druckvolumen mindestens 2:1 — Rudern, Face Pulls, Reverse Flys, Klimmzüge hoch priorisiert','Seitheben 3×/Woche mit hohen Wiederholungen: der direkteste Hebel für Schulterbreite']},
+  {h:'Täglich',li:['Thorakale Extension über der Rolle, 2 Minuten','Kinn-Retraktion 3×10 gegen die Kopfvorschubhaltung','Beides steht als fester Schritt in der Mobility-Routine — kein separater Termin nötig']},
+  {h:'Auf Fotos',li:['Kinn leicht nach vorn und minimal nach unten — nicht anheben, das zeigt die Nasenlöcher','Kamera auf Augenhöhe oder minimal darüber','Selfies von unten verkürzen die Stirn und verbreitern Nase und Kiefer']}]},
+
+{t:'Zeithorizont',c:'#4f4f4f',
+ lead:'Was wann Wirkung zeigt — damit nach drei Wochen nichts abgebrochen wird, das noch gar nicht wirken konnte.',
+ sub:[
+  {h:'4 Wochen — Schnitt + Brauenkontrast',li:['Textured Fringe mit Low Taper, dazu Brauengel oder dezente Tönung','Beide Maßnahmen adressieren dasselbe Kernthema: fehlender horizontaler Rahmen und fehlender Kontrast in einem hellen, langen Gesicht']},
+  {h:'6 Monate — Haltung, Schultern, Haut',li:['Alle drei laufen parallel und brauchen Zeit','Adapalen zeigt nach 12 Wochen belastbare Ergebnisse','Deltoid- und Rückenaufbau nach 4–6 Monaten, Haltungskorrektur ebenfalls','Kein Shortcut, aber die dauerhaftesten Effekte']}]}];

@@ -102,6 +102,33 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
 .morrow{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:8px;margin-bottom:7px;border:1px solid var(--bd);border-left:3px solid var(--grn)}
 .morn{width:24px;height:24px;border-radius:50%;background:#0a1f14;color:var(--grn);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mortxt{font-size:12px;color:var(--tx);line-height:1.5}
+
+/* Unterschritte in der Morgenroutine */
+.substep{list-style:none;margin:7px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.substep li{position:relative;padding-left:14px;font-size:11px;color:var(--mut);line-height:1.65}
+.substep li::before{content:'';position:absolute;left:3px;top:7px;width:4px;height:4px;
+border-radius:50%;background:var(--grn);opacity:.65}
+
+/* Grooming: Nachschlage-Sektionen */
+.gsec{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--gc);
+border-radius:9px;padding:15px 17px;margin-bottom:11px}
+.gsect{font-family:var(--srf);font-size:17px;color:var(--wh);margin-bottom:5px}
+.glead{font-size:12px;color:var(--mut);line-height:1.8;max-width:62ch}
+.gblock{margin-top:13px}
+.gh{font-family:var(--mono);font-size:8px;letter-spacing:1.8px;text-transform:uppercase;
+color:var(--gc);margin-bottom:6px}
+.gl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.gl li{position:relative;padding-left:15px;font-size:12px;color:var(--tx);line-height:1.7}
+.gl li::before{content:'';position:absolute;left:3px;top:8px;width:5px;height:1px;background:var(--gc);opacity:.8}
+.gquote{margin-top:13px;background:#0c0c0c;border:1px solid var(--bd);border-radius:7px;padding:12px 14px}
+.gqh{font-family:var(--mono);font-size:8px;letter-spacing:1.8px;text-transform:uppercase;
+color:var(--dim);margin-bottom:7px}
+.gqt{font-family:var(--srf);font-size:15px;color:var(--wh);line-height:1.65}
+.gwarn{margin-top:11px;background:#1a0e0c;border-left:2px solid var(--red);border-radius:5px;
+padding:9px 12px;font-size:11px;color:#d08a80;line-height:1.7}
+.gnote{margin-top:9px;background:#1a1408;border-left:2px solid var(--yel);border-radius:5px;
+padding:9px 12px;font-size:11px;color:#c9a870;line-height:1.7}
+
 /* --- Health / Finanzen --- */
 .btn{background:var(--s2);border:1px solid var(--bd);color:var(--tx);font-family:var(--mono);font-size:10px;
 letter-spacing:1px;text-transform:uppercase;padding:7px 12px;border-radius:5px;cursor:pointer;text-decoration:none;display:inline-block}
@@ -146,6 +173,7 @@ transition:bottom .25s;z-index:200;max-width:90vw}
     <button class="tb" onclick="tab('mob',this)">Mobility</button>
     <button class="tb" onclick="tab('eve',this)">Abend</button>
     <button class="tb" onclick="tab('mor',this)">Morgen</button>
+    <button class="tb" onclick="tab('groom',this)">Grooming</button>
     <button class="tb" onclick="tab('health',this)">Health</button>
     <button class="tb" onclick="tab('fin',this)">Finanzen</button>
     <button class="tb" onclick="tab('wealth',this)">Vermögen</button>
@@ -186,6 +214,13 @@ transition:bottom .25s;z-index:200;max-width:90vw}
     <div style="font-size:12px;color:#999;line-height:1.8">
       Quadrizeps (4), Hamstrings (4) und Waden (2) liegen unter dem klassischen MAV — das ist bei deinem Setup <strong style="color:var(--wh)">kein Problem</strong>. Durch Badminton, Beachvolleyball, Fußball, Wandern, Radfahren, Schlittschuh und Surfen erhalten die Beine kontinuierlich hohen Reiz aus multiplen Bewegungsmustern: Sprünge, Sprints, Richtungswechsel, Ausdauerbelastung.
       Sportartspezifische Belastung ist für Beinmuskulatur funktional oft wertvoller als isoliertes Maschinenvolumen. Der Lower-Tag deckt die schweren Grundmuster ab (Beinpresse niedrige Wdh) — der Rest kommt aus dem Sport.
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--red)">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">↔ Haltung & Schulterbreite — Priorisierung</div>
+    <div style="font-size:12px;color:#999;line-height:1.8">
+      Zwei Vorgaben, die über dem reinen Volumen stehen: <strong style="color:var(--wh)">Zugvolumen zu Druckvolumen mindestens 2:1</strong> — Rudern, Face Pulls, Reverse Flys und Klimmzüge werden bei Kürzungen zuletzt gestrichen, Drückbewegungen zuerst. Und <strong style="color:var(--wh)">Seitheben an drei Tagen pro Woche</strong> mit hohen Wiederholungen: die laterale Schulter ist der direkteste Hebel für Schulterbreite, und die Schulterbreite ist der limitierende Faktor der Silhouette — nicht das Körpergewicht.
+      Der tägliche Haltungsblock (thorakale Extension, Kinn-Retraktion) steht in der Mobility-Routine, die Begründung im Grooming-Tab.
     </div>
   </div>
 </div></div>
@@ -238,11 +273,11 @@ transition:bottom .25s;z-index:200;max-width:90vw}
 <div id="t-mob" class="tc"><div class="ct">
   <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Mobility-Routine</div>
   <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:16px">
-    Täglich, nach warmem Duschen, vor dem Schlafen · 25 Min · Primär PNF (Contract-Relax)
+    Täglich, nach warmem Duschen, vor dem Schlafen · ~30 Min · Primär PNF (Contract-Relax), eingeleitet durch den Haltungsblock
   </div>
 
   <div class="macro" style="grid-template-columns:repeat(3,1fr)">
-    <div class="mac"><div class="macv" style="color:#7a5ab5">25</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
+    <div class="mac"><div class="macv" style="color:#7a5ab5">30</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
     <div class="mac"><div class="macv" style="color:#7a5ab5">8s · 30s</div><div class="macl" style="color:#7a5ab5">An · Halten</div><div class="macs">×3 pro Muskel</div></div>
     <div class="mac"><div class="macv" style="color:#7a5ab5">Abends</div><div class="macl" style="color:#7a5ab5">Timing</div><div class="macs">nach Dusche</div></div>
   </div>
@@ -302,6 +337,18 @@ transition:bottom .25s;z-index:200;max-width:90vw}
 </div></div>
 
 
+
+<!-- GROOMING -->
+<div id="t-groom" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Grooming &amp; Erscheinung</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:8px;max-width:62ch">
+    Nachschlagewissen, kein Tagesablauf. Was täglich zu tun ist, steht dort, wo es hingehört:
+    Haut morgens und Haare in der <strong style="color:var(--tx)">Morgenroutine</strong>,
+    Haut abends in der <strong style="color:var(--tx)">Abendroutine</strong>,
+    Haltungsübungen in der <strong style="color:var(--tx)">Mobility-Routine</strong>.
+  </div>
+  <div id="groomlist"></div>
+</div></div>
 
 <!-- HEALTH -->
 <div id="t-health" class="tc"><div class="ct">

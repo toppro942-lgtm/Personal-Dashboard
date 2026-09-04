@@ -427,7 +427,7 @@ function wireForms() {
 
 /* Plan-Tabs zuerst — sie brauchen keinen Speicher und stehen sofort. */
 renderDayBar(); renderDay('mo'); renderVol(); renderFood();
-renderSleep(); renderMob(); renderEve(); renderMor();
+renderSleep(); renderMob(); renderEve(); renderMor(); renderGroom();
 wireForms();
 wireWealth();
 initStore();
