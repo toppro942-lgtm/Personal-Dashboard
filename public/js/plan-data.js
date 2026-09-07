@@ -322,10 +322,10 @@ export const SLEEP=[
 {d:'Montag',w:'07:25',tr:'Sharms',b:'22:45',s:'8h 40min',c:'#7a5ab5'},
 {d:'Dienstag',w:'06:45',tr:'HIIT',b:'22:00',s:'8h 45min',c:'#c94535'},
 {d:'Mittwoch',w:'06:45',tr:'Upper A',b:'22:00',s:'8h 45min',c:'#b8922e'},
-{d:'Donnerstag',w:'06:45',tr:'Rest',b:'21:45',s:'9h 00min',c:'#2e9e6a'},
+{d:'Donnerstag',w:'06:45',tr:'Rest',b:'22:00',s:'8h 45min',c:'#2e9e6a'},
 {d:'Freitag',w:'06:45',tr:'Lower',b:'22:00',s:'8h 45min',c:'#3a7bbf'},
 {d:'Samstag',w:'08:00',tr:'Upper B',b:'22:45',s:'9h 15min',c:'#b8922e'},
-{d:'Sonntag',w:'08:00',tr:'Zone 2',b:'22:00',s:'10h 00min',c:'#2e9e6a'}];
+{d:'Sonntag',w:'08:00',tr:'Zone 2',b:'22:45',s:'9h 15min',c:'#2e9e6a'}];
 
 export const STIPS=[
 {i:'🧠',n:'Circadianer Rhythmus mit 18',t:'Mit 18 ist der natürliche Schlafrhythmus am stärksten nach hinten verschoben. Melatonin steigt 1–2h später als bei Erwachsenen — früh einzuschlafen ist biologisch schwerer. Die Abend-Routine ist deshalb in deinem Alter noch wichtiger.',s:'Roenneberg et al., 2012'},
@@ -333,7 +333,7 @@ export const STIPS=[
 {i:'🌡️',n:'Raumtemperatur 18–20 °C',t:'Der Kerntemperatur-Abfall um 1–1,5 °C ist das stärkste physiologische Einschlafsignal. Räume über 22 °C verlängern die Einschlafzeit und reduzieren den Tiefschlafanteil messbar.',s:'Harding et al., 2019'},
 {i:'🏋️',n:'Training-Abstand zum Schlaf',t:'HIIT und schweres Krafttraining erhöhen Cortisol und Kerntemperatur für 2–4 Stunden. Mindestabstand: HIIT 3h, Krafttraining 2h. Zone 2 am Sonntag stört den Schlaf praktisch nicht.',s:'Stutz et al., 2019'},
 {i:'☕',n:'Koffein-Cutoff 13–14 Uhr',t:'Halbwertszeit 5–7 Stunden. Bei Ziel-Einschlafzeit 22:00 Uhr bedeutet ein Kaffee um 15 Uhr noch etwa 125 mg aktives Koffein zur Schlafenszeit. Reduziert den Tiefschlafanteil auch ohne spürbare Wachheit.',s:'Drake et al., 2013'},
-{i:'⏰',n:'Konstanz — max. 1h Abweichung',t:'Social Jet Lag über 1h zwischen Werktag und Wochenende dysreguliert den zirkadianen Rhythmus. Deine Wochenendzeiten (8:00 statt 6:45) liegen mit 75 Min knapp darüber — akzeptabel, aber nicht weiter ausdehnen.',s:'Roenneberg et al., 2012'}];
+{i:'⏰',n:'Konstanz — max. 1h Abweichung',t:'Social Jet Lag über 1h zwischen Werktag und Wochenende dysreguliert den zirkadianen Rhythmus. Deine Zubettgehzeiten liegen jetzt in einem Fenster von nur 45 Minuten (22:00 bis 22:45) — das ist der Teil, den du selbst steuerst, und er sitzt. Die Aufwachzeiten spreizen mit 75 Min (8:00 statt 6:45) knapp über die Grenze: akzeptabel, aber nicht weiter ausdehnen.',s:'Roenneberg et al., 2012'}];
 
 // RENDER
 
@@ -358,16 +358,16 @@ export const EVE=[
 b:['<b>Brain Dump:</b> Gedanken auslagern, Kopf leeren.','<b>Kalender-Struktur:</b> Den nächsten Tag taktisch durchplanen. Kontrolle minimiert Cortisol-Spitzen.']},
 {t:'T-90 Min',ti:'Anaboler Input',c:'#c94535',
 b:['<b>Nährstoffversorgung:</b> 30–40g Casein. Sichert die Muskelproteinsynthese über Nacht.','<b>Flüssigkeitsstopp:</b> Keine weitere Hydratation, um nächtliche Weckreize zu eliminieren.']},
-{t:'T-60 Min',ti:'Nervensystem-Modulation',c:'#b8922e',
-b:['<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Minoxidil:</b> Erst nach vollständigem Trocknen der Kopfhaut (20–30 Min lufttrocknen) auftragen.']},
+{t:'T-75 Min',ti:'Wärme & Nervensystem',c:'#b8922e',
+b:['<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Kopfhaut ab jetzt lufttrocknen:</b> Minoxidil folgt erst zu Beginn der Badroutine bei T-25 — rund 50 Minuten Abstand statt der vorher knappen 20–30.']},
 {t:'T-45 Min',ti:'Physische Optimierung',c:'#2e9e6a',
 b:['<b>Dehnen + Haltung:</b> Gezielte Mobilisation zur muskulären Entspannung — deine PNF-Routine, eingeleitet durch thorakale Extension und Kinn-Retraktion.','<b>Atemkontrolle:</b> 5 Minuten tiefe Bauchatmung. Schaltet das System aktiv in den parasympathischen Modus.']},
-{t:'T-25 Min',ti:'Hygienische Präzision',c:'#3a7bbf',
-b:['<b>Früher ins Bad:</b> weniger Überwindung später, kürzerer Weg bis ins Bett.','<b>10 Minuten Routine:</b> Zahnhygiene inkl. Zahnseide für systemische Entzündungsminimierung, Toilettengang.','<b>Haut — Cleanser:</b> Gel-Cleanser, danach vollständig trocken tupfen.','<b>Haut — EpiDuo:</b> erbsengroß aufs ganze Gesicht, ausdrücklich erst auf trockene Haut. Feucht aufgetragen steigt die Reizung deutlich.','<b>Bei Trockenheit:</b> Feuchtigkeitscreme mit Ceramiden + Niacinamid dünn davor und danach (Sandwich-Methode).','Diesen Zeitraum für absolute mentale Stille nutzen.']},
-{t:'T-15 Min',ti:'Umfeld-Optimierung',c:'#7a5ab5',
-b:['<b>Stoßlüften:</b> Maximaler Sauerstoffaustausch.','<b>Temperatursturz:</b> Raum auf 16–18 °C bringen. Kühle Umgebung essentiell für die Testosteron-Ausschüttung.','<b>Licht-Eliminierung:</b> Absolute Dunkelheit.']},
+{t:'T-25 Min',ti:'Bad, Haut & Lüften',c:'#3a7bbf',
+b:['<b>Fenster auf:</b> Stoßlüften startet, bevor du ins Bad gehst — der Raum kühlt, während du ohnehin beschäftigt bist. Beim Rauskommen schließen, Ziel 16–18 °C.','<b>Minoxidil zuerst:</b> gleich zu Beginn der Badroutine. Die Kopfhaut ist seit der Dusche rund 50 Minuten trocken — genau der Abstand, den das Präparat braucht.','<b>Zahnhygiene:</b> inkl. Zahnseide für systemische Entzündungsminimierung, Toilettengang.','<b>Haut — Cleanser:</b> Gel-Cleanser, danach vollständig trocken tupfen.','<b>Haut — EpiDuo:</b> erbsengroß aufs ganze Gesicht, ausdrücklich erst auf trockene Haut. Feucht aufgetragen steigt die Reizung deutlich.','<b>Bei Trockenheit:</b> Feuchtigkeitscreme mit Ceramiden + Niacinamid dünn davor und danach (Sandwich-Methode).']},
+{t:'T-15 Min',ti:'Ruhiger Ausklang',c:'#7a5ab5',
+b:['<b>Journaling:</b> Tag abschließen, offene Gedanken auslagern.','<b>Lesen:</b> Papier statt Bildschirm, warmes gedämpftes Licht.','Kein Planen mehr — das lief bereits bei T-120. Hier geht es ausschließlich ums Runterfahren.']},
 {t:'T-0 Min',ti:'Regeneration',c:'#2e9e6a',
-b:['<b>Zahnschutz:</b> Boxer-Mundschutz einsetzen — letzter Handgriff, nach der kompletten Zahnhygiene.','<b>Schlaf:</b> Vollständige Systemabschaltung. Wachstum und Hormonproduktion laufen auf Hochtouren.']}];
+b:['<b>Licht-Eliminierung:</b> Absolute Dunkelheit, Raum auf 16–18 °C. Kühle Umgebung essentiell für die Testosteron-Ausschüttung.','<b>Zahnschutz:</b> Boxer-Mundschutz einsetzen — letzter Handgriff.','<b>Schlaf:</b> Vollständige Systemabschaltung. Wachstum und Hormonproduktion laufen auf Hochtouren.']}];
 
 /* Eintraege sind entweder ein String oder {t, sub:[]} mit Unterschritten. */
 export const MOR=[
@@ -407,7 +407,8 @@ export const GROOM=[
  sub:[
   {h:'Morgens',li:['Sanfter Gel-Cleanser, pH-hautneutral, tensidarm','Sonnenschutz LSF 50, chemisch-leicht oder Hybrid']},
   {h:'Abends',li:['Gleicher Cleanser','EpiDuo, erbsengroß aufs ganze Gesicht','Bei Trockenheit: Feuchtigkeitscreme mit Ceramiden + Niacinamid, dünn, davor und danach (Sandwich-Methode)']},
-  {h:'Rasur',li:['Alle 3–4 Tage glatt — der Bartwuchs ist zu licht für Konturenarbeit','Mit Kornrichtung, Rasierhobel oder 3-Klingen','Danach ausschließlich Feuchtigkeitspflege, kein alkoholhaltiges Aftershave auf entzündeter Haut']}],
+  {h:'Rasur',li:['Alle 3–4 Tage — der Bartwuchs ist zu licht für Konturenarbeit','Folienrasierer (Foil Shaver), trocken, ohne Druck — nicht Klinge, nicht Rotationsrasierer','Über akut entzündeten Stellen nicht aufdrücken, sondern umfahren','Danach ausschließlich Feuchtigkeitspflege, kein alkoholhaltiges Aftershave auf entzündeter Haut','Scherfolie regelmäßig reinigen und jährlich tauschen — eine stumpfe Folie reißt, statt zu schneiden']},
+  {h:'Warum Folienrasierer statt Klinge',li:['Eine Klinge zieht über entzündete Papeln, öffnet sie und verteilt Keime über das Gesicht. Das ist bei Akne der stärkste einzelne Reiztreiber der Rasur.','Der übliche Vorteil der Klinge ist die höhere Gründlichkeit — und der ist bei blondem, lichtem Wuchs praktisch wertlos. Entfernt werden soll der ungepflegte Eindruck, nicht das letzte Stoppelrestchen.','Damit entfällt das einzige Argument für die Klinge, während das Argument gegen sie bestehen bleibt.','Folie statt Rotation, weil Folienköpfe für feines, flach anliegendes Haar auf flächigen Partien gebaut sind; Rotationsköpfe zielen auf groben, längeren Wuchs.']}],
  warn:'Nicht machen: Peelingtücher, Alkohol-Gesichtswasser, Ausdrücken, Zink-Eigenmedikation.',
  note:'Wenn nach 12 Wochen keine Besserung eintritt: Hautarzt — nicht Produktwechsel.'},
 
