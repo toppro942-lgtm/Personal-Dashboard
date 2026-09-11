@@ -1791,6 +1791,31 @@ async function saveDay(day, values) {
 
 const catById = id => CATS.find(c => c.id === id);
 
+/* Haengt Buchungen an das Dokument IHRES Monats an, unabhaengig davon, ob
+   der gerade auf der Seite angezeigt wird -- eine Buchung ist nach dem
+   Speichern immer im richtigen Monat sichtbar, statt lautlos abgelehnt
+   oder in den falschen Monat gemischt zu werden. Dedupliziert innerhalb
+   dieses Monats. */
+async function appendTxToMonth(month, rows) {
+  let doc;
+  if (month === MONTH) doc = { month, tx: TX.slice() };
+  else { const snap = await DB.doc('finance/' + month).get(); doc = snap.exists ? snap.data() : { month, tx: [] }; }
+  doc.tx = doc.tx || [];
+  const seen = new Set(doc.tx.map(t => `${t.d}|${t.a}|${t.c}|${t.p}`));
+  let added = 0, dup = 0;
+  for (const t of rows) {
+    const key = `${t.d}|${t.a}|${t.c}|${t.p}`;
+    if (seen.has(key)) { dup++; continue; }
+    seen.add(key);
+    t.cat = t.cat ?? classify(t);
+    doc.tx.push(t); added++;
+  }
+  doc.tx.sort((a, b) => a.d < b.d ? 1 : -1);
+  await DB.doc('finance/' + month).set(doc);
+  if (month === MONTH) TX = doc.tx;
+  return { added, dup };
+}
+
 function classify(t) {
   const hay = `${t.c} ${t.p}`.toLowerCase();
   return RULES.find(r => hay.includes(r.pattern.toLowerCase()))?.cat ?? null;
@@ -1840,7 +1865,10 @@ const COLS = {
 };
 const findCol = (h, names) => h.findIndex(x => names.some(n => x.toLowerCase().trim().includes(n)));
 
-function importCsv(text) {
+/* Bank-Exporte ueberschreiten haeufig Monatsgrenzen (z.B. "letzte 90 Tage").
+   Jede Zeile geht deshalb in das Dokument IHRES Monats, nicht nur des
+   gerade angezeigten -- keine Zeile wird mehr stillschweigend verworfen. */
+async function importCsv(text) {
   const line = text.split('\n').find(l => l.trim()) || '';
   const delim = [';', ',', '\t'].sort((a, b) => line.split(b).length - line.split(a).length)[0];
   const rows = parseCsv(text, delim);
@@ -1850,20 +1878,22 @@ function importCsv(text) {
   if (hi < 0) return { error:'In dieser Datei sind keine Spalten für Datum und Betrag zu finden. Exportiere die Umsätze als CSV und versuche es erneut.' };
   const h = rows[hi];
   const ci = { d:findCol(h, COLS.date), a:findCol(h, COLS.amount), p:findCol(h, COLS.party), z:findCol(h, COLS.purpose) };
-  const seen = new Set(TX.map(t => `${t.d}|${t.a}|${t.c}|${t.p}`));
-  let added = 0, dup = 0, skip = 0, other = 0;
+  const byMonth = new Map();
+  let skip = 0;
   for (const r of rows.slice(hi + 1)) {
     const d = toIso(r[ci.d]), a = toCents(r[ci.a]);
     if (!d || a === null) { skip++; continue; }
-    if (d.slice(0, 7) !== MONTH) { other++; continue; }
     const t = { id:'t' + Math.random().toString(36).slice(2, 10), d, a,
                 c:(ci.p >= 0 ? r[ci.p] : '').trim(), p:(ci.z >= 0 ? r[ci.z] : '').trim() };
-    const key = `${t.d}|${t.a}|${t.c}|${t.p}`;
-    if (seen.has(key)) { dup++; continue; }
-    seen.add(key); t.cat = classify(t); TX.push(t); added++;
+    const m = d.slice(0, 7);
+    (byMonth.get(m) || byMonth.set(m, []).get(m)).push(t);
   }
-  TX.sort((a, b) => a.d < b.d ? 1 : -1);
-  return { added, dup, skip, other };
+  let added = 0, dup = 0;
+  for (const [m, rowsForMonth] of byMonth) {
+    const r = await appendTxToMonth(m, rowsForMonth);
+    added += r.added; dup += r.dup;
+  }
+  return { added, dup, skip, months: byMonth.size };
 }
 
 function summarise() {
@@ -1992,14 +2022,23 @@ function wireForms() {
     const f = new FormData(e.target), a = toCents(f.get('amount'));
     if (a === null || a === 0) return toast('Betrag prüfen — z. B. -42,35', true);
     const d = f.get('day');
-    if (d.slice(0, 7) !== MONTH) return toast(`Das Datum liegt nicht im Monat ${MONTH} — oben den Monat wechseln.`, true);
-    TX.push({ id:'t' + Math.random().toString(36).slice(2,10), d, a,
-              c:(f.get('party') || '').trim(), p:(f.get('purpose') || '').trim(),
-              cat:f.get('category') || null });
-    TX.sort((x, y) => x.d < y.d ? 1 : -1);
-    try { await saveMonth(); e.target.reset(); document.getElementById('ftxday').value = TODAY();
-          renderFinance(); toast('Buchung erfasst'); }
-    catch (err) { toast('Speichern fehlgeschlagen: ' + (err.message || err), true); }
+    if (!d) return toast('Datum fehlt', true);
+    const tm = d.slice(0, 7);
+    const t = { id:'t' + Math.random().toString(36).slice(2,10), d, a,
+                c:(f.get('party') || '').trim(), p:(f.get('purpose') || '').trim(),
+                cat:f.get('category') || null };
+    /* Datum liegt in einem anderen Monat als der gerade angezeigte —
+       dorthin wechseln, statt die Buchung unsichtbar in einem Monat
+       abzulegen, den niemand gerade ansieht. Vergleich VOR dem Umschalten
+       merken, sonst stimmt die Meldung hinterher nicht mehr. */
+    const switchedMonth = tm !== MONTH;
+    try {
+      await appendTxToMonth(tm, [t]);
+      if (switchedMonth) { MONTH = tm; document.getElementById('fmonth').value = MONTH; await loadMonth(); }
+      e.target.reset(); document.getElementById('ftxday').value = TODAY();
+      renderFinance();
+      toast(switchedMonth ? `Buchung erfasst — Ansicht auf ${tm} gewechselt` : 'Buchung erfasst');
+    } catch (err) { toast('Speichern fehlgeschlagen: ' + (err.message || err), true); }
   });
 
   document.getElementById('fimport').addEventListener('submit', async e => {
@@ -2012,12 +2051,13 @@ function wireForms() {
     let text = new TextDecoder('utf-8').decode(buf);
     const REPL = String.fromCharCode(0xFFFD);
     if (text.includes(REPL)) text = new TextDecoder('windows-1252').decode(buf);
-    const r = importCsv(text);
-    if (r.error) return toast(r.error, true);
     try {
-      await saveMonth(); e.target.reset(); renderFinance();
+      const r = await importCsv(text);
+      if (r.error) return toast(r.error, true);
+      await loadMonth(); e.target.reset(); renderFinance();
       toast(`${r.added} übernommen${r.dup ? ` · ${r.dup} schon vorhanden` : ''}${
-        r.other ? ` · ${r.other} aus anderen Monaten übersprungen` : ''}`);
+        r.months > 1 ? ` · über ${r.months} Monate verteilt` : ''}${
+        r.skip ? ` · ${r.skip} Zeilen unlesbar` : ''}`);
     } catch (err) { toast('Speichern fehlgeschlagen: ' + (err.message || err), true); }
   });
 }
