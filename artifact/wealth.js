@@ -271,7 +271,14 @@ function renderPositions(month) {
   const commit = async (el, { format = false } = {}) => {
     const raw = el.value.trim();
     const c = toCents(raw);
-    if (raw && c === null) return;                       // waehrend des Tippens nicht meckern
+    if (raw && c === null) {
+      /* Waehrend des Tippens still bleiben -- beim Verlassen aber sagen,
+         warum nichts passiert ist. Frueher verschwand so eine Eingabe
+         kommentarlos, was von aussen wie ein kaputtes Feld aussieht. */
+      if (format) { el.classList.add('bad'); toast(`„${raw}" ist keine lesbare Zahl — z. B. 15000 oder 15.000,50`, true); }
+      return;
+    }
+    el.classList.remove('bad');
     if (el.dataset.last === String(c)) return;           // unveraendert: kein zweiter Schreibvorgang
     el.dataset.last = String(c);
     WEALTH[month] = WEALTH[month] || { v:{}, in:{} };

@@ -224,15 +224,27 @@ function classify(t) {
   return RULES.find(r => hay.includes(r.pattern.toLowerCase()))?.cat ?? null;
 }
 
-/* Betraege durchgehend in ganzen Cent — Float-Arithmetik ist bei Geld eine Fehlerquelle. */
+/* Betraege durchgehend in ganzen Cent — Float-Arithmetik ist bei Geld eine
+   Fehlerquelle. Der Punkt ist im Deutschen mehrdeutig: in "15.000" trennt er
+   Tausender, in "15.50" Dezimalstellen. Entschieden wird nach der Zahl der
+   Stellen dahinter -- genau drei bedeutet Tausender. Mehrere Punkte sind
+   immer Tausendertrennung ("1.234.567"): dafuer lieferte die fruehere
+   Fassung null, der Wert wurde ohne jede Rueckmeldung verworfen. */
 function toCents(raw) {
   let s = String(raw ?? '').replace(/[\s€"']/g, '');
   if (!s) return null;
   const neg = s.startsWith('-') || /^\(.*\)$/.test(s);
   s = s.replace(/[()+-]/g, '');
   const lc = s.lastIndexOf(','), ld = s.lastIndexOf('.');
-  if (lc > ld) s = s.replace(/\./g, '').replace(',', '.');
-  else if (ld > lc) s = s.replace(/,/g, '');
+  if (lc > ld) {
+    s = s.replace(/\./g, '').replace(',', '.');                                // 1.234,56
+  } else if (ld > lc) {
+    const mehrfach = (s.match(/\./g) || []).length > 1;
+    const nachkomma = s.length - ld - 1;
+    if (lc === -1 && (mehrfach || nachkomma === 3)) s = s.replace(/\./g, '');   // 15.000 · 1.234.567
+    else s = s.replace(/,/g, '');                                              // 15.50
+  }
+  if (!/^\d+(\.\d+)?$/.test(s)) return null;
   const n = Number(s);
   return Number.isFinite(n) ? (neg ? -1 : 1) * Math.round(n * 100) : null;
 }

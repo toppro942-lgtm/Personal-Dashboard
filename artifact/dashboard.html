@@ -270,6 +270,7 @@ padding:8px 0 4px;letter-spacing:.3px}
 @keyframes savedflash{from{border-color:#2e9e6a;box-shadow:0 0 0 2px #2e9e6a33}to{border-color:var(--bd);box-shadow:none}}
 .posin.saved{animation:savedflash 1.1s ease-out}
 @media(prefers-reduced-motion:reduce){.posin.saved{animation:none;border-color:#2e9e6a}}
+.posin.bad{border-color:var(--red);background:#180c0a}
 </style>
 
 <div class="hdr"><div class="hi">
@@ -1588,7 +1589,14 @@ function renderPositions(month) {
   const commit = async (el, { format = false } = {}) => {
     const raw = el.value.trim();
     const c = toCents(raw);
-    if (raw && c === null) return;                       // waehrend des Tippens nicht meckern
+    if (raw && c === null) {
+      /* Waehrend des Tippens still bleiben -- beim Verlassen aber sagen,
+         warum nichts passiert ist. Frueher verschwand so eine Eingabe
+         kommentarlos, was von aussen wie ein kaputtes Feld aussieht. */
+      if (format) { el.classList.add('bad'); toast(`„${raw}" ist keine lesbare Zahl — z. B. 15000 oder 15.000,50`, true); }
+      return;
+    }
+    el.classList.remove('bad');
     if (el.dataset.last === String(c)) return;           // unveraendert: kein zweiter Schreibvorgang
     el.dataset.last = String(c);
     WEALTH[month] = WEALTH[month] || { v:{}, in:{} };
@@ -1943,15 +1951,27 @@ function classify(t) {
   return RULES.find(r => hay.includes(r.pattern.toLowerCase()))?.cat ?? null;
 }
 
-/* Betraege durchgehend in ganzen Cent — Float-Arithmetik ist bei Geld eine Fehlerquelle. */
+/* Betraege durchgehend in ganzen Cent — Float-Arithmetik ist bei Geld eine
+   Fehlerquelle. Der Punkt ist im Deutschen mehrdeutig: in "15.000" trennt er
+   Tausender, in "15.50" Dezimalstellen. Entschieden wird nach der Zahl der
+   Stellen dahinter -- genau drei bedeutet Tausender. Mehrere Punkte sind
+   immer Tausendertrennung ("1.234.567"): dafuer lieferte die fruehere
+   Fassung null, der Wert wurde ohne jede Rueckmeldung verworfen. */
 function toCents(raw) {
   let s = String(raw ?? '').replace(/[\s€"']/g, '');
   if (!s) return null;
   const neg = s.startsWith('-') || /^\(.*\)$/.test(s);
   s = s.replace(/[()+-]/g, '');
   const lc = s.lastIndexOf(','), ld = s.lastIndexOf('.');
-  if (lc > ld) s = s.replace(/\./g, '').replace(',', '.');
-  else if (ld > lc) s = s.replace(/,/g, '');
+  if (lc > ld) {
+    s = s.replace(/\./g, '').replace(',', '.');                                // 1.234,56
+  } else if (ld > lc) {
+    const mehrfach = (s.match(/\./g) || []).length > 1;
+    const nachkomma = s.length - ld - 1;
+    if (lc === -1 && (mehrfach || nachkomma === 3)) s = s.replace(/\./g, '');   // 15.000 · 1.234.567
+    else s = s.replace(/,/g, '');                                              // 15.50
+  }
+  if (!/^\d+(\.\d+)?$/.test(s)) return null;
   const n = Number(s);
   return Number.isFinite(n) ? (neg ? -1 : 1) * Math.round(n * 100) : null;
 }
