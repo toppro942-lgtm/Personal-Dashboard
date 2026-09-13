@@ -42,7 +42,43 @@ async function loadWealth() {
   WEALTH = {};
   for (const d of w.docs) { const wd = d.data(); WEALTH[wd.month] = { v: wd.v || {}, in: wd.in || {} }; }
 }
-const saveMonthWealth = m => DB.doc('wealth/' + m).set({ month: m, ...(WEALTH[m] || { v:{}, in:{} }) });
+/* Frueher: den kompletten Monat aus dem lokalen Zwischenstand ueberschreiben.
+   Das ist bei einem gemeinsam genutzten Dokument mit Versionssperre falsch --
+   basiert der lokale Stand auf einer aelteren Version, weist der Server den
+   Schreibvorgang ab, ohne dass die Seite es merkt: sie meldete Erfolg,
+   gespeichert wurde nichts.
+
+   Jetzt pro Feld: frisch lesen, genau das eine Feld aendern, schreiben,
+   ZURUECKLESEN und pruefen. Der lokale Stand wird anschliessend aus der
+   Serverantwort gesetzt, nicht aus der eigenen Annahme. Nebeneffekt: ein
+   zweiter offener Tab kann nichts mehr ueberschreiben, weil nie mehr der
+   ganze Monat aus einem alten Zwischenstand geschrieben wird. */
+async function saveField(m, feld, assetId, cents) {
+  const ref = DB.doc('wealth/' + m);
+  const vorher = await ref.get();
+  const doc = vorher.exists ? vorher.data() : { month: m };
+  doc.month = m; doc.v = doc.v || {}; doc.in = doc.in || {};
+  if (cents === null) delete doc[feld][assetId]; else doc[feld][assetId] = cents;
+  await ref.set(doc);
+
+  const nachher = await ref.get();
+  const gespeichert = nachher.exists ? nachher.data() : null;
+  WEALTH[m] = { v: (gespeichert && gespeichert.v) || {}, in: (gespeichert && gespeichert.in) || {} };
+  const wert = gespeichert && gespeichert[feld] ? gespeichert[feld][assetId] : undefined;
+  return cents === null ? wert === undefined : wert === cents;
+}
+
+/* Bleibt fuer das Loeschen einer Position: dort fallen mehrere Felder
+   gleichzeitig weg, ein Feld-fuer-Feld-Schreiben waere hier unnoetig. */
+async function saveMonthWealth(m) {
+  const ref = DB.doc('wealth/' + m);
+  const vorher = await ref.get();
+  const doc = vorher.exists ? vorher.data() : { month: m };
+  doc.month = m;
+  doc.v = (WEALTH[m] && WEALTH[m].v) || {};
+  doc.in = (WEALTH[m] && WEALTH[m].in) || {};
+  await ref.set(doc);
+}
 
 const sumOf = obj => Object.values(obj || {}).reduce((a, b) => a + (b || 0), 0);
 const totalAt = m => WEALTH[m] ? sumOf(WEALTH[m].v) : null;
@@ -281,17 +317,24 @@ function renderPositions(month) {
     el.classList.remove('bad');
     if (el.dataset.last === String(c)) return;           // unveraendert: kein zweiter Schreibvorgang
     el.dataset.last = String(c);
-    WEALTH[month] = WEALTH[month] || { v:{}, in:{} };
-    const f = el.dataset.f, a = el.dataset.a;
-    if (!raw) delete WEALTH[month][f][a]; else WEALTH[month][f][a] = c;
     try {
-      await saveMonthWealth(month);
+      const ok = await saveField(month, el.dataset.f, el.dataset.a, raw ? c : null);
       if (format) el.value = raw ? (c / 100).toFixed(2).replace('.', ',') : '';
-      el.classList.remove('saved'); void el.offsetWidth; el.classList.add('saved');
       renderKpi(month); redrawCharts();
-      saveLog(`${pos} · ${feld} = ${raw ? CENT(c) : 'geleert'}`, true);
+      if (ok) {
+        el.classList.remove('bad', 'saved'); void el.offsetWidth; el.classList.add('saved');
+        saveLog(`${pos} · ${feld} = ${raw ? CENT(c) : 'geleert'}`, true);
+      } else {
+        /* Geschrieben, aber beim Zuruecklesen nicht vorhanden -- der Server
+           hat den Wert nicht uebernommen. Frueher meldete die Seite hier
+           faelschlich Erfolg. */
+        el.classList.add('bad'); el.dataset.last = '';
+        saveLog(`${pos} · ${feld}: Server hat den Wert nicht übernommen`, false);
+        toast('Der Wert kam auf dem Server nicht an — bitte noch einmal versuchen.', true);
+      }
     } catch (err) {
-      toast('Speichern fehlgeschlagen: ' + err.message, true);
+      el.dataset.last = '';
+      toast('Speichern fehlgeschlagen: ' + (err.message || err), true);
       saveLog(`${pos} · ${feld}: ${err.message || err}`, false);
     }
   };
