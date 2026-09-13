@@ -1,21 +1,55 @@
-/* Render-Engine der Plan-Tabs — unveraendert aus dashboard4.html uebernommen,
-   nur als ES-Modul gekapselt. Daten kommen aus plan-data.js. */
-import { AC, DAYS, TG, S, VOL, MEALS, FOODTIPS, TIMING, SLEEP, STIPS, MOBSEQ, MOBMILES, EVE, MOR, HYDRATION } from './plan-data.js';
+/* Render-Engine der Plan-Tabs — nur teilweise noch aus dashboard4.html:
+   der Wochentag-Kalender wechselt jetzt alle 14 Tage zwischen zwei
+   Belegungen (WEEKPLAN.a/.b), Trainingsinhalt kommt aus S nach
+   Programm-Identitaet, nicht mehr nach Wochentag. */
+import { TG, S, WEEKPLAN, REF_BADMINTON_MONDAY, VOL, MEALS, FOODTIPS, TIMING, SLEEP, STIPS, MOBSEQ, MOBMILES, EVE, MOR, HYDRATION } from './plan-data.js';
+
+/* Montag der jeweiligen Kalenderwoche, auf Mitternacht normiert. */
+function mondayOf(date){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  const wd=d.getDay(); // 0=So..6=Sa
+  d.setDate(d.getDate()+(wd===0?-6:1-wd));
+  return d;
+}
+/* Woche des Ankerdatums (bestaetigt Badminton) und jede zweite danach/davor
+   gilt als Badminton-Woche -- ueber die Differenz in ganzen Wochen, nicht
+   die Kalenderwochennummer, damit es auch ueber Jahreswechsel stabil bleibt. */
+function isBadmintonWeek(date=new Date()){
+  const [y,m,day]=REF_BADMINTON_MONDAY;
+  const diffDays=Math.round((mondayOf(date)-new Date(y,m,day))/86400000);
+  return (((Math.round(diffDays/7))%2)+2)%2===0;
+}
+const getWeekPlan=()=>WEEKPLAN[isBadmintonWeek()?'b':'a'];
 
 function renderDayBar(){
-  document.getElementById('dbar').innerHTML=DAYS.map((d,i)=>`
-    <button class="db${i===0?' on':''}" onclick="day('${d.id}',this)" style="border-bottom-color:${i===0?AC[d.id]:'transparent'}">
+  const plan=getWeekPlan();
+  document.getElementById('dbar').innerHTML=plan.map((d,i)=>{
+    const prog=S[d.p],ac=prog.ac,name=d.name||prog.lb;
+    return `<button class="db${i===0?' on':''}" onclick="day('${d.id}',this)" style="border-bottom-color:${i===0?ac:'transparent'}">
       <div class="dt">${d.s}</div>
-      <div class="dd" style="background:${AC[d.id]};opacity:${i===0?1:.2}"></div>
-      <div class="dn" style="color:${i===0?AC[d.id]:'var(--dim)'}">${d.n}</div>
-    </button>`).join('');
+      <div class="dd" style="background:${ac};opacity:${i===0?1:.2}"></div>
+      <div class="dn" style="color:${i===0?ac:'var(--dim)'}">${name}</div>
+    </button>`;
+  }).join('');
 }
 
 function renderDay(id){
-  const d=S[id],ac=d.ac;
+  const entry=getWeekPlan().find(d=>d.id===id);
+  const d=S[entry.p],ac=d.ac,label=`${entry.s} · ${entry.name||d.lb}`;
+  /* Ersetzt (z.B. Badminton statt Studio-HIIT): Metrik-Badges, Notizen und
+     Uebungsliste des Studio-Programms gelten fuer diesen Tag nicht -- statt
+     erfundener Badminton-Kennzahlen nur der Ersetzungs-Hinweis. */
+  if(entry.override){
+    document.getElementById('dc').innerHTML=`<div class="sc" style="border-top-color:${ac}">
+      <div class="st"><div>
+        <div class="sdl" style="color:${ac}">${label}</div>
+        <div class="stt">${d.ti}</div></div>
+      </div><div class="sl">${entry.override}</div></div>`;
+    return;
+  }
   let h=`<div class="sc" style="border-top-color:${ac}">
     <div class="st"><div>
-      <div class="sdl" style="color:${ac}">${d.lb}</div>
+      <div class="sdl" style="color:${ac}">${label}</div>
       <div class="stt">${d.ti}</div></div>
       <div class="mb">${[d.du,d.rp,d.rr].filter(x=>x!=='—').map(x=>`<div class="mbg">${x}</div>`).join('')}</div>
     </div><div class="sl">${d.lg}</div></div>`;
@@ -128,8 +162,9 @@ function day(id,b){
     x.classList.remove('on');x.style.borderBottomColor='transparent';
     x.querySelector('.dd').style.opacity='.2';x.querySelector('.dn').style.color='var(--dim)';
   });
-  b.classList.add('on');b.style.borderBottomColor=AC[id];
-  b.querySelector('.dd').style.opacity='1';b.querySelector('.dn').style.color=AC[id];
+  const ac=S[getWeekPlan().find(d=>d.id===id).p].ac;
+  b.classList.add('on');b.style.borderBottomColor=ac;
+  b.querySelector('.dd').style.opacity='1';b.querySelector('.dn').style.color=ac;
   renderDay(id);
 }
 

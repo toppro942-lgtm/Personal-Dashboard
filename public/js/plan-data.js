@@ -2,11 +2,23 @@
    Reine Deklarationen, keine Logik: Inhalte lassen sich hier aendern, ohne
    die Render-Module anzufassen. */
 
-export const AC={mo:'#7a5ab5',di:'#c94535',mi:'#b8922e',do:'#2e9e6a',fr:'#3a7bbf',sa:'#b8922e',so:'#2e9e6a'};
-
-export const DAYS=[
- {id:'mo',s:'MO',n:'Sharms'},{id:'di',s:'DI',n:'HIIT'},{id:'mi',s:'MI',n:'Upper A'},
- {id:'do',s:'DO',n:'Rest'},{id:'fr',s:'FR',n:'Lower'},{id:'sa',s:'SA',n:'Upper B'},{id:'so',s:'SO',n:'Zone 2'}];
+/* Zwei Wochentypen statt eines festen Plans: alle 14 Tage ersetzt Badminton
+   das Studio-HIIT am Mittwoch, und die uebrigen Tage ruecken entsprechend.
+   Farbe und Inhalt haengen jetzt am PROGRAMM (S-Schluessel), nicht mehr am
+   Wochentag -- ein Programm behaelt seine Identitaet, auf welchem Wochentag
+   es auch liegt. "name" ueberschreibt nur die Anzeige (z.B. "Badminton
+   (HIIT)"), das Programm dahinter bleibt dasselbe (S.hiit).
+   Anker: die Woche ab Montag 14.09.2026 ist bestaetigt eine Badminton-Woche
+   -- welche Woche das jeweils ist, berechnet plan.js daraus fuer "heute". */
+export const WEEKPLAN={
+ a:[{id:'mo',s:'MO',p:'sharms'},{id:'di',s:'DI',p:'hiit'},{id:'mi',s:'MI',p:'upperA'},
+    {id:'do',s:'DO',p:'rest'},{id:'fr',s:'FR',p:'lower'},{id:'sa',s:'SA',p:'upperB'},{id:'so',s:'SO',p:'zone2'}],
+ b:[{id:'mo',s:'MO',p:'upperA'},{id:'di',s:'DI',p:'rest'},
+    {id:'mi',s:'MI',p:'hiit',name:'Badminton (HIIT)',
+     override:'Ersetzt die geplante Studio-HIIT-Einheit vollständig — kein zusätzliches Training an diesem Tag. Eine Einzel- oder Doppelpartie liefert Intervallcharakter und Herz-Kreislauf-Reiz mindestens gleichwertig zum Sprint-Protokoll, das sonst hier stünde.'},
+    {id:'do',s:'DO',p:'sharms'},{id:'fr',s:'FR',p:'lower'},{id:'sa',s:'SA',p:'upperB'},{id:'so',s:'SO',p:'zone2'}]
+};
+export const REF_BADMINTON_MONDAY=[2026,8,14]; // Jahr, Monat 0-basiert, Tag
 
 export const TG={C:{b:'#0e1a26',c:'#3a7bbf',t:'COMPOUND'},I:{b:'#1f1a0a',c:'#b8922e',t:'ISOLATION'},
 P:{b:'#260e0e',c:'#c94535',t:'PRIORITÄT'},G:{b:'#0a1f14',c:'#2e9e6a',t:'GESUNDHEIT'},
@@ -15,7 +27,7 @@ O:{b:'#181818',c:'#4f4f4f',t:'OPTIONAL'},X:{b:'#261a0e',c:'#b86830',t:'SPEZIAL'}
 N:{b:'#181818',c:'#757575',t:'INFO'}};
 
 export const S={
-mo:{lb:'MO · Sharms',ti:'Schultern · Arme · Core',ac:'#7a5ab5',du:'80–90 Min',rp:'RPE 7–9',rr:'5–16 Wdh',
+sharms:{lb:'Sharms',ti:'Schultern · Arme · Core',ac:'#7a5ab5',du:'80–90 Min',rp:'RPE 7–9',rr:'5–16 Wdh',
 lg:'Schultern zuerst (Compound → Isolation), dann Arme, Core als Abschluss. Nach zwei Ruhetagen (SO Zone 2 + Erholung) sind die Schultern vollständig frisch. Die niedrigen Wiederholungszahlen (6–8) bei Shoulder Press und Seitheben setzen auf mechanische Spannung als primären Reiz.',
 nt:[{i:'🎯',t:'Preacher Curl bei 5–7 Wdh: Ungewöhnlich niedrig für Bizeps, aber wissenschaftlich valide — schwere Curls erzeugen hohe mechanische Spannung. Der Bizeps erhält zusätzlich hohes indirektes Volumen aus allen Zugübungen.'},
 {i:'💪',t:'Trizeps bekommt mit JM Press + Pushdown 4 direkte Arbeitssätze am Sharms-Tag — dein stärkster Trizeps-Reiz der Woche.'},
@@ -65,8 +77,8 @@ y:'Unterarm-Flexoren sind slow-twitch-dominant und reagieren optimal auf Rest-Pa
 f:'Am hüfthohen Kabel. Unterarme aufgelegt, nur Handgelenk-Extension. Langsame Exzentrik für Sehnenanpassung.',
 y:'Balanciert das hohe Wrist-Curl-Volumen. Bei 16 Unterarm-Sätzen pro Woche ist der Gegenspieler entscheidend für Epicondylitis-Prävention (Tennisarm).'}]},
 
-di:{lb:'DI · HIIT',ti:'Anaerob · VO₂max',ac:'#c94535',du:'35–45 Min',rp:'RPE 9–10',rr:'6–8 Intervalle',
-lg:'HIIT am Dienstag: Sharms-Muskeln (Schultern, Arme) brauchen keine Ausdauerkapazität → kein Interferenzeffekt. Über 24h Abstand zu Upper A → AMPK-Peak klingt ab, mTOR-Signal am Mittwoch frei.',
+hiit:{lb:'HIIT',ti:'Anaerob · VO₂max',ac:'#c94535',du:'35–45 Min',rp:'RPE 9–10',rr:'6–8 Intervalle',
+lg:'Sharms-Muskeln (Schultern, Arme) brauchen keine Ausdauerkapazität → kein Interferenzeffekt mit dem Krafttag davor. Mit knapp 24h Abstand zum nächsten Kraft-Tag klingt der AMPK-Peak vorher ab, das mTOR-Signal ist dann wieder frei.',
 nt:[{i:'🔄',t:'Protokoll A (Wingate) und B (Norwegische 4×4) wöchentlich wechseln — unterschiedliche Adaptationsmechanismen.'},
 {i:'🏃',t:'Wenn du an diesem Tag ohnehin Sport treibst (Badminton, Fußball etc.), kann das HIIT ersetzen — Intervallcharakter ist bei Rückschlagsportarten ohnehin gegeben.'}],
 ex:[
@@ -81,9 +93,9 @@ f:'Ziel-HF 90–95 %. Minute 1–2 aufbauen, Minute 3–4 halten. In der Erholun
 y:'Helgerud et al. (2007): effektivstes bekanntes Protokoll für VO₂max-Steigerung. Maximiert die Zeit bei über 90 % Herzkapazität.'},
 {n:'Cool-Down (8–10 Min, Pflicht)',t:'Aktive Laktatelimination · Parasympathikus',s:'8–10 Min',w:'',r:'—',rs:'',g:'N',
 f:'Nie abrupt stoppen. Aktive Erholung beschleunigt die Laktatclearance etwa 3× gegenüber Stillstand.',
-y:'Parasympathisches Nervensystem schneller reaktivieren → bessere Erholung bis Mittwoch.'}]},
+y:'Parasympathisches Nervensystem schneller reaktivieren → bessere Erholung bis zur nächsten Einheit.'}]},
 
-mi:{lb:'MI · Upper A',ti:'Brust · Rücken · Compound',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'3–11 Wdh',
+upperA:{lb:'Upper A',ti:'Brust · Rücken · Compound',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'3–11 Wdh',
 lg:'Sehr niedrige Wiederholungszahlen bei den Compound-Bewegungen (Schrägbank 4–6, T-Bar 3–8) — das ist ein kraftorientierter Hypertrophie-Tag mit maximaler mechanischer Spannung. Fliegende als Pre-Exhaustion-Einstieg stellt sicher, dass beim Schrägbankdrücken die Brust limitiert.',
 nt:[{i:'📐',t:'Fliegende zuerst: Pre-Exhaustion. Die Brust ist voraktiviert, sodass beim Schrägbankdrücken nicht der Trizeps zuerst versagt.'},
 {i:'⚡',t:'T-Bar Rudern bei 3–8 Wdh mit engem Griff: Sehr schwer. Der enge Griff verlagert den Reiz stärker auf Lat und Teres major (vs. breiter Griff in Upper B → mehr Rhomboiden).'},
@@ -129,8 +141,8 @@ y:'Zweiter Brachialis-Tag. Der Brachialis ist der stärkste Ellenbogenbeuger und
 f:'Optional laut deiner Routine. Rest-Pause-Protokoll wie am Sharms-Tag. Bei Erschöpfung nach dem schweren Compound-Volumen kann diese Übung entfallen.',
 y:'Zweiter Unterarm-Tag der Woche. Bei bereits 16 Unterarm-Sätzen wöchentlich ist die optionale Handhabung sinnvoll — Priorität liegt auf Recovery.'}]},
 
-do:{lb:'DO · Rest',ti:'Vollständige Erholung',ac:'#2e9e6a',du:'Kein Training',rp:'—',rr:'—',
-lg:'Nach drei aufeinanderfolgenden Trainingstagen (MO-DI-MI) ist systemische Ermüdung akkumuliert. Donnerstag bestimmt direkt die Qualität von Lower (FR) und Upper B (SA).',
+rest:{lb:'Rest',ti:'Vollständige Erholung',ac:'#2e9e6a',du:'Kein Training',rp:'—',rr:'—',
+lg:'Nach mehreren aufeinanderfolgenden Trainingstagen ist systemische Ermüdung akkumuliert. Dieser Ruhetag bestimmt direkt die Qualität der beiden folgenden Einheiten.',
 nt:[{i:'📊',t:'HRV morgens messen (liegend, vor dem Aufstehen). Über 10 % unter deinem Basiswert: nur Spaziergang. Über 15 % darunter: vollständige Ruhe und Schlaf priorisieren.'},
 {i:'🍽️',t:'Kalorienaufnahme nicht reduzieren. Muskelreparatur läuft an Ruhetagen auf Hochtouren — der Bedarf ist praktisch identisch mit Trainingstagen.'},
 {i:'🏸',t:'Falls du hier eine Sportart einschieben willst (Badminton, Radfahren): unproblematisch, solange die Intensität moderat bleibt. Das ist funktionale aktive Erholung.'}],
@@ -142,7 +154,7 @@ y:'Leichte Bewegung fördert Sauerstoff- und Nährstoffzufuhr in reparierende Mu
 f:'Pectoralis, Latissimus, posteriore Schulter, Unterarme je 60–90 Sek. PNF-Technik: 6 Sek isometrisch anspannen, ausatmen, dann tiefer in die Dehnung.',
 y:'PNF-Dehnen erzielt messbar tiefere ROM-Gewinne als passives Dehnen. An Ruhetagen (nicht vor dem Krafttraining) ist statisches Dehnen gut evidenziert.'}]},
 
-fr:{lb:'FR · Lower',ti:'Beine · Core',ac:'#3a7bbf',du:'75–85 Min',rp:'RPE 7–9',rr:'5–18 Wdh',
+lower:{lb:'Lower',ti:'Beine · Core',ac:'#3a7bbf',du:'75–85 Min',rp:'RPE 7–9',rr:'5–18 Wdh',
 lg:'Kompakter Beintag mit schwerem Fokus: Beinpresse bei 5–8 Wdh ist bewusst der niedrige Rep-Bereich einmal pro Woche. Ergänzt durch Core und Rumpfstabilität. Das Beinvolumen ist bewusst moderat gehalten, da deine Sportarten kontinuierlich Beinreiz liefern.',
 nt:[{i:'🏃',t:'Bewusst niedrigeres Beinvolumen: Badminton, Beachvolleyball, Fußball, Wandern, Radfahren, Schlittschuh und Surfen liefern kontinuierlich Sprung-, Sprint- und Ausdauerreize. Sportartspezifische Belastung ist funktional oft wertvoller als isoliertes Maschinenvolumen.'},
 {i:'⚡',t:'Beinpresse bei 5–8 Wdh: Der niedrige Rep-Bereich einmal wöchentlich hat echte Vorteile — Rekrutierung hochschwelliger motorischer Einheiten, Sehnenanpassung, neuronale Effizienz.'},
@@ -188,10 +200,10 @@ y:'Zusammen mit Negativ Crunch und Side Bend deckt der Lower-Tag alle Rumpfebene
 f:'Optional. Rest-Pause-Protokoll. Am Lower-Tag ist der Oberkörper frisch — hier kannst du Unterarme ohne Interferenz trainieren.',
 y:'Dritter Unterarm-Tag. Der Lower-Tag ist strategisch günstig dafür, weil keine Griffkraft für andere Übungen benötigt wird.'}]},
 
-sa:{lb:'SA · Upper B',ti:'Brust · Rücken · Variation',ac:'#b8922e',du:'85–95 Min',rp:'RPE 7–9',rr:'5–12 Wdh',
-lg:'Upper B hat höheres Brustvolumen als Upper A (6 vs. 4 Arbeitssätze) und ergänzt die Winkel: Dip (untere Brust), Fliegende (mittlere Brust), Schrägbank (obere Brust). Dazu die Überzüge als Brustkorb-Erweiterung. Der Rep-Bereich liegt etwas höher als Mittwoch.',
+upperB:{lb:'Upper B',ti:'Brust · Rücken · Variation',ac:'#b8922e',du:'85–95 Min',rp:'RPE 7–9',rr:'5–12 Wdh',
+lg:'Upper B hat höheres Brustvolumen als Upper A (6 vs. 4 Arbeitssätze) und ergänzt die Winkel: Dip (untere Brust), Fliegende (mittlere Brust), Schrägbank (obere Brust). Dazu die Überzüge als Brustkorb-Erweiterung. Der Rep-Bereich liegt etwas höher als bei Upper A.',
 nt:[{i:'🫁',t:'Überzüge mit tiefem Atmen: Die klassische Rader-Methode zur Thoraxerweiterung. Mit 18 Jahren ist der Rippenknorpel noch formbar — das ist wissenschaftlich das Zeitfenster, in dem diese Übung überhaupt strukturell wirken kann.'},
-{i:'📐',t:'T-Bar Rudern hier mit breitem Griff (vs. eng am Mittwoch): Breiter Griff = mehr Rhomboiden und hintere Schulter, enger Griff = mehr Lat. Bewusste Variation über die Woche.'},
+{i:'📐',t:'T-Bar Rudern hier mit breitem Griff (vs. eng bei Upper A): Breiter Griff = mehr Rhomboiden und hintere Schulter, enger Griff = mehr Lat. Bewusste Variation über die Woche.'},
 {i:'⚠️',t:'Brust Dip: Deine Notiz "je nach Schulterzustand weglassen" ist die richtige Herangehensweise. Dips belasten das Schultergelenk in der Endposition stark — bei Beschwerden ersatzlos streichen.'}],
 ex:[
 {n:'Brust Dip (Gewichtet)',t:'Pectoralis major — unterer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–12',rs:'2:15',g:'C',
@@ -212,14 +224,14 @@ y:'Die klassische Rader-Methode zur Thoraxerweiterung. Mit 18 Jahren ist der Rip
 
 {n:'T-Bar Rudern — breiter Griff',t:'Rhomboiden · Trapez · Posteriore Schulter · Latissimus',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–9',rs:'2:30',g:'C',
 f:'Warm-Up ~50 % × 10. Breiter Griff → Ellenbogen weiter außen → mehr Rhomboiden und hintere Schulter. Shrugs am Ende, Schulterblätter aktiv kontrahieren.',
-y:'Der breite Griff verlagert den Reiz gegenüber Mittwoch (enger Griff) deutlich Richtung Rhomboiden und posteriore Schulter. Diese beiden T-Bar-Tage liefern zusammen 4 indirekte Sätze für die hintere Schulter — der Grund, warum dieser Muskel jetzt im MAV liegt.'},
+y:'Der breite Griff verlagert den Reiz gegenüber Upper A (enger Griff) deutlich Richtung Rhomboiden und posteriore Schulter. Diese beiden T-Bar-Tage liefern zusammen 4 indirekte Sätze für die hintere Schulter — der Grund, warum dieser Muskel jetzt im MAV liegt.'},
 
 {n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–10',rs:'2:30',g:'C',
-f:'Warm-Up ~55 % × 8. Rumpf anspannen — deine Notiz. Der Rep-Bereich ist etwas höher als am Mittwoch (4–6), was einen anderen Reiztyp setzt.',
+f:'Warm-Up ~55 % × 8. Rumpf anspannen — deine Notiz. Der Rep-Bereich ist etwas höher als bei Upper A (4–6), was einen anderen Reiztyp setzt.',
 y:'Gleiche Übung wie Upper A, aber höherer Rep-Bereich. Über die Woche bekommt die obere Brust damit sowohl schwere mechanische Spannung (MI) als auch metabolischen Stress (SA) — beide Hypertrophie-Mechanismen abgedeckt.'},
 
 {n:'Seitheben (Maschine)',t:'Medialer Deltamuskel',s:'4 Sets',w:'1 Warm-Up + 3 Arbeitssätze',r:'6–9',rs:'2:30',g:'P',
-f:'Warm-Up ~40 % × 12. Lat anspannen um Trapez rauszunehmen. 3 Arbeitssätze wie am Mittwoch.',
+f:'Warm-Up ~40 % × 12. Lat anspannen um Trapez rauszunehmen. 3 Arbeitssätze wie bei Upper A.',
 y:'Insgesamt 8 direkte Seitheben-Arbeitssätze pro Woche über drei Tage verteilt. Der mediale Deltoid ist der entscheidende Muskel für Schulterbreite und verträgt dieses Volumen problemlos.'},
 
 {n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–7',rs:'2:15',g:'I',
@@ -235,11 +247,11 @@ f:'Mit Band als Mix aus Hammer und Reverse Curl. Ellenbogen fixiert, Handstellun
 y:'Dritter Brachialis-Tag. Die Hybrid-Griffposition trifft Brachioradialis und Brachialis gleichzeitig — effizienter als zwei separate Übungen.'},
 
 {n:'Unterarm-Curls hinter dem Rücken (Langhantel)',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'A',
-f:'Rest-Pause-Protokoll wie an den anderen Tagen. Letzter Unterarm-Tag vor dem Wochenende — Sonntag und Montagmorgen liefern ausreichend Erholung.',
+f:'Rest-Pause-Protokoll wie an den anderen Tagen. Letzter Unterarm-Tag vor der nächsten Ruhephase.',
 y:'Vierter Unterarm-Tag. Bei insgesamt 16 Sätzen pro Woche liegt das Volumen am oberen MAV-Rand — beobachte die Ellenbogensehnen und reduziere bei Reizungen.'}]},
 
-so:{lb:'SO · Zone 2',ti:'Aerobe Basis · Erholung',ac:'#2e9e6a',du:'40–60 Min',rp:'RPE 4–5',rr:'60–70 % HFmax',
-lg:'Zone 2 am Sonntag: niedrigste Intensität der Woche, aktive Erholung vor dem Sharms-Montag. Die AMPK-Aktivierung ist minimal, sodass kein Interferenzeffekt mit dem Upper-B-Reiz vom Samstag entsteht.',
+zone2:{lb:'Zone 2',ti:'Aerobe Basis · Erholung',ac:'#2e9e6a',du:'40–60 Min',rp:'RPE 4–5',rr:'60–70 % HFmax',
+lg:'Niedrigste Intensität der Woche, aktive Erholung vor der nächsten Einheit. Die AMPK-Aktivierung ist minimal, sodass kein Interferenzeffekt mit dem Krafttag davor entsteht.',
 nt:[{i:'🫁',t:'Nasenatemtest: Du musst vollständige Sätze sprechen können. Keuchst du, bist du zu schnell. Zone 2 fühlt sich unangenehm langsam an.'},
 {i:'🚴',t:'Radfahren, Wandern oder lockeres Surfen zählen hier vollwertig. Deine Sportarten decken Zone 2 teilweise ohnehin ab — nutze das.'},
 {i:'📅',t:'Dein natürlicher Deload alle ~6 Wochen durch Urlaub oder Krankheit ersetzt einen formalen Deload. Bei frühen Übertrainingssignalen: Intensität an den Upper-Tagen um 40 % reduzieren, Zone 2 beibehalten.'}],
@@ -249,7 +261,7 @@ f:'5 Min sehr leicht starten. Nasenatmung aufrechterhalten, Herzfrequenz zwische
 y:'Zone 2 aktiviert PGC-1α, den Masterregulator der Mitochondriogenese. Mehr Mitochondrien bedeuten bessere aerobe Kapazität, effizientere Fettoxidation und schnellere Laktatclearance — überträgt sich direkt auf deine Sportarten.'},
 {n:'Statisches Dehnen — optional',t:'Wochenabschluss · ROM-Erhalt',s:'15 Min',w:'',r:'—',rs:'',g:'O',
 f:'Alle Muskelgruppen der Woche systematisch durchgehen: Pectoralis, Latissimus, posteriore Schulter, Unterarme, Hüftbeuger, Hamstrings, Waden. Je 60–90 Sek.',
-y:'Wochenabschluss-Ritual. Signalisiert dem Nervensystem den vollständigen Übergang in den Erholungsmodus vor dem Sharms-Montag.'}]}};
+y:'Wochenabschluss-Ritual. Signalisiert dem Nervensystem den vollständigen Übergang in den Erholungsmodus vor der nächsten Einheit.'}]}};
 
 export const VOL=[
 {m:'Pectoralis',mo:0,mi:4,fr:0,sa:6,syn:0,mav:[8,16],n:'MI: Fliegende(2)+Schrägbank(2) · SA: Dip(2)+Fliegende(2)+Schrägbank(2)'},
