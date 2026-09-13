@@ -271,12 +271,12 @@ function renderPositions(month) {
   const commit = async (el, { format = false } = {}) => {
     const raw = el.value.trim();
     const c = toCents(raw);
+    const feld = el.dataset.f === 'v' ? 'Wert' : 'Einzahlung';
+    const pos  = (ASSETS.find(x => x.id === el.dataset.a) || {}).name || el.dataset.a;
+
     if (raw && c === null) {
-      /* Waehrend des Tippens still bleiben -- beim Verlassen aber sagen,
-         warum nichts passiert ist. Frueher verschwand so eine Eingabe
-         kommentarlos, was von aussen wie ein kaputtes Feld aussieht. */
       if (format) { el.classList.add('bad'); toast(`„${raw}" ist keine lesbare Zahl — z. B. 15000 oder 15.000,50`, true); }
-      return;
+      return saveLog(`${pos} · ${feld}: „${raw}" nicht lesbar`, false);
     }
     el.classList.remove('bad');
     if (el.dataset.last === String(c)) return;           // unveraendert: kein zweiter Schreibvorgang
@@ -289,7 +289,11 @@ function renderPositions(month) {
       if (format) el.value = raw ? (c / 100).toFixed(2).replace('.', ',') : '';
       el.classList.remove('saved'); void el.offsetWidth; el.classList.add('saved');
       renderKpi(month); redrawCharts();
-    } catch (err) { toast('Speichern fehlgeschlagen: ' + err.message, true); }
+      saveLog(`${pos} · ${feld} = ${raw ? CENT(c) : 'geleert'}`, true);
+    } catch (err) {
+      toast('Speichern fehlgeschlagen: ' + err.message, true);
+      saveLog(`${pos} · ${feld}: ${err.message || err}`, false);
+    }
   };
 
   const timers = new WeakMap();
@@ -325,6 +329,18 @@ function redrawCharts() {
   drawTrend(document.getElementById('wtrend'));
   drawAllocation(document.getElementById('walloc'), month);
   drawWaterfall(document.getElementById('wfall'), month);
+}
+
+/* Sichtbares Speicher-Protokoll unter der Positionstabelle. Nicht nur zur
+   Fehlersuche: ohne eine Rueckmeldung, WELCHER Wert wann angekommen ist,
+   laesst sich von aussen nicht unterscheiden, ob eine Eingabe gespeichert,
+   verworfen oder nie ausgeloest wurde. */
+function saveLog(text, ok) {
+  const el = document.getElementById('wlog');
+  if (!el) return;
+  const t = new Date().toLocaleTimeString('de-DE');
+  el.className = 'wlog ' + (ok ? 'ok' : 'err');
+  el.textContent = `${ok ? '✓ gespeichert' : '✗ nicht gespeichert'} · ${text} · ${t}`;
 }
 
 /* Nur die vier Kennzahl-Kacheln. Getrennt von renderWealth(), damit ein

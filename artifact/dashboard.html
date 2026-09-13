@@ -271,6 +271,10 @@ padding:8px 0 4px;letter-spacing:.3px}
 .posin.saved{animation:savedflash 1.1s ease-out}
 @media(prefers-reduced-motion:reduce){.posin.saved{animation:none;border-color:#2e9e6a}}
 .posin.bad{border-color:var(--red);background:#180c0a}
+.wlog{font-family:var(--mono);font-size:10px;line-height:1.6;margin-top:8px;padding:8px 11px;
+border-radius:6px;border:1px solid var(--bd);background:#0c0c0c;color:var(--dim)}
+.wlog.ok{border-color:#1d4a33;color:#4fb98a}
+.wlog.err{border-color:#4a2019;color:#d4695a}
 </style>
 
 <div class="hdr"><div class="hi">
@@ -574,8 +578,10 @@ padding:8px 0 4px;letter-spacing:.3px}
 
   <div class="sechead"><h2>Monatswerte eintragen</h2></div>
   <div id="wpos"></div>
+  <div class="wlog" id="wlog">noch nichts gespeichert</div>
   <p class="lead" style="margin-top:10px">Zwei Zahlen je Position und Monat: was aktuell dort liegt,
-  und wie viel davon du in diesem Monat neu eingezahlt hast. Änderungen speichern beim Verlassen des Feldes.</p>
+  und wie viel davon du in diesem Monat neu eingezahlt hast. Gespeichert wird automatisch
+  beim Tippen — die Zeile darüber zeigt, was zuletzt angekommen ist.</p>
 
   <div class="sechead"><h2>Position anlegen</h2></div>
   <form class="frm" id="wposform">
@@ -1589,12 +1595,12 @@ function renderPositions(month) {
   const commit = async (el, { format = false } = {}) => {
     const raw = el.value.trim();
     const c = toCents(raw);
+    const feld = el.dataset.f === 'v' ? 'Wert' : 'Einzahlung';
+    const pos  = (ASSETS.find(x => x.id === el.dataset.a) || {}).name || el.dataset.a;
+
     if (raw && c === null) {
-      /* Waehrend des Tippens still bleiben -- beim Verlassen aber sagen,
-         warum nichts passiert ist. Frueher verschwand so eine Eingabe
-         kommentarlos, was von aussen wie ein kaputtes Feld aussieht. */
       if (format) { el.classList.add('bad'); toast(`„${raw}" ist keine lesbare Zahl — z. B. 15000 oder 15.000,50`, true); }
-      return;
+      return saveLog(`${pos} · ${feld}: „${raw}" nicht lesbar`, false);
     }
     el.classList.remove('bad');
     if (el.dataset.last === String(c)) return;           // unveraendert: kein zweiter Schreibvorgang
@@ -1607,7 +1613,11 @@ function renderPositions(month) {
       if (format) el.value = raw ? (c / 100).toFixed(2).replace('.', ',') : '';
       el.classList.remove('saved'); void el.offsetWidth; el.classList.add('saved');
       renderKpi(month); redrawCharts();
-    } catch (err) { toast('Speichern fehlgeschlagen: ' + err.message, true); }
+      saveLog(`${pos} · ${feld} = ${raw ? CENT(c) : 'geleert'}`, true);
+    } catch (err) {
+      toast('Speichern fehlgeschlagen: ' + err.message, true);
+      saveLog(`${pos} · ${feld}: ${err.message || err}`, false);
+    }
   };
 
   const timers = new WeakMap();
@@ -1643,6 +1653,18 @@ function redrawCharts() {
   drawTrend(document.getElementById('wtrend'));
   drawAllocation(document.getElementById('walloc'), month);
   drawWaterfall(document.getElementById('wfall'), month);
+}
+
+/* Sichtbares Speicher-Protokoll unter der Positionstabelle. Nicht nur zur
+   Fehlersuche: ohne eine Rueckmeldung, WELCHER Wert wann angekommen ist,
+   laesst sich von aussen nicht unterscheiden, ob eine Eingabe gespeichert,
+   verworfen oder nie ausgeloest wurde. */
+function saveLog(text, ok) {
+  const el = document.getElementById('wlog');
+  if (!el) return;
+  const t = new Date().toLocaleTimeString('de-DE');
+  el.className = 'wlog ' + (ok ? 'ok' : 'err');
+  el.textContent = `${ok ? '✓ gespeichert' : '✗ nicht gespeichert'} · ${text} · ${t}`;
 }
 
 /* Nur die vier Kennzahl-Kacheln. Getrennt von renderWealth(), damit ein
