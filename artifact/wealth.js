@@ -257,13 +257,24 @@ function renderPositions(month) {
         <button class="txdel" data-del="${a.id}" aria-label="Position ${ESC(a.name)} löschen">✕</button>
       </div>`; }).join('')}</div>`;
 
+  /* Nach dem Speichern NICHT renderWealth() aufrufen: das baut die ganze
+     Positionsliste per innerHTML neu. change feuert beim Verlassen des
+     Feldes -- typischerweise, weil man gerade das naechste Feld antippt.
+     Genau dieses Feld wuerde dabei zerstoert, der Fokus landet auf <body>,
+     die Tastatur klappt zu. Deshalb nur die abgeleiteten Anzeigen
+     (Kennzahlen, Diagramme) auffrischen und das eigene Feld formatieren. */
   box.querySelectorAll('.posin').forEach(el => el.addEventListener('change', async e => {
-    const c = toCents(e.target.value);
-    if (e.target.value.trim() && c === null) return toast('Betrag prüfen — z. B. 1250,00', true);
+    const raw = e.target.value.trim();
+    const c = toCents(raw);
+    if (raw && c === null) return toast('Betrag prüfen — z. B. 1250,00', true);
     WEALTH[month] = WEALTH[month] || { v:{}, in:{} };
     const f = e.target.dataset.f, a = e.target.dataset.a;
-    if (!e.target.value.trim()) delete WEALTH[month][f][a]; else WEALTH[month][f][a] = c;
-    try { await saveMonthWealth(month); renderWealth(); } catch (err) { toast('Speichern fehlgeschlagen: ' + err.message, true); }
+    if (!raw) delete WEALTH[month][f][a]; else WEALTH[month][f][a] = c;
+    try {
+      await saveMonthWealth(month);
+      e.target.value = raw ? (c / 100).toFixed(2).replace('.', ',') : '';
+      renderKpi(month); redrawCharts();
+    } catch (err) { toast('Speichern fehlgeschlagen: ' + err.message, true); }
   }));
   box.querySelectorAll('[data-del]').forEach(el => el.onclick = async e => {
     const id = e.target.dataset.del;
@@ -290,18 +301,25 @@ function redrawCharts() {
   drawWaterfall(document.getElementById('wfall'), month);
 }
 
-function renderWealth() {
-  const month = document.getElementById('wmonth').value || NOWMONTH();
+/* Nur die vier Kennzahl-Kacheln. Getrennt von renderWealth(), damit ein
+   gespeicherter Wert die Anzeige aktualisieren kann, ohne die
+   Eingabefelder darunter anzufassen. */
+function renderKpi(month) {
   const at = attribution(month);
   const t = at ? at.after : null;
-
   document.getElementById('wkpi').innerHTML = [
     ['Gesamtvermögen', t == null ? '–' : CENT(t), 'neu'],
     ['Veränderung', at?.delta == null ? '–' : (at.delta >= 0 ? '+' : '−') + CENT(Math.abs(at.delta)), at?.delta >= 0 ? 'pos' : 'neg'],
     ['davon eingezahlt', at ? (at.inflow >= 0 ? '+' : '−') + CENT(Math.abs(at.inflow)) : '–', 'neu'],
     ['davon Markt', at?.market == null ? '–' : (at.market >= 0 ? '+' : '−') + CENT(Math.abs(at.market)), at?.market >= 0 ? 'pos' : 'neg']
   ].map(([l, v, tone]) => `<div class="kpi ${tone}"><div class="kpiv">${v}</div><div class="kpil">${l}</div></div>`).join('');
+}
 
+/* Vollstaendiger Aufbau -- nur bei Ereignissen, die die Zeilenstruktur
+   wirklich aendern: Laden, Monatswechsel, Position angelegt oder geloescht. */
+function renderWealth() {
+  const month = document.getElementById('wmonth').value || NOWMONTH();
+  renderKpi(month);
   redrawCharts();
   renderPositions(month);
 }
