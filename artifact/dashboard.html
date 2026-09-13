@@ -1378,13 +1378,16 @@ function attribution(m) {
 const CH = { padL:52, padR:14, padT:12, padB:26 };
 const tipEl = () => document.getElementById('charttip');
 
+/* Der Tooltip ist position:fixed. Bei fixierten Elementen ist offsetParent
+   per Spezifikation null -- ein Zugriff darauf wirft. clientX/clientY sind
+   ohnehin bereits Viewport-Koordinaten, genau das Bezugssystem von fixed;
+   es braucht also gar keinen Container-Bezug. */
 function showTip(html, ev) {
   const t = tipEl();
   t.innerHTML = html; t.classList.add('on');
-  const r = t.offsetParent.getBoundingClientRect();
-  const x = ev.clientX - r.left, y = ev.clientY - r.top;
-  t.style.left = Math.max(4, Math.min(r.width - t.offsetWidth - 4, x - t.offsetWidth / 2)) + 'px';
-  t.style.top  = Math.max(4, y - t.offsetHeight - 12) + 'px';
+  const w = t.offsetWidth, h = t.offsetHeight;
+  t.style.left = Math.max(6, Math.min(window.innerWidth - w - 6, ev.clientX - w / 2)) + 'px';
+  t.style.top  = Math.max(6, ev.clientY - h - 14) + 'px';
 }
 const hideTip = () => tipEl().classList.remove('on');
 
@@ -1639,6 +1642,12 @@ function wireWealth() {
   const wm = document.getElementById('wmonth');
   wm.value = NOWMONTH();
   wm.addEventListener('change', renderWealth);
+
+  /* Auf Touch-Geraeten feuert pointerleave nach einem Antippen nicht
+     verlaesslich -- ohne dieses Netz bliebe der Tooltip stehen. */
+  addEventListener('pointerup', hideTip);
+  addEventListener('pointercancel', hideTip);
+  addEventListener('scroll', hideTip, { passive: true });
 
   document.getElementById('wkindsel').innerHTML =
     KINDS.map(k => `<option value="${k.id}">${k.n}</option>`).join('');
