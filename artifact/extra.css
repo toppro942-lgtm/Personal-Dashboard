@@ -136,3 +136,9 @@ font-variant-numeric:tabular-nums}
 .chartnote{font-family:var(--mono);font-size:10px;color:var(--mut);text-align:center;
 padding:8px 0 4px;letter-spacing:.3px}
 .chartnote b{color:var(--tx);font-weight:500}
+
+/* Kurzes Aufleuchten als Speicher-Bestaetigung: der einzige Hinweis, dass
+   ein Positionswert angekommen ist -- ein Toast pro Tastendruck waere Laerm. */
+@keyframes savedflash{from{border-color:#2e9e6a;box-shadow:0 0 0 2px #2e9e6a33}to{border-color:var(--bd);box-shadow:none}}
+.posin.saved{animation:savedflash 1.1s ease-out}
+@media(prefers-reduced-motion:reduce){.posin.saved{animation:none;border-color:#2e9e6a}}
