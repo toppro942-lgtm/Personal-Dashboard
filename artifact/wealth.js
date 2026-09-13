@@ -279,6 +279,17 @@ function renderPositions(month) {
   });
 }
 
+/* Nur die SVG-Diagramme neu zeichnen -- ohne KPI-Kacheln und ohne die
+   Eingabezeilen der Positionen anzufassen. Wird vom ResizeObserver
+   aufgerufen; die Positionsliste darf dabei NICHT neu gebaut werden,
+   sonst verliert ein gerade fokussiertes Eingabefeld den Fokus. */
+function redrawCharts() {
+  const month = document.getElementById('wmonth').value || NOWMONTH();
+  drawTrend(document.getElementById('wtrend'));
+  drawAllocation(document.getElementById('walloc'), month);
+  drawWaterfall(document.getElementById('wfall'), month);
+}
+
 function renderWealth() {
   const month = document.getElementById('wmonth').value || NOWMONTH();
   const at = attribution(month);
@@ -291,9 +302,7 @@ function renderWealth() {
     ['davon Markt', at?.market == null ? '–' : (at.market >= 0 ? '+' : '−') + CENT(Math.abs(at.market)), at?.market >= 0 ? 'pos' : 'neg']
   ].map(([l, v, tone]) => `<div class="kpi ${tone}"><div class="kpiv">${v}</div><div class="kpil">${l}</div></div>`).join('');
 
-  drawTrend(document.getElementById('wtrend'));
-  drawAllocation(document.getElementById('walloc'), month);
-  drawWaterfall(document.getElementById('wfall'), month);
+  redrawCharts();
   renderPositions(month);
 }
 
@@ -321,14 +330,19 @@ function wireWealth() {
   });
 
   /* Beim ersten Rendern ist der Tab ausgeblendet, clientWidth also 0. Der
-     Observer zeichnet neu, sobald er Breite bekommt — und bei jeder
-     Groessenaenderung danach. */
+     Observer zeichnet die Diagramme neu, sobald der Container Breite
+     bekommt — und bei jeder echten Groessenaenderung danach (Drehung,
+     Fenster). Ruft bewusst NUR redrawCharts() auf, nicht renderWealth():
+     Das mobile Tastatur-Einblenden verschiebt auf manchen Geraeten die
+     Layout-Breite geringfuegig und loeste hier sonst einen kompletten
+     Rebuild der Positions-Eingabefelder aus -- man wurde beim Tippen
+     mitten aus dem Feld geworfen. */
   let rt, lastW = 0;
   const ro = new ResizeObserver(entries => {
     const w = Math.round(entries[0].contentRect.width);
     if (!w || Math.abs(w - lastW) < 8) return;
     lastW = w;
-    clearTimeout(rt); rt = setTimeout(renderWealth, 60);
+    clearTimeout(rt); rt = setTimeout(redrawCharts, 60);
   });
   ro.observe(document.getElementById('wtrend'));
 }
