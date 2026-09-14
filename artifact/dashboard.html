@@ -1362,9 +1362,16 @@ async function loadWealth() {
     DB.collection('assets').limit(200).get(),
     DB.collection('wealth').orderBy('month', 'desc').limit(60).get()
   ]);
-  ASSETS = a.docs.map(d => d.data()).sort((x, y) => KINDS.findIndex(k => k.id === x.kind) - KINDS.findIndex(k => k.id === y.kind));
+  ASSETS = a.docs.map(d => clone(d.data())).sort((x, y) => KINDS.findIndex(k => k.id === x.kind) - KINDS.findIndex(k => k.id === y.kind));
   WEALTH = {};
-  for (const d of w.docs) { const wd = d.data(); WEALTH[wd.month] = { v: wd.v || {}, in: wd.in || {} }; }
+  /* Nur Dokumente mit gueltigem Monatsschluessel uebernehmen -- ein fremdes
+     oder unvollstaendiges Dokument in der Sammlung wuerde sonst als
+     WEALTH[undefined] landen. */
+  for (const d of w.docs) {
+    const wd = clone(d.data());
+    if (!wd || !/^\d{4}-\d{2}$/.test(wd.month || '')) continue;
+    WEALTH[wd.month] = { v: wd.v || {}, in: wd.in || {} };
+  }
 }
 /* Frueher: den kompletten Monat aus dem lokalen Zwischenstand ueberschreiben.
    Das ist bei einem gemeinsam genutzten Dokument mit Versionssperre falsch --
@@ -1377,16 +1384,21 @@ async function loadWealth() {
    Serverantwort gesetzt, nicht aus der eigenen Annahme. Nebeneffekt: ein
    zweiter offener Tab kann nichts mehr ueberschreiben, weil nie mehr der
    ganze Monat aus einem alten Zwischenstand geschrieben wird. */
-async function saveField(m, feld, assetId, cents) {
+async function saveField(m, feld, assetId, cents, { pruefen = true } = {}) {
   const ref = DB.doc('wealth/' + m);
   const vorher = await ref.get();
-  const doc = vorher.exists ? vorher.data() : { month: m };
+  const doc = vorher.exists ? clone(vorher.data()) : { month: m };
   doc.month = m; doc.v = doc.v || {}; doc.in = doc.in || {};
   if (cents === null) delete doc[feld][assetId]; else doc[feld][assetId] = cents;
   await ref.set(doc);
+  WEALTH[m] = { v: doc.v, in: doc.in };
 
+  /* Zurueckpruefen kostet eine dritte Anfrage. Waehrend des Tippens waere
+     das bei jeder Tastenpause spuerbar; entscheidend ist die Pruefung erst
+     beim endgueltigen Speichern nach dem Verlassen des Feldes. */
+  if (!pruefen) return true;
   const nachher = await ref.get();
-  const gespeichert = nachher.exists ? nachher.data() : null;
+  const gespeichert = nachher.exists ? clone(nachher.data()) : null;
   WEALTH[m] = { v: (gespeichert && gespeichert.v) || {}, in: (gespeichert && gespeichert.in) || {} };
   const wert = gespeichert && gespeichert[feld] ? gespeichert[feld][assetId] : undefined;
   return cents === null ? wert === undefined : wert === cents;
@@ -1397,7 +1409,7 @@ async function saveField(m, feld, assetId, cents) {
 async function saveMonthWealth(m) {
   const ref = DB.doc('wealth/' + m);
   const vorher = await ref.get();
-  const doc = vorher.exists ? vorher.data() : { month: m };
+  const doc = vorher.exists ? clone(vorher.data()) : { month: m };
   doc.month = m;
   doc.v = (WEALTH[m] && WEALTH[m].v) || {};
   doc.in = (WEALTH[m] && WEALTH[m].in) || {};
@@ -1642,7 +1654,7 @@ function renderPositions(month) {
     if (el.dataset.last === String(c)) return;           // unveraendert: kein zweiter Schreibvorgang
     el.dataset.last = String(c);
     try {
-      const ok = await saveField(month, el.dataset.f, el.dataset.a, raw ? c : null);
+      const ok = await saveField(month, el.dataset.f, el.dataset.a, raw ? c : null, { pruefen: format });
       if (format) el.value = raw ? (c / 100).toFixed(2).replace('.', ',') : '';
       renderKpi(month); redrawCharts();
       if (ok) {
@@ -1667,7 +1679,7 @@ function renderPositions(month) {
   box.querySelectorAll('.posin').forEach(el => {
     el.addEventListener('input', () => {
       clearTimeout(timers.get(el));
-      timers.set(el, setTimeout(() => commit(el), 700));
+      timers.set(el, setTimeout(() => commit(el), 1000));
     });
     /* Verlassen: sofort schreiben und sauber formatieren. */
     el.addEventListener('change', () => { clearTimeout(timers.get(el)); commit(el, { format: true }); });
@@ -1850,6 +1862,16 @@ function spark(points, color, w = 240, h = 44) {
 }
 
 /* ---------- Datenbank ---------- */
+
+/* Was DocumentSnapshot.data() liefert, gehoert der Laufzeit und darf nicht
+   veraendert werden: Zuweisungen daran verpuffen in nicht-striktem Code
+   lautlos. Genau daran scheiterte das Speichern der Vermoegenswerte --
+   das Dokument wurde gelesen, "geaendert" und unveraendert zurueck-
+   geschrieben; die Versionsnummer stieg, der Inhalt nie.
+   Deshalb: jeden Snapshot einmal tief kopieren, bevor irgendetwas damit
+   passiert. */
+const clone = x => (x == null ? x : JSON.parse(JSON.stringify(x)));
+
 async function initStore() {
   try { DB = (typeof claude !== 'undefined' && claude.use) ? await claude.use('db') : null; }
   catch { DB = null; }
@@ -1870,19 +1892,19 @@ async function initStore() {
 
 async function loadSettings() {
   const snap = await DB.doc('settings/main').get();
-  if (snap.exists) { const d = snap.data(); CATS = d.categories || DEFAULT_CATS; RULES = d.rules || []; }
+  if (snap.exists) { const d = clone(snap.data()); CATS = d.categories || DEFAULT_CATS; RULES = d.rules || []; }
   else await DB.doc('settings/main').set({ categories: DEFAULT_CATS, rules: [] });
 }
 const saveSettings = () => DB.doc('settings/main').set({ categories: CATS, rules: RULES });
 
 async function loadHealth() {
   const snap = await DB.collection('health').orderBy('day', 'desc').limit(90).get();
-  HEALTH = snap.docs.map(d => d.data()).sort((a, b) => a.day < b.day ? -1 : 1);
+  HEALTH = snap.docs.map(d => clone(d.data())).sort((a, b) => a.day < b.day ? -1 : 1);
 }
 
 async function loadMonth() {
   const snap = await DB.doc('finance/' + MONTH).get();
-  TX = snap.exists ? (snap.data().tx || []) : [];
+  TX = snap.exists ? (clone(snap.data()).tx || []) : [];
 }
 const saveMonth = () => DB.doc('finance/' + MONTH).set({ month: MONTH, tx: TX });
 
@@ -1962,7 +1984,7 @@ function importHealthCsv(text) {
 async function saveMetric(day, metric, value) {
   const ref = DB.collection('health').doc(day);
   const snap = await ref.get();
-  const doc = snap.exists ? { ...snap.data() } : { day };
+  const doc = snap.exists ? clone(snap.data()) : { day };
   doc[metric] = value;
   await ref.set(doc);
   const i = HEALTH.findIndex(d => d.day === day);
@@ -1974,7 +1996,7 @@ async function saveMetric(day, metric, value) {
 async function saveDay(day, values) {
   const ref = DB.collection('health').doc(day);
   const snap = await ref.get();
-  const doc = snap.exists ? { ...snap.data(), day } : { day };
+  const doc = snap.exists ? { ...clone(snap.data()), day } : { day };
   Object.assign(doc, values);
   await ref.set(doc);
   const i = HEALTH.findIndex(d => d.day === day);
@@ -1994,7 +2016,7 @@ const catById = id => CATS.find(c => c.id === id);
 async function appendTxToMonth(month, rows) {
   let doc;
   if (month === MONTH) doc = { month, tx: TX.slice() };
-  else { const snap = await DB.doc('finance/' + month).get(); doc = snap.exists ? snap.data() : { month, tx: [] }; }
+  else { const snap = await DB.doc('finance/' + month).get(); doc = snap.exists ? clone(snap.data()) : { month, tx: [] }; }
   doc.tx = doc.tx || [];
   const seen = new Set(doc.tx.map(t => `${t.d}|${t.a}|${t.c}|${t.p}`));
   let added = 0, dup = 0;

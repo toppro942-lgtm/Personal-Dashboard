@@ -38,9 +38,16 @@ async function loadWealth() {
     DB.collection('assets').limit(200).get(),
     DB.collection('wealth').orderBy('month', 'desc').limit(60).get()
   ]);
-  ASSETS = a.docs.map(d => d.data()).sort((x, y) => KINDS.findIndex(k => k.id === x.kind) - KINDS.findIndex(k => k.id === y.kind));
+  ASSETS = a.docs.map(d => clone(d.data())).sort((x, y) => KINDS.findIndex(k => k.id === x.kind) - KINDS.findIndex(k => k.id === y.kind));
   WEALTH = {};
-  for (const d of w.docs) { const wd = d.data(); WEALTH[wd.month] = { v: wd.v || {}, in: wd.in || {} }; }
+  /* Nur Dokumente mit gueltigem Monatsschluessel uebernehmen -- ein fremdes
+     oder unvollstaendiges Dokument in der Sammlung wuerde sonst als
+     WEALTH[undefined] landen. */
+  for (const d of w.docs) {
+    const wd = clone(d.data());
+    if (!wd || !/^\d{4}-\d{2}$/.test(wd.month || '')) continue;
+    WEALTH[wd.month] = { v: wd.v || {}, in: wd.in || {} };
+  }
 }
 /* Frueher: den kompletten Monat aus dem lokalen Zwischenstand ueberschreiben.
    Das ist bei einem gemeinsam genutzten Dokument mit Versionssperre falsch --
@@ -53,16 +60,21 @@ async function loadWealth() {
    Serverantwort gesetzt, nicht aus der eigenen Annahme. Nebeneffekt: ein
    zweiter offener Tab kann nichts mehr ueberschreiben, weil nie mehr der
    ganze Monat aus einem alten Zwischenstand geschrieben wird. */
-async function saveField(m, feld, assetId, cents) {
+async function saveField(m, feld, assetId, cents, { pruefen = true } = {}) {
   const ref = DB.doc('wealth/' + m);
   const vorher = await ref.get();
-  const doc = vorher.exists ? vorher.data() : { month: m };
+  const doc = vorher.exists ? clone(vorher.data()) : { month: m };
   doc.month = m; doc.v = doc.v || {}; doc.in = doc.in || {};
   if (cents === null) delete doc[feld][assetId]; else doc[feld][assetId] = cents;
   await ref.set(doc);
+  WEALTH[m] = { v: doc.v, in: doc.in };
 
+  /* Zurueckpruefen kostet eine dritte Anfrage. Waehrend des Tippens waere
+     das bei jeder Tastenpause spuerbar; entscheidend ist die Pruefung erst
+     beim endgueltigen Speichern nach dem Verlassen des Feldes. */
+  if (!pruefen) return true;
   const nachher = await ref.get();
-  const gespeichert = nachher.exists ? nachher.data() : null;
+  const gespeichert = nachher.exists ? clone(nachher.data()) : null;
   WEALTH[m] = { v: (gespeichert && gespeichert.v) || {}, in: (gespeichert && gespeichert.in) || {} };
   const wert = gespeichert && gespeichert[feld] ? gespeichert[feld][assetId] : undefined;
   return cents === null ? wert === undefined : wert === cents;
@@ -73,7 +85,7 @@ async function saveField(m, feld, assetId, cents) {
 async function saveMonthWealth(m) {
   const ref = DB.doc('wealth/' + m);
   const vorher = await ref.get();
-  const doc = vorher.exists ? vorher.data() : { month: m };
+  const doc = vorher.exists ? clone(vorher.data()) : { month: m };
   doc.month = m;
   doc.v = (WEALTH[m] && WEALTH[m].v) || {};
   doc.in = (WEALTH[m] && WEALTH[m].in) || {};
@@ -318,7 +330,7 @@ function renderPositions(month) {
     if (el.dataset.last === String(c)) return;           // unveraendert: kein zweiter Schreibvorgang
     el.dataset.last = String(c);
     try {
-      const ok = await saveField(month, el.dataset.f, el.dataset.a, raw ? c : null);
+      const ok = await saveField(month, el.dataset.f, el.dataset.a, raw ? c : null, { pruefen: format });
       if (format) el.value = raw ? (c / 100).toFixed(2).replace('.', ',') : '';
       renderKpi(month); redrawCharts();
       if (ok) {
@@ -343,7 +355,7 @@ function renderPositions(month) {
   box.querySelectorAll('.posin').forEach(el => {
     el.addEventListener('input', () => {
       clearTimeout(timers.get(el));
-      timers.set(el, setTimeout(() => commit(el), 700));
+      timers.set(el, setTimeout(() => commit(el), 1000));
     });
     /* Verlassen: sofort schreiben und sauber formatieren. */
     el.addEventListener('change', () => { clearTimeout(timers.get(el)); commit(el, { format: true }); });

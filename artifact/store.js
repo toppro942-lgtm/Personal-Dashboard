@@ -58,6 +58,16 @@ function spark(points, color, w = 240, h = 44) {
 }
 
 /* ---------- Datenbank ---------- */
+
+/* Was DocumentSnapshot.data() liefert, gehoert der Laufzeit und darf nicht
+   veraendert werden: Zuweisungen daran verpuffen in nicht-striktem Code
+   lautlos. Genau daran scheiterte das Speichern der Vermoegenswerte --
+   das Dokument wurde gelesen, "geaendert" und unveraendert zurueck-
+   geschrieben; die Versionsnummer stieg, der Inhalt nie.
+   Deshalb: jeden Snapshot einmal tief kopieren, bevor irgendetwas damit
+   passiert. */
+const clone = x => (x == null ? x : JSON.parse(JSON.stringify(x)));
+
 async function initStore() {
   try { DB = (typeof claude !== 'undefined' && claude.use) ? await claude.use('db') : null; }
   catch { DB = null; }
@@ -78,19 +88,19 @@ async function initStore() {
 
 async function loadSettings() {
   const snap = await DB.doc('settings/main').get();
-  if (snap.exists) { const d = snap.data(); CATS = d.categories || DEFAULT_CATS; RULES = d.rules || []; }
+  if (snap.exists) { const d = clone(snap.data()); CATS = d.categories || DEFAULT_CATS; RULES = d.rules || []; }
   else await DB.doc('settings/main').set({ categories: DEFAULT_CATS, rules: [] });
 }
 const saveSettings = () => DB.doc('settings/main').set({ categories: CATS, rules: RULES });
 
 async function loadHealth() {
   const snap = await DB.collection('health').orderBy('day', 'desc').limit(90).get();
-  HEALTH = snap.docs.map(d => d.data()).sort((a, b) => a.day < b.day ? -1 : 1);
+  HEALTH = snap.docs.map(d => clone(d.data())).sort((a, b) => a.day < b.day ? -1 : 1);
 }
 
 async function loadMonth() {
   const snap = await DB.doc('finance/' + MONTH).get();
-  TX = snap.exists ? (snap.data().tx || []) : [];
+  TX = snap.exists ? (clone(snap.data()).tx || []) : [];
 }
 const saveMonth = () => DB.doc('finance/' + MONTH).set({ month: MONTH, tx: TX });
 
@@ -170,7 +180,7 @@ function importHealthCsv(text) {
 async function saveMetric(day, metric, value) {
   const ref = DB.collection('health').doc(day);
   const snap = await ref.get();
-  const doc = snap.exists ? { ...snap.data() } : { day };
+  const doc = snap.exists ? clone(snap.data()) : { day };
   doc[metric] = value;
   await ref.set(doc);
   const i = HEALTH.findIndex(d => d.day === day);
@@ -182,7 +192,7 @@ async function saveMetric(day, metric, value) {
 async function saveDay(day, values) {
   const ref = DB.collection('health').doc(day);
   const snap = await ref.get();
-  const doc = snap.exists ? { ...snap.data(), day } : { day };
+  const doc = snap.exists ? { ...clone(snap.data()), day } : { day };
   Object.assign(doc, values);
   await ref.set(doc);
   const i = HEALTH.findIndex(d => d.day === day);
@@ -202,7 +212,7 @@ const catById = id => CATS.find(c => c.id === id);
 async function appendTxToMonth(month, rows) {
   let doc;
   if (month === MONTH) doc = { month, tx: TX.slice() };
-  else { const snap = await DB.doc('finance/' + month).get(); doc = snap.exists ? snap.data() : { month, tx: [] }; }
+  else { const snap = await DB.doc('finance/' + month).get(); doc = snap.exists ? clone(snap.data()) : { month, tx: [] }; }
   doc.tx = doc.tx || [];
   const seen = new Set(doc.tx.map(t => `${t.d}|${t.a}|${t.c}|${t.p}`));
   let added = 0, dup = 0;
