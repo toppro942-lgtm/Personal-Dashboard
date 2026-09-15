@@ -304,6 +304,8 @@ border-radius:6px;border:1px solid var(--bd);background:#0c0c0c;color:var(--dim)
 <!-- VOLUMEN -->
 <div id="t-vol" class="tc"><div class="ct">
   <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Wochenvolumen</div>
+  <div id="mesoinfo" style="font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--wh);
+    background:#1a1408;border-left:2px solid var(--yel);border-radius:4px;padding:8px 12px;margin-bottom:12px;line-height:1.7"></div>
   <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
     Zählung: <strong style="color:var(--tx)">3 Sets = 1 Warm-Up + 2 Arbeitssätze</strong> · 2 Sets = 2 Arbeitssätze · 4 Sets = 1W + 3 Arbeitssätze.
     Nur Arbeitssätze zählen. Synergisten = Mitarbeit als Nicht-Primärmuskel.
@@ -338,6 +340,13 @@ border-radius:6px;border:1px solid var(--bd);background:#0c0c0c;color:var(--dim)
     <div style="font-size:12px;color:#999;line-height:1.8">
       Zwei Vorgaben, die über dem reinen Volumen stehen: <strong style="color:var(--wh)">Zugvolumen zu Druckvolumen mindestens 2:1</strong> — Rudern, Face Pulls, Reverse Flys und Klimmzüge werden bei Kürzungen zuletzt gestrichen, Drückbewegungen zuerst. Und <strong style="color:var(--wh)">Seitheben an drei Tagen pro Woche</strong> mit hohen Wiederholungen: die laterale Schulter ist der direkteste Hebel für Schulterbreite, und die Schulterbreite ist der limitierende Faktor der Silhouette — nicht das Körpergewicht.
       Der tägliche Haltungsblock (thorakale Extension, Kinn-Retraktion) steht in der Mobility-Routine, die Begründung im Grooming-Tab.
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--yel)">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--yel);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">🔄 Mesozyklus — Blockperiodisierung</div>
+    <div style="font-size:12px;color:#999;line-height:1.8">
+      Man kann nicht dauerhaft jede Muskelgruppe gleichzeitig mit Maximalvolumen trainieren, ohne die Erholungskapazität zu übersteigen. Deshalb rotiert die Priorität monatsweise: <strong style="color:var(--wh)">September Brust, Oktober Rücken</strong>. Der Wechsel läuft über eine einzige Übung in Upper B — der Brust Dip weicht im Rücken-Block dem Einarmigen Kurzhantelrudern, an exakt derselben Stelle in der Reihenfolge. Dadurch sinkt Brust von 10 auf 8 Sätze/Woche (unterer MAV-Rand), Rücken steigt von 8 auf 10 (oberer MAV-Rand) — eine echte Verschiebung, kein Umsortieren. Upper A dreht in beiden Blöcken zusätzlich die Reihenfolge: die priorisierte Muskelgruppe eröffnet die Einheit, solange Kraft und Nervensystem frisch sind.
+      Ab November ist noch keine weitere Rotation festgelegt — der Rücken-Block bleibt aktiv, bis eine dritte Priorität feststeht. Kein automatischer Rücksprung zur Brust.
     </div>
   </div>
 </div></div>
@@ -626,6 +635,17 @@ const WEEKPLAN={
 };
 const REF_BADMINTON_MONDAY=[2026,8,14]; // Jahr, Monat 0-basiert, Tag
 
+/* Mesozyklus: welche Muskelgruppe pro Kalendermonat priorisiert wird.
+   Betrifft nur Upper A/B -- Sharms, Lower, HIIT/Badminton, Rest und
+   Zone 2 sind vom Block unabhaengig. Nur die vom Nutzer festgelegten
+   Monate stehen hier; jeder andere Monat faellt auf den Brust-Standard
+   zurueck, bis eine weitere Rotation definiert wird. */
+const MESO_SCHEDULE={'2026-09':'chest','2026-10':'back'};
+/* Haelt den zuletzt geplanten Block, statt nach Oktober grundlos auf
+   Block 1 zurueckzuspringen -- eine echte Rotation braeuchte eine dritte
+   Vorgabe, kein automatisches Zuruecksetzen. */
+const MESO_DEFAULT='back';
+
 const TG={C:{b:'#0e1a26',c:'#3a7bbf',t:'COMPOUND'},I:{b:'#1f1a0a',c:'#b8922e',t:'ISOLATION'},
 P:{b:'#260e0e',c:'#c94535',t:'PRIORITÄT'},G:{b:'#0a1f14',c:'#2e9e6a',t:'GESUNDHEIT'},
 K:{b:'#180e26',c:'#7a5ab5',t:'CORE'},A:{b:'#1a0e1a',c:'#7a5ab5',t:'ARMGESUND'},
@@ -701,8 +721,8 @@ y:'Helgerud et al. (2007): effektivstes bekanntes Protokoll für VO₂max-Steige
 f:'Nie abrupt stoppen. Aktive Erholung beschleunigt die Laktatclearance etwa 3× gegenüber Stillstand.',
 y:'Parasympathisches Nervensystem schneller reaktivieren → bessere Erholung bis zur nächsten Einheit.'}]},
 
-upperA:{lb:'Upper A',ti:'Brust · Rücken · Compound',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'3–11 Wdh',
-lg:'Sehr niedrige Wiederholungszahlen bei den Compound-Bewegungen (Schrägbank 4–6, T-Bar 3–8) — das ist ein kraftorientierter Hypertrophie-Tag mit maximaler mechanischer Spannung. Fliegende als Pre-Exhaustion-Einstieg stellt sicher, dass beim Schrägbankdrücken die Brust limitiert.',
+upperA_chest:{lb:'Upper A',ti:'Brust · Rücken · Compound',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'3–11 Wdh',
+lg:'Mesozyklus Block 1 (September): Brust-Priorität. Sehr niedrige Wiederholungszahlen bei den Compound-Bewegungen (Schrägbank 4–6, T-Bar 3–8) — das ist ein kraftorientierter Hypertrophie-Tag mit maximaler mechanischer Spannung. Fliegende als Pre-Exhaustion-Einstieg stellt sicher, dass beim Schrägbankdrücken die Brust limitiert. Ab Oktober übernimmt der Rücken die Priorität — dann siehst du hier die andere Fassung dieses Tages.',
 nt:[{i:'📐',t:'Fliegende zuerst: Pre-Exhaustion. Die Brust ist voraktiviert, sodass beim Schrägbankdrücken nicht der Trizeps zuerst versagt.'},
 {i:'⚡',t:'T-Bar Rudern bei 3–8 Wdh mit engem Griff: Sehr schwer. Der enge Griff verlagert den Reiz stärker auf Lat und Teres major (vs. breiter Griff in Upper B → mehr Rhomboiden).'},
 {i:'🔬',t:'4 Sets Seitheben = 3 Arbeitssätze. Zusammen mit Upper B (3) und Sharms (2) ergibt das 8 direkte Sätze für den medialen Deltoid.'}],
@@ -746,6 +766,57 @@ y:'Zweiter Brachialis-Tag. Der Brachialis ist der stärkste Ellenbogenbeuger und
 {n:'Unterarm-Curls hinter dem Rücken — Optional',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'O',
 f:'Optional laut deiner Routine. Rest-Pause-Protokoll wie am Sharms-Tag. Bei Erschöpfung nach dem schweren Compound-Volumen kann diese Übung entfallen.',
 y:'Zweiter Unterarm-Tag der Woche. Bei bereits 16 Unterarm-Sätzen wöchentlich ist die optionale Handhabung sinnvoll — Priorität liegt auf Recovery.'}]},
+
+/* Mesozyklus Block 2 (Oktober): Ruecken-Prioritaet. Gleiche zehn Uebungen
+   wie im Brust-Block, umsortiert -- Ruecken zuerst in der Einheit, solange
+   ZNS und Griffkraft frisch sind. Die eigentliche Volumenverschiebung
+   (Brust runter, Ruecken rauf) passiert nicht hier, sondern drueben bei
+   Upper B ueber den Dip-Tausch. Hier aendert sich nur die Reihenfolge. */
+upperA_back:{lb:'Upper A',ti:'Rücken · Brust · Compound',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'3–11 Wdh',
+lg:'Mesozyklus Block 2 (Oktober): Rücken-Priorität. Latzug und Iso-Rudern eröffnen jetzt die Einheit, solange Griffkraft und Nervensystem frisch sind — genau die Logik, die im September für die Brust galt, jetzt umgekehrt. Die Satzzahlen bleiben hier unverändert; die tatsächliche Volumenverschiebung zwischen Brust und Rücken passiert drüben bei Upper B über den Dip-Tausch.',
+nt:[{i:'🔄',t:'Reihenfolge gedreht: Rücken zuerst, Brust danach. Die Pre-Exhaustion-Logik der Fliegenden entfällt dadurch für diesen Block — sie kommt jetzt als Übergang nach dem Rückenblock, nicht mehr als Einstieg.'},
+{i:'⚡',t:'T-Bar Rudern bei 3–8 Wdh mit engem Griff: unverändert der schwerste Rückenreiz der Woche. Enger Griff = mehr Lat und Teres major (vs. breiter Griff in Upper B → mehr Rhomboiden).'},
+{i:'🔬',t:'4 Sets Seitheben = 3 Arbeitssätze, unverändert. Zusammen mit Upper B (3) und Sharms (2) weiterhin 8 direkte Sätze für den medialen Deltoid — der Block ändert nichts an der Schulter.'}],
+ex:[
+{n:'Latzug (Kabel)',t:'Latissimus dorsi · Teres major · Bizeps synergistisch',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–12',rs:'2:30',g:'C',
+f:'Warm-Up ~45 % × 10. Vollständige Streckung am oberen Punkt — der Lat muss maximal gedehnt sein. Schulterblatt-Depression initiiert die Zugbewegung, nicht der Bizeps. Am Endpunkt 1 Sek halten.',
+y:'Eröffnet jetzt die Einheit statt an zweiter Stelle zu stehen — der Lat bekommt den frischesten Zustand des Tages. Die Dehnungsphase am oberen Umkehrpunkt ist der stärkste Wachstumsstimulus für den Latissimus.'},
+
+{n:'Iso-Laterales Rudern von oben',t:'Latissimus · Teres major · Rhomboiden · Posteriore Schulter',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'8–12',rs:'2:00',g:'C',
+f:'Iso-lateral = jede Seite unabhängig. Direkt nach Latzug, solange die Zugkraft noch frisch ist. Am Endpunkt Schulterblatt aktiv retrahieren.',
+y:'Zweite Rückenübung des Blocks, jetzt an Position 2 statt 3 — mehr Kraftreserve für den zusätzlichen Winkel. Die unabhängige Seitenführung deckt Kraft-Asymmetrien auf, die bei bilateralem Training unbemerkt bleiben.'},
+
+{n:'Fliegende (Maschine)',t:'Pectoralis major — sternaler + mittlerer Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–10',rs:'2:30',g:'I',
+f:'Warm-Up ~50 % × 10. Nach zwei Rückenübungen ist die Zugmuskulatur vorermüdet — die Brust startet jetzt frisch in ihren Teil der Einheit. Am Tiefpunkt maximale Pectoralis-Dehnung — 1 Sek halten.',
+y:'Übernimmt hier die Rolle des Übergangs zur Brust statt der Pre-Exhaustion-Einleitung. Die Maschine hält konstante Zugspannung über den gesamten ROM — auch bei reduzierter Frische noch ein sauberer Reiz.'},
+
+{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'4–6',rs:'2:30',g:'P',
+f:'Warm-Up ~55 % × 8. Abgewinkelte Ellenbogen (nicht 90° ausgestellt) — schont das Schultergelenk erheblich. Am Tiefpunkt kontrolliert dehnen, dann kraftvoll drücken.',
+y:'Bleibt bei 4–6 Wdh im klassischen Kraftbereich, jetzt aber nach zwei Rückenübungen und der Brust-Isolation — bewusst spätere Position im Erhaltungs-Block der Brust. Die Smith-Führung sichert das auch bei reduzierter Frische ab.'},
+
+{n:'T-Bar Rudern — enger Griff',t:'Latissimus · Teres major · Rhomboiden · Posteriore Schulter · Trapez',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'3–8',rs:'2:30',g:'P',
+f:'Warm-Up ~50 % × 10. Enger Griff → Ellenbogen näher am Körper → mehr Lat und Teres major. Shrugs am Ende der Bewegung für Trapez-Aktivierung. Rücken neutral, keine Rumpfstreckung als Schwung.',
+y:'3–8 Wdh macht das weiterhin zur schwersten Rückenübung der Woche — jetzt als dritte statt vierte Rückenbewegung. T-Bar Rudern trainiert die hintere Schulter substanziell mit; zusammen mit Upper B ergibt das weiterhin 4 indirekte Posterior-Delt-Sätze.'},
+
+{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel',s:'4 Sets',w:'1 Warm-Up + 3 Arbeitssätze',r:'3–9',rs:'2:30',g:'P',
+f:'Warm-Up ~40 % × 12. Lat anspannen um Trapez rauszunehmen — deine Technik-Notiz. Der Rep-Bereich 3–9 erlaubt schwere Sätze am Anfang und höhere Wiederholungen bei Ermüdung.',
+y:'3 Arbeitssätze hier + 3 in Upper B + 2 in Sharms = weiterhin 8 direkte Sätze/Woche. Der Block ändert nichts an der Schulter-Planung.'},
+
+{n:'Single Arm Triceps Pushdown (Cable) — mit Cuffs',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–11',rs:'1:35',g:'I',
+f:'Warm-Up ~35 % × 12. Mit Cuffs statt Griff — eliminiert Unterarm-Beteiligung und isoliert den Trizeps stärker. Ellenbogen fixiert, volle Streckung am Endpunkt.',
+y:'Nach dem Schrägbankdrücken bereits vorermüdet — die Isolation schöpft die Restkapazität aus. Unverändert gegenüber dem Brust-Block.'},
+
+{n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–7',rs:'2:15',g:'I',
+f:'Warm-Up ~40 % × 12. Identische Ausführung wie am Sharms-Tag. Am Tiefpunkt vollständig öffnen, 1 Sek pausieren.',
+y:'Zweiter von drei Preacher-Curl-Tagen. Der Bizeps hat bereits erhebliches indirektes Volumen aus Latzug, Iso-Rudern und T-Bar Rudern erhalten — unverändert gegenüber dem Brust-Block.'},
+
+{n:'Reverse Curl (Cable) — mit Band',t:'Brachioradialis · Brachialis',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'8–9',rs:'1:25',g:'A',
+f:'Mit Band als Mischung aus Hammer und Reverse Curl. Ellenbogen fixiert, neutrale bis pronierte Handstellung.',
+y:'Zweiter Brachialis-Tag. Unverändert gegenüber dem Brust-Block.'},
+
+{n:'Unterarm-Curls hinter dem Rücken — Optional',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'O',
+f:'Optional laut deiner Routine. Rest-Pause-Protokoll wie am Sharms-Tag. Bei Erschöpfung nach dem schweren Compound-Volumen kann diese Übung entfallen.',
+y:'Zweiter Unterarm-Tag der Woche. Unverändert gegenüber dem Brust-Block.'}]},
 
 rest:{lb:'Rest',ti:'Vollständige Erholung',ac:'#2e9e6a',du:'Kein Training',rp:'—',rr:'—',
 lg:'Nach mehreren aufeinanderfolgenden Trainingstagen ist systemische Ermüdung akkumuliert. Dieser Ruhetag bestimmt direkt die Qualität der beiden folgenden Einheiten.',
@@ -806,8 +877,8 @@ y:'Zusammen mit Negativ Crunch und Side Bend deckt der Lower-Tag alle Rumpfebene
 f:'Optional. Rest-Pause-Protokoll. Am Lower-Tag ist der Oberkörper frisch — hier kannst du Unterarme ohne Interferenz trainieren.',
 y:'Dritter Unterarm-Tag. Der Lower-Tag ist strategisch günstig dafür, weil keine Griffkraft für andere Übungen benötigt wird.'}]},
 
-upperB:{lb:'Upper B',ti:'Brust · Rücken · Variation',ac:'#b8922e',du:'85–95 Min',rp:'RPE 7–9',rr:'5–12 Wdh',
-lg:'Upper B hat höheres Brustvolumen als Upper A (6 vs. 4 Arbeitssätze) und ergänzt die Winkel: Dip (untere Brust), Fliegende (mittlere Brust), Schrägbank (obere Brust). Dazu die Überzüge als Brustkorb-Erweiterung. Der Rep-Bereich liegt etwas höher als bei Upper A.',
+upperB_chest:{lb:'Upper B',ti:'Brust · Rücken · Variation',ac:'#b8922e',du:'85–95 Min',rp:'RPE 7–9',rr:'5–12 Wdh',
+lg:'Mesozyklus Block 1 (September): Brust-Priorität. Upper B hat höheres Brustvolumen als Upper A (6 vs. 4 Arbeitssätze) und ergänzt die Winkel: Dip (untere Brust), Fliegende (mittlere Brust), Schrägbank (obere Brust). Dazu die Überzüge als Brustkorb-Erweiterung. Der Rep-Bereich liegt etwas höher als bei Upper A. Ab Oktober weicht der Dip einem Rückenzug — die Erklärung steht dann in der Rücken-Fassung dieses Tages.',
 nt:[{i:'🫁',t:'Überzüge mit tiefem Atmen: Die klassische Rader-Methode zur Thoraxerweiterung. Mit 18 Jahren ist der Rippenknorpel noch formbar — das ist wissenschaftlich das Zeitfenster, in dem diese Übung überhaupt strukturell wirken kann.'},
 {i:'📐',t:'T-Bar Rudern hier mit breitem Griff (vs. eng bei Upper A): Breiter Griff = mehr Rhomboiden und hintere Schulter, enger Griff = mehr Lat. Bewusste Variation über die Woche.'},
 {i:'⚠️',t:'Brust Dip: Deine Notiz "je nach Schulterzustand weglassen" ist die richtige Herangehensweise. Dips belasten das Schultergelenk in der Endposition stark — bei Beschwerden ersatzlos streichen.'}],
@@ -856,6 +927,62 @@ y:'Dritter Brachialis-Tag. Die Hybrid-Griffposition trifft Brachioradialis und B
 f:'Rest-Pause-Protokoll wie an den anderen Tagen. Letzter Unterarm-Tag vor der nächsten Ruhephase.',
 y:'Vierter Unterarm-Tag. Bei insgesamt 16 Sätzen pro Woche liegt das Volumen am oberen MAV-Rand — beobachte die Ellenbogensehnen und reduziere bei Reizungen.'}]},
 
+/* Mesozyklus Block 2 (Oktober): Ruecken-Prioritaet. Der eigentliche
+   Volumen-Tausch: Brust Dip (2 Arbeitssaetze) faellt weg, ein drittes
+   Ruecken-Element kommt an dieselbe Stelle in der Reihenfolge -- dieselbe
+   Position in der Einheit, umgekehrter Reiz. Pectoralis faellt dadurch von
+   10 auf 8 Saetze/Woche (unterer MAV-Rand), Latissimus steigt von 8 auf
+   10 (oberer MAV-Rand). Siehe VOL_BACK fuer die Tabelle. */
+upperB_back:{lb:'Upper B',ti:'Rücken · Brust · Variation',ac:'#b8922e',du:'85–95 Min',rp:'RPE 7–9',rr:'5–12 Wdh',
+lg:'Mesozyklus Block 2 (Oktober): Rücken-Priorität. Der Brust Dip pausiert für die Dauer des Blocks — an seiner Stelle in der Reihenfolge steht jetzt Einarmiges Kurzhantelrudern, das dritte Rückenelement neben Klimmzug und T-Bar. Damit fällt Brust von 10 auf 8 Sätze/Woche (unterer MAV-Rand), Rücken steigt von 8 auf 10 (oberer MAV-Rand) — eine echte Verschiebung, kein bloßes Umsortieren. Dieser Block bleibt über Oktober hinaus aktiv, bis eine dritte Priorität feststeht — kein automatischer Rücksprung zur Brust.',
+nt:[{i:'🔁',t:'Der Tausch: Brust Dip raus, Einarmiges Kurzhantelrudern rein — exakt an dessen Position als Übung 3. Das ist der einzige Eingriff, der tatsächlich Volumen zwischen den Muskeln verschiebt; alles andere in diesem Block ist nur umsortiert.'},
+{i:'🫁',t:'Überzüge mit tiefem Atmen: unverändert die Rader-Methode zur Thoraxerweiterung. Mit 18 Jahren ist der Rippenknorpel noch formbar — das gilt unabhängig vom aktiven Block.'},
+{i:'📐',t:'T-Bar Rudern hier weiterhin mit breitem Griff (vs. eng bei Upper A): mehr Rhomboiden und hintere Schulter. Jetzt an zweiter statt fünfter Stelle — mehr Kraftreserve für den Griff.'}],
+ex:[
+{n:'Klimmzug (Gewichtet)',t:'Latissimus dorsi · Teres major · Bizeps · Rhomboiden',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–12',rs:'2:30',g:'P',
+f:'Warm-Up mit Körpergewicht × 5, langsame Exzentrik und volle ROM. Am Tiefpunkt vollständige Armstreckung — kein halbes Hängen. Schulterblatt-Depression initiiert die Bewegung.',
+y:'Eröffnet jetzt die Einheit statt an zweiter Stelle zu stehen — die überlegene Latissimus-Übung bekommt den frischesten Zustand des Tages. Der volle ROM mit maximaler Dehnung am Tiefpunkt ist der stärkste Wachstumsreiz für den Lat.'},
+
+{n:'T-Bar Rudern — breiter Griff',t:'Rhomboiden · Trapez · Posteriore Schulter · Latissimus',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–9',rs:'2:30',g:'C',
+f:'Warm-Up ~50 % × 10. Breiter Griff → Ellenbogen weiter außen → mehr Rhomboiden und hintere Schulter. Shrugs am Ende, Schulterblätter aktiv kontrahieren.',
+y:'Zweite Rückenübung des Blocks, direkt nach Klimmzug statt an fünfter Stelle — mehr Kraftreserve für den schweren Zug. Der breite Griff verlagert den Reiz gegenüber Upper A (enger Griff) Richtung Rhomboiden und posteriore Schulter.'},
+
+{n:'Einarmiges Kurzhantelrudern',t:'Latissimus dorsi · Rhomboiden · Teres major — unilateral',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'8–10',rs:'2:00',g:'X',
+f:'Auf der Bank abgestützt (Knie und Hand derselben Seite), freier Arm hängt vollständig gestreckt. Ellenbogen eng am Körper nach hinten-oben ziehen, am Endpunkt Schulterblatt aktiv retrahieren und 1 Sek halten. Kontrolliert bis zur vollen Dehnung ablassen.',
+y:'Ersetzt den Brust Dip für die Dauer des Rücken-Blocks — dritte Rückenübung an derselben Stelle in der Reihenfolge, an der sonst die erste Brustübung stünde. Unilateral erlaubt einen tieferen Dehnungsweg als jede bilaterale Variante, weil der Rücken nicht durch eine Stangenbreite limitiert wird, und deckt Kraft-Asymmetrien zwischen beiden Seiten auf, die Klimmzug und T-Bar nicht zeigen.'},
+
+{n:'Fliegende (Maschine)',t:'Pectoralis major — mittlerer + sternaler Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–11',rs:'2:15',g:'I',
+f:'Aufrechte Maschine bevorzugen, Sitz eher höher einstellen — deine Notiz. Die höhere Sitzposition verschiebt den Zugwinkel und trifft mehr mittlere bis untere Brustfasern. Am Tiefpunkt 1 Sek Dehnung halten.',
+y:'Nach drei Rückenübungen der Einstieg in den Brustteil der Einheit — bewusst später, weil Brust in diesem Block auf Erhaltungsvolumen läuft. Die Sitzhöhe bleibt der entscheidende Parameter für den Faserbereich.'},
+
+{n:'Überzüge — tief atmen',t:'Latissimus · Pectoralis · Serratus anterior · Rippenknorpel',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'15–20',rs:'2:00',g:'X',
+f:'Leichtes Gewicht, hohe Wiederholungen. In der Dehnungsposition (Hantel hinter dem Kopf) maximal tief einatmen und den Brustkorb bewusst weiten. Beim Zurückführen ausatmen. Die Atmung ist hier wichtiger als das Gewicht.',
+y:'Unverändert gegenüber dem Brust-Block — die Rader-Methode zur Thoraxerweiterung ist blockunabhängig sinnvoll, solange die mediale Clavicula-Epiphyse offen ist. Zusätzlich trainiert sie den Serratus anterior.'},
+
+{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–10',rs:'2:30',g:'C',
+f:'Warm-Up ~55 % × 8. Rumpf anspannen — deine Notiz. Der Rep-Bereich ist etwas höher als bei Upper A (4–6), was einen anderen Reiztyp setzt.',
+y:'Letzte Brustübung des Blocks statt der zweiten — bewusst spät positioniert, solange Brust auf Erhaltungsvolumen läuft. Der Rep-Bereich bleibt höher als bei Upper A für metabolischen statt mechanischen Reiz.'},
+
+{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel',s:'4 Sets',w:'1 Warm-Up + 3 Arbeitssätze',r:'6–9',rs:'2:30',g:'P',
+f:'Warm-Up ~40 % × 12. Lat anspannen um Trapez rauszunehmen. 3 Arbeitssätze wie bei Upper A.',
+y:'Insgesamt weiterhin 8 direkte Seitheben-Arbeitssätze pro Woche. Der Block ändert nichts an der Schulter-Planung.'},
+
+{n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–7',rs:'2:15',g:'I',
+f:'Warm-Up ~40 % × 12. Dritter Preacher-Curl-Tag der Woche. Am Tiefpunkt vollständig öffnen.',
+y:'Unverändert gegenüber dem Brust-Block. Zusammen mit dem indirekten Volumen aus Klimmzügen, T-Bar Rudern und jetzt auch dem einarmigen Rudern erreicht der Bizeps in diesem Block eher mehr als 12 Sätze/Woche.'},
+
+{n:'Trizepsdrücken (Kabel)',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–12',rs:'1:30',g:'I',
+f:'Warm-Up ~35 % × 12. Ellenbogen fixiert, vollständige Streckung am Endpunkt mit 1 Sek Halten.',
+y:'Nach Schrägbankdrücken vorermüdet — ohne den Dip diesmal nur einfach statt doppelt vorermüdet. Unverändert sonst gegenüber dem Brust-Block.'},
+
+{n:'Reverse Curl (Cable) — mit Band',t:'Brachioradialis · Brachialis · Unterarm-Extensoren',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'10–15',rs:'1:30',g:'A',
+f:'Mit Band als Mix aus Hammer und Reverse Curl. Ellenbogen fixiert, Handstellung zwischen neutral und proniert.',
+y:'Unverändert gegenüber dem Brust-Block.'},
+
+{n:'Unterarm-Curls hinter dem Rücken (Langhantel)',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'A',
+f:'Rest-Pause-Protokoll wie an den anderen Tagen. Letzter Unterarm-Tag vor der nächsten Ruhephase.',
+y:'Unverändert gegenüber dem Brust-Block.'}]},
+
 zone2:{lb:'Zone 2',ti:'Aerobe Basis · Erholung',ac:'#2e9e6a',du:'40–60 Min',rp:'RPE 4–5',rr:'60–70 % HFmax',
 lg:'Niedrigste Intensität der Woche, aktive Erholung vor der nächsten Einheit. Die AMPK-Aktivierung ist minimal, sodass kein Interferenzeffekt mit dem Krafttag davor entsteht.',
 nt:[{i:'🫁',t:'Nasenatemtest: Du musst vollständige Sätze sprechen können. Keuchst du, bist du zu schnell. Zone 2 fühlt sich unangenehm langsam an.'},
@@ -869,13 +996,34 @@ y:'Zone 2 aktiviert PGC-1α, den Masterregulator der Mitochondriogenese. Mehr Mi
 f:'Alle Muskelgruppen der Woche systematisch durchgehen: Pectoralis, Latissimus, posteriore Schulter, Unterarme, Hüftbeuger, Hamstrings, Waden. Je 60–90 Sek.',
 y:'Wochenabschluss-Ritual. Signalisiert dem Nervensystem den vollständigen Übergang in den Erholungsmodus vor der nächsten Einheit.'}]}};
 
-const VOL=[
+/* VOL_CHEST = Mesozyklus Block 1 (September). VOL_BACK = Block 2 (Oktober),
+   nur die zwei mechanisch betroffenen Zeilen unterscheiden sich: Pectoralis
+   (SA verliert den Dip, -2) und Latissimus (SA gewinnt das einarmige
+   Rudern, +2) -- exakt der Tausch aus upperB_back, sonst nichts geraten. */
+const VOL_CHEST=[
 {m:'Pectoralis',mo:0,mi:4,fr:0,sa:6,syn:0,mav:[8,16],n:'MI: Fliegende(2)+Schrägbank(2) · SA: Dip(2)+Fliegende(2)+Schrägbank(2)'},
 {m:'Latissimus',mo:0,mi:4,fr:0,sa:4,syn:0,mav:[8,14],n:'MI: Latzug(2)+Iso-Rudern(2) · SA: Klimmzug(2)+Überzüge(2)'},
 {m:'Rhomboiden / Trap',mo:0,mi:2,fr:0,sa:2,syn:4,mav:[6,12],n:'T-Bar(2) je Upper · Latzug/Klimmzug → 4 indir.'},
 {m:'Med. Deltoid',mo:2,mi:3,fr:0,sa:3,syn:2,mav:[6,14],n:'Seitheben MO(2)+MI(3)+SA(3) · Shoulder Press → 2 indir.'},
 {m:'Post. Deltoid',mo:2,mi:0,fr:0,sa:0,syn:4,mav:[6,12],n:'Reverse Fliegende(2) · T-Bar Rudern MI+SA → 4 indir. ✓'},
 {m:'Bizeps',mo:2,mi:2,fr:0,sa:2,syn:6,mav:[8,14],n:'Preacher 3× · alle Zugübungen → 6 indir.'},
+{m:'Trizeps',mo:4,mi:2,fr:0,sa:2,syn:4,mav:[6,14],n:'MO: JM Press(2)+Pushdown(2) · Drücken → 4 indir.'},
+{m:'Unterarm',mo:6,mi:4,fr:2,sa:4,syn:0,mav:[6,16],n:'Reverse Curl + Wrist Curl + Extension'},
+{m:'Core',mo:4,mi:0,fr:5,sa:0,syn:0,mav:[4,12],n:'MO: Crunch(2)+Beinheben(2) · FR: Crunch(3)+Beinheben(2)'},
+{m:'Obliques',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[2,8],n:'Side Bend(2)'},
+{m:'Quadrizeps',mo:0,mi:0,fr:4,sa:0,syn:0,mav:[8,16],n:'Beinpresse(2)+Beinstrecken(2) · + Sportarten',sport:1},
+{m:'Hamstrings',mo:0,mi:0,fr:2,sa:0,syn:2,mav:[6,12],n:'Beinbeugen(2) · Hyperext → 2 indir. · + Sportarten',sport:1},
+{m:'Gluteus',mo:0,mi:0,fr:2,sa:0,syn:1,mav:[4,12],n:'Hyperextension(2) · + Sportarten',sport:1},
+{m:'Adduktoren',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[2,8],n:'Hüftadduktion(2)'},
+{m:'Waden',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[4,10],n:'Wadenpressen(2) · + Sprungsportarten',sport:1}];
+
+const VOL_BACK=[
+{m:'Pectoralis',mo:0,mi:4,fr:0,sa:4,syn:0,mav:[8,16],n:'MI: Fliegende(2)+Schrägbank(2) · SA: Fliegende(2)+Schrägbank(2) — Dip pausiert im Rücken-Block'},
+{m:'Latissimus',mo:0,mi:4,fr:0,sa:6,syn:0,mav:[8,14],n:'MI: Latzug(2)+Iso-Rudern(2) · SA: Klimmzug(2)+Überzüge(2)+Einarmiges Rudern(2)'},
+{m:'Rhomboiden / Trap',mo:0,mi:2,fr:0,sa:2,syn:4,mav:[6,12],n:'T-Bar(2) je Upper · Latzug/Klimmzug → 4 indir.'},
+{m:'Med. Deltoid',mo:2,mi:3,fr:0,sa:3,syn:2,mav:[6,14],n:'Seitheben MO(2)+MI(3)+SA(3) · Shoulder Press → 2 indir.'},
+{m:'Post. Deltoid',mo:2,mi:0,fr:0,sa:0,syn:4,mav:[6,12],n:'Reverse Fliegende(2) · T-Bar Rudern MI+SA → 4 indir. ✓'},
+{m:'Bizeps',mo:2,mi:2,fr:0,sa:2,syn:7,mav:[8,14],n:'Preacher 3× · alle Zugübungen inkl. einarmiges Rudern → 7 indir.'},
 {m:'Trizeps',mo:4,mi:2,fr:0,sa:2,syn:4,mav:[6,14],n:'MO: JM Press(2)+Pushdown(2) · Drücken → 4 indir.'},
 {m:'Unterarm',mo:6,mi:4,fr:2,sa:4,syn:0,mav:[6,16],n:'Reverse Curl + Wrist Curl + Extension'},
 {m:'Core',mo:4,mi:0,fr:5,sa:0,syn:0,mav:[4,12],n:'MO: Crunch(2)+Beinheben(2) · FR: Crunch(3)+Beinheben(2)'},
@@ -1081,6 +1229,19 @@ const GROOM=[
    Belegungen (WEEKPLAN.a/.b), Trainingsinhalt kommt aus S nach
    Programm-Identitaet, nicht mehr nach Wochentag. */
 
+/* Mesozyklus: welche Muskelgruppe im Kalendermonat priorisiert wird.
+   Betrifft nur upperA/upperB -- resolveProgram() biegt genau diese beiden
+   Schluessel auf ihre Blockvariante um, alle anderen Programme (Sharms,
+   HIIT, Rest, Lower, Zone 2) reichen unveraendert durch. */
+function activeMesoBlock(date=new Date()){
+  const key=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
+  return MESO_SCHEDULE[key]||MESO_DEFAULT;
+}
+const BLOCKED_PROGRAMS=['upperA','upperB'];
+function resolveProgram(key){
+  return BLOCKED_PROGRAMS.includes(key) ? S[`${key}_${activeMesoBlock()}`] : S[key];
+}
+
 /* Montag der jeweiligen Kalenderwoche, auf Mitternacht normiert. */
 function mondayOf(date){
   const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
@@ -1101,7 +1262,7 @@ const getWeekPlan=()=>WEEKPLAN[isBadmintonWeek()?'b':'a'];
 function renderDayBar(){
   const plan=getWeekPlan();
   document.getElementById('dbar').innerHTML=plan.map((d,i)=>{
-    const prog=S[d.p],ac=prog.ac,name=d.name||prog.lb;
+    const prog=resolveProgram(d.p),ac=prog.ac,name=d.name||prog.lb;
     return `<button class="db${i===0?' on':''}" onclick="day('${d.id}',this)" style="border-bottom-color:${i===0?ac:'transparent'}">
       <div class="dt">${d.s}</div>
       <div class="dd" style="background:${ac};opacity:${i===0?1:.2}"></div>
@@ -1112,7 +1273,7 @@ function renderDayBar(){
 
 function renderDay(id){
   const entry=getWeekPlan().find(d=>d.id===id);
-  const d=S[entry.p],ac=d.ac,label=`${entry.s} · ${entry.name||d.lb}`;
+  const d=resolveProgram(entry.p),ac=d.ac,label=`${entry.s} · ${entry.name||d.lb}`;
   /* Ersetzt (z.B. Badminton statt Studio-HIIT): Metrik-Badges, Notizen und
      Uebungsliste des Studio-Programms gelten fuer diesen Tag nicht -- statt
      erfundener Badminton-Kennzahlen nur der Ersetzungs-Hinweis. */
@@ -1160,6 +1321,12 @@ function renderDay(id){
 }
 
 function renderVol(){
+  const block=activeMesoBlock(), VOL=block==='back'?VOL_BACK:VOL_CHEST;
+  const info=document.getElementById('mesoinfo');
+  const monatsname=new Date().toLocaleDateString('de-DE',{month:'long',year:'numeric'});
+  if(info) info.innerHTML=block==='back'
+    ? `<b>Aktiver Mesozyklus: Rücken-Priorität</b> (${monatsname}) — Brust Dip pausiert zugunsten von Einarmigem Kurzhantelrudern in Upper B.`
+    : `<b>Aktiver Mesozyklus: Brust-Priorität</b> (${monatsname}) — Standardplan, Brust Dip aktiv.`;
   document.getElementById('vtb').innerHTML=VOL.map(r=>{
     const tot=r.mo+r.mi+r.fr+r.sa+r.syn,[lo,hi]=r.mav;
     const ok=tot>=lo&&tot<=hi,over=tot>hi;
@@ -1239,7 +1406,7 @@ function day(id,b){
     x.classList.remove('on');x.style.borderBottomColor='transparent';
     x.querySelector('.dd').style.opacity='.2';x.querySelector('.dn').style.color='var(--dim)';
   });
-  const ac=S[getWeekPlan().find(d=>d.id===id).p].ac;
+  const ac=resolveProgram(getWeekPlan().find(d=>d.id===id).p).ac;
   b.classList.add('on');b.style.borderBottomColor=ac;
   b.querySelector('.dd').style.opacity='1';b.querySelector('.dn').style.color=ac;
   renderDay(id);

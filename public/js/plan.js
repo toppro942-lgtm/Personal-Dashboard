@@ -2,7 +2,20 @@
    der Wochentag-Kalender wechselt jetzt alle 14 Tage zwischen zwei
    Belegungen (WEEKPLAN.a/.b), Trainingsinhalt kommt aus S nach
    Programm-Identitaet, nicht mehr nach Wochentag. */
-import { TG, S, WEEKPLAN, REF_BADMINTON_MONDAY, VOL, MEALS, FOODTIPS, TIMING, SLEEP, STIPS, MOBSEQ, MOBMILES, EVE, MOR, HYDRATION } from './plan-data.js';
+import { TG, S, WEEKPLAN, REF_BADMINTON_MONDAY, MESO_SCHEDULE, MESO_DEFAULT, VOL_CHEST, VOL_BACK, MEALS, FOODTIPS, TIMING, SLEEP, STIPS, MOBSEQ, MOBMILES, EVE, MOR, HYDRATION } from './plan-data.js';
+
+/* Mesozyklus: welche Muskelgruppe im Kalendermonat priorisiert wird.
+   Betrifft nur upperA/upperB -- resolveProgram() biegt genau diese beiden
+   Schluessel auf ihre Blockvariante um, alle anderen Programme (Sharms,
+   HIIT, Rest, Lower, Zone 2) reichen unveraendert durch. */
+function activeMesoBlock(date=new Date()){
+  const key=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
+  return MESO_SCHEDULE[key]||MESO_DEFAULT;
+}
+const BLOCKED_PROGRAMS=['upperA','upperB'];
+function resolveProgram(key){
+  return BLOCKED_PROGRAMS.includes(key) ? S[`${key}_${activeMesoBlock()}`] : S[key];
+}
 
 /* Montag der jeweiligen Kalenderwoche, auf Mitternacht normiert. */
 function mondayOf(date){
@@ -24,7 +37,7 @@ const getWeekPlan=()=>WEEKPLAN[isBadmintonWeek()?'b':'a'];
 function renderDayBar(){
   const plan=getWeekPlan();
   document.getElementById('dbar').innerHTML=plan.map((d,i)=>{
-    const prog=S[d.p],ac=prog.ac,name=d.name||prog.lb;
+    const prog=resolveProgram(d.p),ac=prog.ac,name=d.name||prog.lb;
     return `<button class="db${i===0?' on':''}" onclick="day('${d.id}',this)" style="border-bottom-color:${i===0?ac:'transparent'}">
       <div class="dt">${d.s}</div>
       <div class="dd" style="background:${ac};opacity:${i===0?1:.2}"></div>
@@ -35,7 +48,7 @@ function renderDayBar(){
 
 function renderDay(id){
   const entry=getWeekPlan().find(d=>d.id===id);
-  const d=S[entry.p],ac=d.ac,label=`${entry.s} · ${entry.name||d.lb}`;
+  const d=resolveProgram(entry.p),ac=d.ac,label=`${entry.s} · ${entry.name||d.lb}`;
   /* Ersetzt (z.B. Badminton statt Studio-HIIT): Metrik-Badges, Notizen und
      Uebungsliste des Studio-Programms gelten fuer diesen Tag nicht -- statt
      erfundener Badminton-Kennzahlen nur der Ersetzungs-Hinweis. */
@@ -83,6 +96,12 @@ function renderDay(id){
 }
 
 function renderVol(){
+  const block=activeMesoBlock(), VOL=block==='back'?VOL_BACK:VOL_CHEST;
+  const info=document.getElementById('mesoinfo');
+  const monatsname=new Date().toLocaleDateString('de-DE',{month:'long',year:'numeric'});
+  if(info) info.innerHTML=block==='back'
+    ? `<b>Aktiver Mesozyklus: Rücken-Priorität</b> (${monatsname}) — Brust Dip pausiert zugunsten von Einarmigem Kurzhantelrudern in Upper B.`
+    : `<b>Aktiver Mesozyklus: Brust-Priorität</b> (${monatsname}) — Standardplan, Brust Dip aktiv.`;
   document.getElementById('vtb').innerHTML=VOL.map(r=>{
     const tot=r.mo+r.mi+r.fr+r.sa+r.syn,[lo,hi]=r.mav;
     const ok=tot>=lo&&tot<=hi,over=tot>hi;
@@ -162,7 +181,7 @@ function day(id,b){
     x.classList.remove('on');x.style.borderBottomColor='transparent';
     x.querySelector('.dd').style.opacity='.2';x.querySelector('.dn').style.color='var(--dim)';
   });
-  const ac=S[getWeekPlan().find(d=>d.id===id).p].ac;
+  const ac=resolveProgram(getWeekPlan().find(d=>d.id===id).p).ac;
   b.classList.add('on');b.style.borderBottomColor=ac;
   b.querySelector('.dd').style.opacity='1';b.querySelector('.dn').style.color=ac;
   renderDay(id);
