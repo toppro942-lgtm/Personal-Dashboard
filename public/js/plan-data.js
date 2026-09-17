@@ -2,8 +2,13 @@
    Reine Deklarationen, keine Logik: Inhalte lassen sich hier aendern, ohne
    die Render-Module anzufassen. */
 
-/* Zwei Wochentypen statt eines festen Plans: alle 14 Tage ersetzt Badminton
-   das Studio-HIIT am Mittwoch, und die uebrigen Tage ruecken entsprechend.
+/* Zwei Wochentypen statt eines festen Plans, und sie unterscheiden sich
+   nicht nur in der Tagesbelegung, sondern im Oberkoerper-Programm selbst:
+   - a (Nicht-Badminton): Sharms 1x + HIIT + Upper A 2x + Lower -- schwere
+     Fassung, 2 Arbeitssaetze je Uebung, gewichtete Koerpergewichts-Compounds.
+   - b (Badminton): Upper B 3x + Badminton + Lower, kein Sharms -- Frequenz-
+     Fassung, 1-2 Saetze je Uebung, maschinenlastig, damit dieselbe Muskulatur
+     nach 48h wieder belastbar ist. Wochensumme je Muskel bleibt vergleichbar.
    Farbe und Inhalt haengen jetzt am PROGRAMM (S-Schluessel), nicht mehr am
    Wochentag -- ein Programm behaelt seine Identitaet, auf welchem Wochentag
    es auch liegt. "name" ueberschreibt nur die Anzeige (z.B. "Badminton
@@ -12,12 +17,16 @@
    -- welche Woche das jeweils ist, berechnet plan.js daraus fuer "heute". */
 export const WEEKPLAN={
  a:[{id:'mo',s:'MO',p:'sharms'},{id:'di',s:'DI',p:'hiit'},{id:'mi',s:'MI',p:'upperA'},
-    {id:'do',s:'DO',p:'rest'},{id:'fr',s:'FR',p:'lower'},{id:'sa',s:'SA',p:'upperB'},{id:'so',s:'SO',p:'zone2'}],
- b:[{id:'mo',s:'MO',p:'upperA'},{id:'di',s:'DI',p:'rest'},
+    {id:'do',s:'DO',p:'rest'},{id:'fr',s:'FR',p:'lower'},{id:'sa',s:'SA',p:'upperA'},{id:'so',s:'SO',p:'zone2'}],
+ b:[{id:'mo',s:'MO',p:'rest'},{id:'di',s:'DI',p:'upperB'},
     {id:'mi',s:'MI',p:'hiit',name:'Badminton (HIIT)',
-     override:'Ersetzt die geplante Studio-HIIT-Einheit vollständig — kein zusätzliches Training an diesem Tag. Eine Einzel- oder Doppelpartie liefert Intervallcharakter und Herz-Kreislauf-Reiz mindestens gleichwertig zum Sprint-Protokoll, das sonst hier stünde.'},
-    {id:'do',s:'DO',p:'sharms'},{id:'fr',s:'FR',p:'lower'},{id:'sa',s:'SA',p:'upperB'},{id:'so',s:'SO',p:'zone2'}]
+     override:'Ersetzt die geplante Studio-HIIT-Einheit vollständig — kein zusätzliches Training an diesem Tag. Eine Einzel- oder Doppelpartie liefert Intervallcharakter und Herz-Kreislauf-Reiz mindestens gleichwertig zum Sprint-Protokoll, das sonst hier stünde. Gleichzeitig liegt Badminton genau zwischen zwei Upper-B-Einheiten und hält den Oberkörper in Bewegung, ohne ihn zu ermüden.'},
+    {id:'do',s:'DO',p:'upperB'},{id:'fr',s:'FR',p:'lower'},{id:'sa',s:'SA',p:'upperB'},{id:'so',s:'SO',p:'zone2'}]
 };
+/* Wie oft das jeweilige Oberkoerper-Programm im Wochentyp vorkommt --
+   Quelle fuer die Volumenrechnung, damit Tabelle und Wochenplan nicht
+   auseinanderlaufen koennen. Muss zu WEEKPLAN passen. */
+export const WEEKFREQ={a:{sharms:1,upperA:2,lower:1},b:{upperB:3,lower:1}};
 export const REF_BADMINTON_MONDAY=[2026,8,14]; // Jahr, Monat 0-basiert, Tag
 
 /* Mesozyklus: welche Muskelgruppe pro Kalendermonat priorisiert wird.
@@ -106,102 +115,114 @@ y:'Helgerud et al. (2007): effektivstes bekanntes Protokoll für VO₂max-Steige
 f:'Nie abrupt stoppen. Aktive Erholung beschleunigt die Laktatclearance etwa 3× gegenüber Stillstand.',
 y:'Parasympathisches Nervensystem schneller reaktivieren → bessere Erholung bis zur nächsten Einheit.'}]},
 
-upperA_chest:{lb:'Upper A',ti:'Brust · Rücken · Compound',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'3–11 Wdh',
-lg:'Mesozyklus Block 1 (September): Brust-Priorität. Sehr niedrige Wiederholungszahlen bei den Compound-Bewegungen (Schrägbank 4–6, T-Bar 3–8) — das ist ein kraftorientierter Hypertrophie-Tag mit maximaler mechanischer Spannung. Fliegende als Pre-Exhaustion-Einstieg stellt sicher, dass beim Schrägbankdrücken die Brust limitiert. Ab Oktober übernimmt der Rücken die Priorität — dann siehst du hier die andere Fassung dieses Tages.',
-nt:[{i:'📐',t:'Fliegende zuerst: Pre-Exhaustion. Die Brust ist voraktiviert, sodass beim Schrägbankdrücken nicht der Trizeps zuerst versagt.'},
-{i:'⚡',t:'T-Bar Rudern bei 3–8 Wdh mit engem Griff: Sehr schwer. Der enge Griff verlagert den Reiz stärker auf Lat und Teres major (vs. breiter Griff in Upper B → mehr Rhomboiden).'},
-{i:'🔬',t:'4 Sets Seitheben = 3 Arbeitssätze. Zusammen mit Upper B (3) und Sharms (2) ergibt das 8 direkte Sätze für den medialen Deltoid.'}],
+/* Upper A -- 2x pro Woche, nur in der Nicht-Badminton-Woche (MI + SA).
+   Niedrigere Frequenz, dafuer volle 2 Arbeitssaetze pro Uebung und die
+   schweren gewichteten Koerpergewichts-Compounds (Dip, Klimmzug), die in
+   einer Woche mit drei Oberkoerper-Einheiten nicht regenerierbar waeren. */
+upperA_chest:{lb:'Upper A',ti:'Brust · Rücken · schwer',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'5–16 Wdh',
+lg:'Mesozyklus Block 1 (September): Brust-Priorität. Upper A läuft 2× in der Nicht-Badminton-Woche (MI + SA) und ist die schwere Fassung: durchgehend 2 Arbeitssätze pro Übung und die beiden gewichteten Körpergewichts-Compounds Dip und Klimmzug, die bei drei Oberkörper-Einheiten pro Woche nicht regenerierbar wären. Brust bekommt hier drei Winkel — Dip (untere Brust), Fliegende (mittlere), Schrägbank (obere) — plus Überzüge für den Brustkorb. Ab Oktober weicht der Dip einem Rückenzug; die Erklärung steht dann in der Rücken-Fassung dieses Tages.',
+nt:[{i:'📅',t:'Dieser Tag existiert nur in der Nicht-Badminton-Woche. In der Badminton-Woche übernimmt Upper B mit drei Einheiten statt zwei — gleiche Wochensumme Brust, anders verteilt.'},
+{i:'⚡',t:'2 Arbeitssätze pro Übung über 11 Übungen: Das Volumen kommt hier aus der Breite, nicht aus der Satzzahl je Übung. Jeder Satz muss dementsprechend nah ans Muskelversagen.'},
+{i:'⚠️',t:'Brust Dip: Deine Notiz "je nach Schulterzustand weglassen" ist die richtige Herangehensweise. Dips belasten das Schultergelenk in der Endposition stark — bei Beschwerden ersatzlos streichen, nicht durch Drücken ersetzen.'}],
 ex:[
-{n:'Fliegende (Maschine)',t:'Pectoralis major — sternaler + mittlerer Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–10',rs:'2:30',g:'I',
-f:'Warm-Up ~50 % × 10. Pre-Exhaustion-Prinzip: Brust isoliert erschöpfen. Am Tiefpunkt maximale Pectoralis-Dehnung — 1 Sek halten. Dann aktiv zusammendrücken.',
-y:'Als Einstiegsübung sorgt die Isolation dafür, dass die Brust in den nachfolgenden Drückbewegungen der limitierende Faktor ist. Die Maschine hält konstante Zugspannung über den gesamten ROM — anders als freie Kurzhanteln, die am Tiefpunkt entlasten.'},
+{n:'Brust Dip (Gewichtet)',t:'Pectoralis major — unterer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–11',rs:'2:15',g:'P',
+f:'Warm-Up mit Körpergewicht × 8, langsame Exzentrik. Nicht zu tief gehen und nach vorne gebeugt bleiben — deine Notiz. Die Vorbeugung macht daraus eine Brustübung statt einer Trizepsübung. Bei Schulterbeschwerden weglassen.',
+y:'Der Dip trainiert die Brust in einer Schulterextensions-Bewegung — biomechanisch einzigartig unter allen Brustübungen, weil kein Drücken diesen Winkel abdeckt. Als erste Übung des Tages steht er im frischesten Zustand, was bei einer Übung mit Zusatzgewicht am Gürtel auch technisch der sicherste Zeitpunkt ist.'},
 
-{n:'Latzug (Kabel)',t:'Latissimus dorsi · Teres major · Bizeps synergistisch',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–12',rs:'2:30',g:'C',
-f:'Warm-Up ~45 % × 10. Vollständige Streckung am oberen Punkt — der Lat muss maximal gedehnt sein. Schulterblatt-Depression initiiert die Zugbewegung, nicht der Bizeps. Am Endpunkt 1 Sek halten.',
-y:'Vertikales Zugmuster als Basis der Rückenbreite. Die Dehnungsphase am oberen Umkehrpunkt ist der stärkste Wachstumsstimulus für den Latissimus.'},
+{n:'Klimmzug (Gewichtet)',t:'Latissimus dorsi · Teres major · Bizeps · Rhomboiden',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'10–12',rs:'2:15',g:'C',
+f:'Warm-Up mit Körpergewicht × 2–5, langsame Exzentrik und volle ROM. Am Tiefpunkt vollständige Armstreckung — kein halbes Hängen. Schulterblatt-Depression initiiert die Bewegung, nicht der Bizeps. Alternativ Latzug, falls die Klimmzugstange belegt ist — deine Notiz.',
+y:'Die überlegene Latissimus-Übung, weil die Progression über Zusatzgewicht unbegrenzt ist, während der Latzug irgendwann am Körpergewicht als Gegengewicht scheitert. Der volle ROM mit maximaler Dehnung am Tiefpunkt ist der stärkste bekannte Wachstumsreiz für den Lat.'},
 
-{n:'Iso-Laterales Rudern von oben',t:'Latissimus · Teres major · Rhomboiden · Posteriore Schulter',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'8–12',rs:'2:00',g:'C',
-f:'Iso-lateral = jede Seite unabhängig. Nach dem Latzug ist der Lat bereits vorermüdet — hier geht es um zusätzliches Volumen mit anderem Winkel. Am Endpunkt Schulterblatt aktiv retrahieren.',
-y:'Die unabhängige Seitenführung deckt Kraft-Asymmetrien auf, die bei bilateralem Training unbemerkt bleiben. Der Zugwinkel von oben trifft den Lat anders als der Latzug — Multi-Angle-Prinzip.'},
+{n:'Fliegende (Maschine)',t:'Pectoralis major — mittlerer + sternaler Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–9',rs:'2:15',g:'I',
+f:'Aufrechte Maschine bevorzugen, Sitz eher höher einstellen — deine Notiz. Die höhere Sitzposition verschiebt den Zugwinkel und trifft mehr mittlere bis untere Brustfasern. Am Tiefpunkt 1 Sek maximale Dehnung halten, dann aktiv zusammendrücken.',
+y:'Die Maschine hält konstante Zugspannung über den gesamten ROM — anders als freie Kurzhanteln, die am Tiefpunkt entlasten. Nach dem Dip ist die Brust vorermüdet, sodass der Trizeps beim späteren Schrägbankdrücken nicht mehr der limitierende Faktor ist.'},
 
-{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'4–6',rs:'2:30',g:'P',
-f:'Warm-Up ~55 % × 8. Abgewinkelte Ellenbogen (nicht 90° ausgestellt) — schont das Schultergelenk erheblich. Am Tiefpunkt kontrolliert dehnen, dann kraftvoll drücken.',
-y:'4–6 Wiederholungen sind der klassische Kraftbereich — maximale mechanische Spannung, der stärkste Einzelfaktor für Hypertrophie. Die Smith-Führung erlaubt es, in diesem schweren Bereich ohne Spotter sicher zu arbeiten.'},
+{n:'T-Bar Rudern — breiter Griff',t:'Rhomboiden · Trapez · Posteriore Schulter · Latissimus',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–8',rs:'2:30',g:'C',
+f:'Warm-Up ~40 % × 8. Breiter Griff → Ellenbogen weiter außen → mehr Rhomboiden und hintere Schulter. Schulterblätter aktiv kontrahieren, Shrugs am Ende — deine Notiz.',
+y:'Der breite Griff ist die bewusste Gegenposition zum engen Griff in Upper B: breit = Rhomboiden und posteriore Schulter, eng = Latissimus und Teres major. Über beide Wochentypen bekommt der obere Rücken so beide Zugwinkel, statt einen doppelt.'},
 
-{n:'T-Bar Rudern — enger Griff',t:'Latissimus · Teres major · Rhomboiden · Posteriore Schulter · Trapez',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'3–8',rs:'2:30',g:'P',
-f:'Warm-Up ~50 % × 10. Enger Griff → Ellenbogen näher am Körper → mehr Lat und Teres major. Shrugs am Ende der Bewegung für Trapez-Aktivierung. Rücken neutral, keine Rumpfstreckung als Schwung.',
-y:'3–8 Wdh macht das zur schwersten Rückenübung der Woche. Wichtig für die Volumenrechnung: T-Bar Rudern trainiert die hintere Schulter substanziell mit — zusammen mit Upper B ergibt das 4 indirekte Posterior-Delt-Sätze, wodurch dieser Muskel jetzt im MAV liegt.'},
+{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–8',rs:'2:30',g:'C',
+f:'Warm-Up ~50 % × 8. Rumpf anspannen — deine Notiz. Die Smith-Führung erlaubt es, ohne Spotter nah ans Versagen zu gehen, was bei 5–8 Wdh der entscheidende Punkt ist.',
+y:'Der klavikuläre Anteil der Brust ist der Bereich, den Dip und Fliegende nicht treffen — beide arbeiten in horizontaler oder absteigender Bahn. Der niedrige Rep-Bereich setzt hier bewusst auf mechanische Spannung als Reiz, nachdem die Brust durch die zwei vorherigen Übungen bereits metabolisch belastet ist.'},
 
-{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel',s:'4 Sets',w:'1 Warm-Up + 3 Arbeitssätze',r:'3–9',rs:'2:30',g:'P',
-f:'Warm-Up ~40 % × 12. Lat anspannen um Trapez rauszunehmen — deine Technik-Notiz. Der Rep-Bereich 3–9 erlaubt schwere Sätze am Anfang und höhere Wiederholungen bei Ermüdung.',
-y:'3 Arbeitssätze hier + 3 in Upper B + 2 in Sharms = 8 direkte Sätze/Woche. Der mediale Deltoid ist der wichtigste Muskel für optische Schulterbreite und verträgt hohes Volumen.'},
+{n:'Überzüge (Kurzhantel) — tief atmen',t:'Latissimus · Pectoralis · Serratus anterior · Rippenknorpel',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'15–20',rs:'2:00',g:'X',
+f:'Leichtes Gewicht, hohe Wiederholungen. In der Dehnungsposition (Hantel hinter dem Kopf) maximal tief einatmen und den Brustkorb bewusst weiten — deine Notiz. Beim Zurückführen ausatmen. Die Atmung ist hier wichtiger als das Gewicht.',
+y:'Die klassische Rader-Methode zur Thoraxerweiterung. Mit 18 Jahren ist der Rippenknorpel noch formbar und die mediale Clavicula-Epiphyse offen — das ist das biologische Zeitfenster, in dem diese Übung überhaupt strukturell wirken kann. Zusätzlich trainiert sie den Serratus anterior, der die Rippen von innen nach außen drückt.'},
 
-{n:'Single Arm Triceps Pushdown (Cable) — mit Cuffs',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–11',rs:'1:35',g:'I',
-f:'Warm-Up ~35 % × 12. Mit Cuffs statt Griff — eliminiert Unterarm-Beteiligung und isoliert den Trizeps stärker. Ellenbogen fixiert, volle Streckung am Endpunkt.',
-y:'Cuffs sind ein unterschätztes Detail: Ohne Griffkraft-Limitation kann der Trizeps bis zum echten Versagen arbeiten. Nach dem Schrägbankdrücken ist er bereits vorermüdet — die Isolation schöpft die Restkapazität aus.'},
+{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel — isoliert',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–9',rs:'2:30',g:'P',
+f:'Warm-Up ~50 % × 7. Lat aktiv anspannen, um den Trapez rauszunehmen — deine Notiz, und sie ist biomechanisch exakt: der angespannte Lat deprimiert das Schulterblatt und verhindert das Hochziehen. Ellenbogen 15° gebeugt.',
+y:'Der mediale Deltoid ist der Muskel, der Schulterbreite erzeugt, und er bekommt aus Drückbewegungen fast kein Volumen — Shoulder Press trifft überwiegend den anterioren Anteil. Ohne direktes Seitheben bleibt dieser Bereich unterversorgt, deshalb steht er in jeder Oberkörper-Einheit.'},
 
-{n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–7',rs:'2:15',g:'I',
-f:'Warm-Up ~40 % × 12. Identische Ausführung wie am Sharms-Tag. Am Tiefpunkt vollständig öffnen, 1 Sek pausieren.',
-y:'Zweiter von drei Preacher-Curl-Tagen. Der Bizeps hat bereits erhebliches indirektes Volumen aus Latzug, Iso-Rudern und T-Bar Rudern erhalten — die direkte Arbeit am Ende ist der gezielte Zusatzreiz.'},
+{n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–9',rs:'2:15',g:'I',
+f:'Warm-Up ~50 % × 7. Am Tiefpunkt den Arm vollständig öffnen und 1 Sek pausieren — dort liegt der Reiz. Am Endpunkt 1 Sek Kontraktion halten. Schultern bleiben an der Auflage.',
+y:'Die Preacher-Position fixiert den Oberarm vor dem Körper und trainiert damit den kurzen Kopf in verkürzter Position — der Gegenpol zum Incline Curl. Zusammen mit dem indirekten Volumen aus Klimmzug und T-Bar Rudern liegt der Bizeps an diesem Tag bei 2 direkten und rund 4 indirekten Sätzen.'},
 
-{n:'Reverse Curl (Cable) — mit Band',t:'Brachioradialis · Brachialis',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'8–9',rs:'1:25',g:'A',
-f:'Mit Band als Mischung aus Hammer und Reverse Curl. Ellenbogen fixiert, neutrale bis pronierte Handstellung.',
-y:'Zweiter Brachialis-Tag. Der Brachialis ist der stärkste Ellenbogenbeuger und trägt direkt zur Armdicke bei, da er den Bizeps nach oben drückt.'},
+{n:'Trizepsdrücken (Kabel)',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'10–12',rs:'1:30',g:'I',
+f:'Warm-Up ~50 % × 12. Nah am Kabelzug stehen, Ellenbogen absolut fixiert am Körper. Vollständige Streckung am Endpunkt, 1 Sek halten.',
+y:'Nach Dip und Schrägbankdrücken ist der Trizeps doppelt vorermüdet — die Isolation am Ende schöpft gezielt die Restkapazität aus, statt einen frischen schweren Reiz zu setzen, für den nach zwei Drückbewegungen ohnehin keine Kraft mehr da wäre.'},
 
-{n:'Unterarm-Curls hinter dem Rücken — Optional',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'O',
-f:'Optional laut deiner Routine. Rest-Pause-Protokoll wie am Sharms-Tag. Bei Erschöpfung nach dem schweren Compound-Volumen kann diese Übung entfallen.',
-y:'Zweiter Unterarm-Tag der Woche. Bei bereits 16 Unterarm-Sätzen wöchentlich ist die optionale Handhabung sinnvoll — Priorität liegt auf Recovery.'}]},
+{n:'Reverse Curl (Cable) — mit Band',t:'M. brachioradialis · M. brachialis · Unterarm-Extensoren',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'11–14',rs:'1:30',g:'A',
+f:'Mit dem Band als Mischung aus Hammer und Reverse Curl — deine Notiz. Handstellung zwischen neutral und proniert. Ellenbogen fixiert, kein Schwung aus der Hüfte.',
+y:'Der Brachialis liegt unter dem Bizeps und drückt ihn optisch nach oben — direkter Beitrag zur Armdicke, der über normale Curls kaum zu erreichen ist, weil der Bizeps dort immer dominiert. Die Hybrid-Griffposition trifft Brachioradialis und Brachialis gleichzeitig.'},
 
-/* Mesozyklus Block 2 (Oktober): Ruecken-Prioritaet. Gleiche zehn Uebungen
-   wie im Brust-Block, umsortiert -- Ruecken zuerst in der Einheit, solange
-   ZNS und Griffkraft frisch sind. Die eigentliche Volumenverschiebung
-   (Brust runter, Ruecken rauf) passiert nicht hier, sondern drueben bei
-   Upper B ueber den Dip-Tausch. Hier aendert sich nur die Reihenfolge. */
-upperA_back:{lb:'Upper A',ti:'Rücken · Brust · Compound',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'3–11 Wdh',
-lg:'Mesozyklus Block 2 (Oktober): Rücken-Priorität. Latzug und Iso-Rudern eröffnen jetzt die Einheit, solange Griffkraft und Nervensystem frisch sind — genau die Logik, die im September für die Brust galt, jetzt umgekehrt. Die Satzzahlen bleiben hier unverändert; die tatsächliche Volumenverschiebung zwischen Brust und Rücken passiert drüben bei Upper B über den Dip-Tausch.',
-nt:[{i:'🔄',t:'Reihenfolge gedreht: Rücken zuerst, Brust danach. Die Pre-Exhaustion-Logik der Fliegenden entfällt dadurch für diesen Block — sie kommt jetzt als Übergang nach dem Rückenblock, nicht mehr als Einstieg.'},
-{i:'⚡',t:'T-Bar Rudern bei 3–8 Wdh mit engem Griff: unverändert der schwerste Rückenreiz der Woche. Enger Griff = mehr Lat und Teres major (vs. breiter Griff in Upper B → mehr Rhomboiden).'},
-{i:'🔬',t:'4 Sets Seitheben = 3 Arbeitssätze, unverändert. Zusammen mit Upper B (3) und Sharms (2) weiterhin 8 direkte Sätze für den medialen Deltoid — der Block ändert nichts an der Schulter.'}],
+{n:'Unterarm-Curls hinter dem Rücken (Langhantel)',t:'Unterarm-Flexoren · M. flexor carpi radialis et ulnaris',s:'2 Sets',w:'1 Arbeitssatz + 1 Drop-Satz',r:'16 + Drop',rs:'0:15',g:'A',
+f:'Ein schwerer Satz bis ~16 Wdh, dann ohne Gewichtsreduktion direkt in den Drop-Satz bis zum Versagen (deine Logs zeigen ~4 weitere Wdh). Volle Flexions-ROM, Stange hinter dem Rücken aus den Fingern bis zur vollständigen Beugung rollen.',
+y:'Unterarm-Flexoren sind slow-twitch-dominant und reagieren besser auf hohe Wiederholungen mit kurzer Pause als auf schwere Sätze. Starke Griffkraft überträgt sich direkt auf Klimmzug und T-Bar Rudern — deshalb steht die Übung am Ende und nicht davor.'}]},
+
+/* Mesozyklus Block 2 (Oktober): Ruecken-Prioritaet. Der Tausch in Upper A
+   ist der Brust Dip -- die vom Nutzer benannte Wechseluebung. An seiner
+   Stelle steht das einarmige Kurzhantelrudern, gleiche Satzzahl, gleiche
+   Position. Pectoralis faellt pro Einheit von 6 auf 4 Arbeitssaetze,
+   Latissimus steigt von 6 auf 8. Siehe VOL_BACK fuer die Wochensumme. */
+upperA_back:{lb:'Upper A',ti:'Rücken · Brust · schwer',ac:'#b8922e',du:'80–90 Min',rp:'RPE 8–9',rr:'5–16 Wdh',
+lg:'Mesozyklus Block 2 (Oktober): Rücken-Priorität. Der Brust Dip pausiert für die Dauer des Blocks — an seiner Stelle in der Reihenfolge steht jetzt Einarmiges Kurzhantelrudern, das dritte Rückenelement neben Klimmzug und T-Bar. Damit fällt Brust in dieser Einheit von 6 auf 4 Arbeitssätze, Rücken steigt von 6 auf 8 — eine echte Verschiebung, kein bloßes Umsortieren. Der Rest des Tages bleibt unverändert. Dieser Block bleibt über Oktober hinaus aktiv, bis eine dritte Priorität feststeht — kein automatischer Rücksprung zur Brust.',
+nt:[{i:'🔁',t:'Der Tausch: Brust Dip raus, Einarmiges Kurzhantelrudern rein — exakt an dessen Position als erste Übung. Das ist der einzige Eingriff, der tatsächlich Volumen zwischen den Muskeln verschiebt.'},
+{i:'📅',t:'Dieser Tag existiert nur in der Nicht-Badminton-Woche (MI + SA). In der Badminton-Woche übernimmt Upper B, wo im selben Block der Chest Press dem Rudern weicht.'},
+{i:'💪',t:'Ohne den Dip fehlt dem Trizeps eine seiner beiden schweren Vorermüdungen. Das Trizepsdrücken am Ende trifft ihn dadurch frischer — ruhig 2–3 kg mehr auflegen als im Brust-Block.'}],
 ex:[
-{n:'Latzug (Kabel)',t:'Latissimus dorsi · Teres major · Bizeps synergistisch',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–12',rs:'2:30',g:'C',
-f:'Warm-Up ~45 % × 10. Vollständige Streckung am oberen Punkt — der Lat muss maximal gedehnt sein. Schulterblatt-Depression initiiert die Zugbewegung, nicht der Bizeps. Am Endpunkt 1 Sek halten.',
-y:'Eröffnet jetzt die Einheit statt an zweiter Stelle zu stehen — der Lat bekommt den frischesten Zustand des Tages. Die Dehnungsphase am oberen Umkehrpunkt ist der stärkste Wachstumsstimulus für den Latissimus.'},
+{n:'Einarmiges Kurzhantelrudern',t:'Latissimus dorsi · Rhomboiden · Teres major — unilateral',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–10',rs:'2:15',g:'P',
+f:'Auf der Bank abgestützt (Knie und Hand derselben Seite), freier Arm hängt vollständig gestreckt. Ellenbogen eng am Körper nach hinten-oben ziehen, am Endpunkt Schulterblatt aktiv retrahieren und 1 Sek halten. Kontrolliert bis zur vollen Dehnung ablassen — nicht fallen lassen.',
+y:'Ersetzt den Brust Dip für die Dauer des Rücken-Blocks, an derselben Stelle, an der sonst die erste Brustübung stünde. Unilateral erlaubt einen tieferen Dehnungsweg als jede bilaterale Variante, weil der Rücken nicht durch eine Stangenbreite limitiert wird, und deckt Kraft-Asymmetrien zwischen beiden Seiten auf, die Klimmzug und T-Bar verdecken.'},
 
-{n:'Iso-Laterales Rudern von oben',t:'Latissimus · Teres major · Rhomboiden · Posteriore Schulter',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'8–12',rs:'2:00',g:'C',
-f:'Iso-lateral = jede Seite unabhängig. Direkt nach Latzug, solange die Zugkraft noch frisch ist. Am Endpunkt Schulterblatt aktiv retrahieren.',
-y:'Zweite Rückenübung des Blocks, jetzt an Position 2 statt 3 — mehr Kraftreserve für den zusätzlichen Winkel. Die unabhängige Seitenführung deckt Kraft-Asymmetrien auf, die bei bilateralem Training unbemerkt bleiben.'},
+{n:'Klimmzug (Gewichtet)',t:'Latissimus dorsi · Teres major · Bizeps · Rhomboiden',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'10–12',rs:'2:15',g:'C',
+f:'Warm-Up mit Körpergewicht × 2–5, langsame Exzentrik und volle ROM. Am Tiefpunkt vollständige Armstreckung. Schulterblatt-Depression initiiert die Bewegung. Alternativ Latzug — deine Notiz.',
+y:'Steht bewusst nach dem einarmigen Rudern statt davor: Das Rudern braucht Griffkraft in nur einer Hand gleichzeitig, der Klimmzug in beiden. Die umgekehrte Reihenfolge würde den Klimmzug durch Griffermüdung limitieren, bevor der Lat ausgereizt ist.'},
 
-{n:'Fliegende (Maschine)',t:'Pectoralis major — sternaler + mittlerer Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–10',rs:'2:30',g:'I',
-f:'Warm-Up ~50 % × 10. Nach zwei Rückenübungen ist die Zugmuskulatur vorermüdet — die Brust startet jetzt frisch in ihren Teil der Einheit. Am Tiefpunkt maximale Pectoralis-Dehnung — 1 Sek halten.',
-y:'Übernimmt hier die Rolle des Übergangs zur Brust statt der Pre-Exhaustion-Einleitung. Die Maschine hält konstante Zugspannung über den gesamten ROM — auch bei reduzierter Frische noch ein sauberer Reiz.'},
+{n:'Fliegende (Maschine)',t:'Pectoralis major — mittlerer + sternaler Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–9',rs:'2:15',g:'I',
+f:'Aufrechte Maschine bevorzugen, Sitz eher höher einstellen — deine Notiz. Am Tiefpunkt 1 Sek maximale Dehnung halten, dann aktiv zusammendrücken.',
+y:'Erste von nur noch zwei Brustübungen in diesem Block. Da der Dip als Vorermüdung fehlt, ist die Brust hier frisch — das Gewicht darf entsprechend höher liegen als im Brust-Block, obwohl das Gesamtvolumen für die Brust sinkt.'},
 
-{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'4–6',rs:'2:30',g:'P',
-f:'Warm-Up ~55 % × 8. Abgewinkelte Ellenbogen (nicht 90° ausgestellt) — schont das Schultergelenk erheblich. Am Tiefpunkt kontrolliert dehnen, dann kraftvoll drücken.',
-y:'Bleibt bei 4–6 Wdh im klassischen Kraftbereich, jetzt aber nach zwei Rückenübungen und der Brust-Isolation — bewusst spätere Position im Erhaltungs-Block der Brust. Die Smith-Führung sichert das auch bei reduzierter Frische ab.'},
+{n:'T-Bar Rudern — breiter Griff',t:'Rhomboiden · Trapez · Posteriore Schulter · Latissimus',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–8',rs:'2:30',g:'C',
+f:'Warm-Up ~40 % × 8. Breiter Griff → Ellenbogen weiter außen → mehr Rhomboiden und hintere Schulter. Schulterblätter aktiv kontrahieren, Shrugs am Ende — deine Notiz.',
+y:'Dritte Zugbewegung des Tages, jede mit anderem Winkel: einarmig (Sagittalebene, unilateral), Klimmzug (vertikal), T-Bar breit (horizontal, außen). Diese Winkelvielfalt ist der Grund, warum 8 Rückensätze hier mehr bringen als 8 Sätze derselben Übung.'},
 
-{n:'T-Bar Rudern — enger Griff',t:'Latissimus · Teres major · Rhomboiden · Posteriore Schulter · Trapez',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'3–8',rs:'2:30',g:'P',
-f:'Warm-Up ~50 % × 10. Enger Griff → Ellenbogen näher am Körper → mehr Lat und Teres major. Shrugs am Ende der Bewegung für Trapez-Aktivierung. Rücken neutral, keine Rumpfstreckung als Schwung.',
-y:'3–8 Wdh macht das weiterhin zur schwersten Rückenübung der Woche — jetzt als dritte statt vierte Rückenbewegung. T-Bar Rudern trainiert die hintere Schulter substanziell mit; zusammen mit Upper B ergibt das weiterhin 4 indirekte Posterior-Delt-Sätze.'},
+{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–8',rs:'2:30',g:'C',
+f:'Warm-Up ~50 % × 8. Rumpf anspannen — deine Notiz. Die Smith-Führung erlaubt es, ohne Spotter nah ans Versagen zu gehen.',
+y:'Die zweite und letzte Brustübung des Blocks. Mit nur noch zwei Brustübungen ist der obere Anteil der Bereich, der am wenigsten verzichtbar ist — er bekommt aus keiner anderen Bewegung im Plan nennenswertes Volumen, während untere und mittlere Brust indirekt aus den Überzügen mitprofitieren.'},
 
-{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel',s:'4 Sets',w:'1 Warm-Up + 3 Arbeitssätze',r:'3–9',rs:'2:30',g:'P',
-f:'Warm-Up ~40 % × 12. Lat anspannen um Trapez rauszunehmen — deine Technik-Notiz. Der Rep-Bereich 3–9 erlaubt schwere Sätze am Anfang und höhere Wiederholungen bei Ermüdung.',
-y:'3 Arbeitssätze hier + 3 in Upper B + 2 in Sharms = weiterhin 8 direkte Sätze/Woche. Der Block ändert nichts an der Schulter-Planung.'},
+{n:'Überzüge (Kurzhantel) — tief atmen',t:'Latissimus · Pectoralis · Serratus anterior · Rippenknorpel',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'15–20',rs:'2:00',g:'X',
+f:'Leichtes Gewicht, hohe Wiederholungen. In der Dehnungsposition maximal tief einatmen und den Brustkorb bewusst weiten — deine Notiz. Beim Zurückführen ausatmen.',
+y:'Blockunabhängig sinnvoll, solange die mediale Clavicula-Epiphyse offen ist. Im Rücken-Block zählt zusätzlich der Latissimus-Anteil der Bewegung stärker: Der Überzug ist die einzige Lat-Übung im Plan, bei der der Ellenbogen fast gestreckt bleibt, der Bizeps also nicht mithelfen kann.'},
 
-{n:'Single Arm Triceps Pushdown (Cable) — mit Cuffs',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–11',rs:'1:35',g:'I',
-f:'Warm-Up ~35 % × 12. Mit Cuffs statt Griff — eliminiert Unterarm-Beteiligung und isoliert den Trizeps stärker. Ellenbogen fixiert, volle Streckung am Endpunkt.',
-y:'Nach dem Schrägbankdrücken bereits vorermüdet — die Isolation schöpft die Restkapazität aus. Unverändert gegenüber dem Brust-Block.'},
+{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel — isoliert',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–9',rs:'2:30',g:'P',
+f:'Warm-Up ~50 % × 7. Lat aktiv anspannen, um den Trapez rauszunehmen — deine Notiz. Ellenbogen 15° gebeugt.',
+y:'Unverändert gegenüber dem Brust-Block. Der Mesozyklus verschiebt Volumen zwischen Brust und Rücken, nicht zur Schulter — sonst wäre die Priorisierung kein Nullsummenspiel mehr, sondern eine schleichende Gesamtvolumen-Erhöhung.'},
 
-{n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–7',rs:'2:15',g:'I',
-f:'Warm-Up ~40 % × 12. Identische Ausführung wie am Sharms-Tag. Am Tiefpunkt vollständig öffnen, 1 Sek pausieren.',
-y:'Zweiter von drei Preacher-Curl-Tagen. Der Bizeps hat bereits erhebliches indirektes Volumen aus Latzug, Iso-Rudern und T-Bar Rudern erhalten — unverändert gegenüber dem Brust-Block.'},
+{n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–9',rs:'2:15',g:'I',
+f:'Warm-Up ~50 % × 7. Am Tiefpunkt vollständig öffnen und 1 Sek pausieren. Schultern bleiben an der Auflage.',
+y:'Im Rücken-Block hat der Bizeps aus drei statt zwei Zugbewegungen indirektes Volumen bekommen. Wenn die Curls sich schwerer anfühlen als sonst, ist das erwartbar — die Satzzahl bleibt trotzdem gleich, reduziere lieber das Gewicht als die Sätze.'},
 
-{n:'Reverse Curl (Cable) — mit Band',t:'Brachioradialis · Brachialis',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'8–9',rs:'1:25',g:'A',
-f:'Mit Band als Mischung aus Hammer und Reverse Curl. Ellenbogen fixiert, neutrale bis pronierte Handstellung.',
-y:'Zweiter Brachialis-Tag. Unverändert gegenüber dem Brust-Block.'},
+{n:'Trizepsdrücken (Kabel)',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'10–12',rs:'1:30',g:'I',
+f:'Warm-Up ~50 % × 12. Ellenbogen absolut fixiert am Körper, vollständige Streckung am Endpunkt mit 1 Sek Halten.',
+y:'Ohne den Dip ist der Trizeps nur noch einfach vorermüdet statt doppelt — hier liegt entsprechend mehr Gewicht drin. Das ist der einzige Muskel, der vom Rücken-Block indirekt profitiert.'},
 
-{n:'Unterarm-Curls hinter dem Rücken — Optional',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'O',
-f:'Optional laut deiner Routine. Rest-Pause-Protokoll wie am Sharms-Tag. Bei Erschöpfung nach dem schweren Compound-Volumen kann diese Übung entfallen.',
-y:'Zweiter Unterarm-Tag der Woche. Unverändert gegenüber dem Brust-Block.'}]},
+{n:'Reverse Curl (Cable) — mit Band',t:'M. brachioradialis · M. brachialis · Unterarm-Extensoren',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'11–14',rs:'1:30',g:'A',
+f:'Mit dem Band als Mischung aus Hammer und Reverse Curl — deine Notiz. Ellenbogen fixiert, kein Schwung.',
+y:'Unverändert gegenüber dem Brust-Block.'},
+
+{n:'Unterarm-Curls hinter dem Rücken (Langhantel)',t:'Unterarm-Flexoren · M. flexor carpi radialis et ulnaris',s:'2 Sets',w:'1 Arbeitssatz + 1 Drop-Satz',r:'16 + Drop',rs:'0:15',g:'A',
+f:'Ein schwerer Satz bis ~16 Wdh, dann direkt in den Drop-Satz bis zum Versagen. Volle Flexions-ROM.',
+y:'Unverändert gegenüber dem Brust-Block. Im Rücken-Block sind die Unterarme durch die dritte Zugübung stärker vorbelastet — bei Ellenbogenreizung ist das der erste Satz, der entfällt.'}]},
 
 rest:{lb:'Rest',ti:'Vollständige Erholung',ac:'#2e9e6a',du:'Kein Training',rp:'—',rr:'—',
 lg:'Nach mehreren aufeinanderfolgenden Trainingstagen ist systemische Ermüdung akkumuliert. Dieser Ruhetag bestimmt direkt die Qualität der beiden folgenden Einheiten.',
@@ -262,111 +283,115 @@ y:'Zusammen mit Negativ Crunch und Side Bend deckt der Lower-Tag alle Rumpfebene
 f:'Optional. Rest-Pause-Protokoll. Am Lower-Tag ist der Oberkörper frisch — hier kannst du Unterarme ohne Interferenz trainieren.',
 y:'Dritter Unterarm-Tag. Der Lower-Tag ist strategisch günstig dafür, weil keine Griffkraft für andere Übungen benötigt wird.'}]},
 
-upperB_chest:{lb:'Upper B',ti:'Brust · Rücken · Variation',ac:'#b8922e',du:'85–95 Min',rp:'RPE 7–9',rr:'5–12 Wdh',
-lg:'Mesozyklus Block 1 (September): Brust-Priorität. Upper B hat höheres Brustvolumen als Upper A (6 vs. 4 Arbeitssätze) und ergänzt die Winkel: Dip (untere Brust), Fliegende (mittlere Brust), Schrägbank (obere Brust). Dazu die Überzüge als Brustkorb-Erweiterung. Der Rep-Bereich liegt etwas höher als bei Upper A. Ab Oktober weicht der Dip einem Rückenzug — die Erklärung steht dann in der Rücken-Fassung dieses Tages.',
-nt:[{i:'🫁',t:'Überzüge mit tiefem Atmen: Die klassische Rader-Methode zur Thoraxerweiterung. Mit 18 Jahren ist der Rippenknorpel noch formbar — das ist wissenschaftlich das Zeitfenster, in dem diese Übung überhaupt strukturell wirken kann.'},
-{i:'📐',t:'T-Bar Rudern hier mit breitem Griff (vs. eng bei Upper A): Breiter Griff = mehr Rhomboiden und hintere Schulter, enger Griff = mehr Lat. Bewusste Variation über die Woche.'},
-{i:'⚠️',t:'Brust Dip: Deine Notiz "je nach Schulterzustand weglassen" ist die richtige Herangehensweise. Dips belasten das Schultergelenk in der Endposition stark — bei Beschwerden ersatzlos streichen.'}],
+/* Upper B -- 3x pro Woche, nur in der Badminton-Woche (DI, DO, SA).
+   Hoehere Frequenz, dafuer meist nur 1-2 Arbeitssaetze je Uebung und
+   ueberwiegend gefuehrte Maschinen: weniger Stabilisations- und
+   Gelenkermuedung, damit dieselbe Muskulatur alle 48h wieder belastbar
+   ist. Gleiches Wochenvolumen wie Upper A 2x, anders verteilt. */
+upperB_chest:{lb:'Upper B',ti:'Brust · Rücken · Frequenz',ac:'#b8922e',du:'70–80 Min',rp:'RPE 7–9',rr:'5–20 Wdh',
+lg:'Mesozyklus Block 1 (September): Brust-Priorität. Upper B läuft 3× in der Badminton-Woche (DI, DO, SA) und ist die Frequenz-Fassung: meist nur 1–2 Arbeitssätze pro Übung und überwiegend geführte Maschinen. Das ist kein reduziertes Training, sondern dieselbe Wochensumme auf drei Einheiten verteilt statt auf zwei — bei dieser Verteilung ist weniger Gelenk- und Stabilisationsermüdung pro Einheit die Voraussetzung dafür, dass dieselbe Muskulatur nach 48 h wieder belastbar ist. Ab Oktober weicht der Chest Press einem Rückenzug.',
+nt:[{i:'📅',t:'Dieser Tag existiert nur in der Badminton-Woche, dafür dreimal (DI, DO, SA) mit Badminton am Mittwoch dazwischen. Sharms entfällt in dieser Woche komplett — Schultern und Arme werden hier dreimal statt einmal mitbedient.'},
+{i:'🔁',t:'Drei identische Einheiten pro Woche heißt: dieselbe Übung alle 48 h. Nicht jeder Satz muss ans absolute Versagen — 1–2 Wdh Reserve an DI und DO, erst am SA ausreizen. Sonst akkumuliert die Ermüdung über die Woche schneller als die Erholung.'},
+{i:'📐',t:'T-Bar Rudern hier mit engem Griff (vs. breit bei Upper A): eng = mehr Latissimus und Teres major, breit = mehr Rhomboiden und hintere Schulter. Bewusste Variation zwischen den beiden Wochentypen.'}],
 ex:[
-{n:'Brust Dip (Gewichtet)',t:'Pectoralis major — unterer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–12',rs:'2:15',g:'C',
-f:'Warm-Up mit Körpergewicht × 8, langsame Exzentrik. Nicht zu tief gehen und nach vorne gebeugt bleiben — deine Notiz. Die Vorbeugung macht daraus eine Brustübung statt einer Trizepsübung. Bei Schulterbeschwerden weglassen.',
-y:'Der Dip trainiert die Brust in einer Schulterextensions-Bewegung — biomechanisch einzigartig unter allen Brustübungen. Die begrenzte Tiefe schützt das Schultergelenk, ohne den Reiz wesentlich zu reduzieren.'},
+{n:'Fliegende (Maschine)',t:'Pectoralis major — mittlerer + sternaler Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–15',rs:'2:30',g:'P',
+f:'Warm-Up ~60 % × 6. Am Tiefpunkt 1 Sek maximale Dehnung halten, dann aktiv zusammendrücken. Der Rep-Bereich darf hier über die drei Einheiten schwanken — deine Logs zeigen 15 und 8 Wdh im selben Training, das ist als Doppelreiz sinnvoll.',
+y:'Steht als einzige Brustübung mit zwei vollen Arbeitssätzen am Anfang, weil sie das Schultergelenk am wenigsten belastet — bei drei Einheiten pro Woche ist genau das der limitierende Faktor, nicht die Muskelermüdung. Die Maschine hält konstante Zugspannung über den gesamten ROM.'},
 
-{n:'Klimmzug (Gewichtet)',t:'Latissimus dorsi · Teres major · Bizeps · Rhomboiden',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–12',rs:'2:30',g:'P',
-f:'Warm-Up mit Körpergewicht × 5, langsame Exzentrik und volle ROM. Am Tiefpunkt vollständige Armstreckung — kein halbes Hängen. Schulterblatt-Depression initiiert die Bewegung.',
-y:'Die überlegene Latissimus-Übung durch unbegrenzte Progression via Zusatzgewicht. Der volle ROM mit maximaler Dehnung am Tiefpunkt ist der stärkste Wachstumsreiz für den Lat.'},
+{n:'Shoulder Press (Machine Plates)',t:'Anteriore + mediale Schulter · Trizeps synergistisch',s:'1 Set',w:'1 Arbeitssatz (kein Warm-Up)',r:'6–8',rs:'2:00',g:'C',
+f:'Die Fliegenden davor haben Schultergürtel und Brustmuskulatur bereits durchblutet — ein separates Warm-Up entfällt. Ellenbogen leicht vor der Schulterebene halten, das folgt dem natürlichen Humerus-Pfad. Schultern am Gipfelpunkt nicht hochziehen.',
+y:'Ein einziger schwerer Satz, dreimal pro Woche, ergibt 3 Sätze für die vordere Schulter — genau der Bereich, der in der Nicht-Badminton-Woche über Sharms abgedeckt wird. Bei 6–8 Wdh steht mechanische Spannung als Reiz im Vordergrund, wofür ein maximal ausgeführter Satz genügt.'},
 
-{n:'Fliegende (Maschine)',t:'Pectoralis major — mittlerer + sternaler Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–11',rs:'2:15',g:'I',
-f:'Aufrechte Maschine bevorzugen, Sitz eher höher einstellen — deine Notiz. Die höhere Sitzposition verschiebt den Zugwinkel und trifft mehr mittlere bis untere Brustfasern. Am Tiefpunkt 1 Sek Dehnung halten.',
-y:'Die Sitzhöhe ist ein unterschätzter Parameter: Sie bestimmt, welcher Pectoralis-Bereich primär arbeitet. Höherer Sitz = Zugbahn tendenziell abwärts = mehr sternaler Anteil.'},
+{n:'Latzug (Kabel)',t:'Latissimus dorsi · Teres major · Bizeps synergistisch',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–9',rs:'2:30',g:'C',
+f:'Warm-Up ~45 % × 8. Vollständige Streckung am oberen Punkt — der Lat muss maximal gedehnt sein. Schulterblatt-Depression initiiert die Zugbewegung, nicht der Bizeps. Am Endpunkt 1 Sek halten.',
+y:'Ersetzt hier den gewichteten Klimmzug aus Upper A bewusst: Bei drei Einheiten pro Woche wäre der Klimmzug mit Zusatzgewicht die erste Übung, an der Ellenbogen und Bizepssehne überlastet reagieren. Der Latzug liefert denselben vertikalen Zugreiz bei deutlich geringerer Sehnenbelastung.'},
 
-{n:'Überzüge — tief atmen',t:'Latissimus · Pectoralis · Serratus anterior · Rippenknorpel',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'15–20',rs:'2:00',g:'X',
-f:'Leichtes Gewicht, hohe Wiederholungen. In der Dehnungsposition (Hantel hinter dem Kopf) maximal tief einatmen und den Brustkorb bewusst weiten. Beim Zurückführen ausatmen. Die Atmung ist hier wichtiger als das Gewicht.',
-y:'Die klassische Rader-Methode zur Thoraxerweiterung. Mit 18 Jahren ist der Rippenknorpel noch formbar und die mediale Clavicula-Epiphyse offen — dies ist das biologische Zeitfenster, in dem diese Übung strukturell wirken kann. Zusätzlich trainiert sie den Serratus anterior, der die Rippen von innen nach außen drückt.'},
+{n:'Chest Press (Maschine)',t:'Pectoralis major — mittlerer Anteil · Anteriore Schulter · Trizeps',s:'2 Sets',w:'1 Warm-Up + 1 Arbeitssatz',r:'8–12',rs:'2:00',g:'I',
+f:'Warm-Up ~50 % × 10. Schulterblätter zurück und unten fixiert an der Lehne. Nicht vollständig durchstrecken — die Endposition entlastet die Brust und verlagert alles auf den Trizeps.',
+y:'Der horizontale Druckwinkel, den weder Fliegende (Adduktion) noch Schrägbank (aufsteigend) abdecken. Nur ein Arbeitssatz, weil es die dritte Brustbelastung der Einheit ist und die Brust bei drei Einheiten pro Woche ohnehin auf 12 Wochensätze kommt. Dies ist die Übung, die im Rücken-Block dem Rudern weicht.'},
 
-{n:'T-Bar Rudern — breiter Griff',t:'Rhomboiden · Trapez · Posteriore Schulter · Latissimus',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–9',rs:'2:30',g:'C',
-f:'Warm-Up ~50 % × 10. Breiter Griff → Ellenbogen weiter außen → mehr Rhomboiden und hintere Schulter. Shrugs am Ende, Schulterblätter aktiv kontrahieren.',
-y:'Der breite Griff verlagert den Reiz gegenüber Upper A (enger Griff) deutlich Richtung Rhomboiden und posteriore Schulter. Diese beiden T-Bar-Tage liefern zusammen 4 indirekte Sätze für die hintere Schulter — der Grund, warum dieser Muskel jetzt im MAV liegt.'},
+{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'2 Sets',w:'1 Warm-Up + 1 Arbeitssatz',r:'6–9',rs:'2:30',g:'C',
+f:'Warm-Up ~50 % × 6. Ellenbogen abgewinkelt halten, nicht ausgestellt — deine Notiz. Alternativ die Incline Machine Press, falls die Smith belegt ist.',
+y:'Der klavikuläre Anteil ist der Brustbereich, der aus keiner anderen Bewegung im Plan Volumen bekommt. Ein Arbeitssatz × 3 Einheiten = 3 Wochensätze, identisch zu Upper A (2 Sätze × 2 Einheiten = 4) — die Frequenzverteilung gleicht sich hier fast exakt aus.'},
 
-{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–10',rs:'2:30',g:'C',
-f:'Warm-Up ~55 % × 8. Rumpf anspannen — deine Notiz. Der Rep-Bereich ist etwas höher als bei Upper A (4–6), was einen anderen Reiztyp setzt.',
-y:'Gleiche Übung wie Upper A, aber höherer Rep-Bereich. Über die Woche bekommt die obere Brust damit sowohl schwere mechanische Spannung (MI) als auch metabolischen Stress (SA) — beide Hypertrophie-Mechanismen abgedeckt.'},
+{n:'T-Bar Rudern — enger Griff',t:'Latissimus dorsi · Teres major · Rhomboiden',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–10',rs:'2:30',g:'C',
+f:'Warm-Up ~45 % × 8. Enger Griff → Ellenbogen nah am Körper → mehr Latissimus und Teres major. Shrugs am Ende — deine Notiz.',
+y:'Der enge Griff ist die bewusste Gegenposition zum breiten Griff in Upper A. Zusammen mit dem Latzug ergibt das zwei horizontale bzw. vertikale Zugwinkel pro Einheit, dreimal pro Woche — der Rücken bekommt in dieser Woche mehr Frequenz als die Brust, obwohl das Satzvolumen gleich ist.'},
 
-{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel',s:'4 Sets',w:'1 Warm-Up + 3 Arbeitssätze',r:'6–9',rs:'2:30',g:'P',
-f:'Warm-Up ~40 % × 12. Lat anspannen um Trapez rauszunehmen. 3 Arbeitssätze wie bei Upper A.',
-y:'Insgesamt 8 direkte Seitheben-Arbeitssätze pro Woche über drei Tage verteilt. Der mediale Deltoid ist der entscheidende Muskel für Schulterbreite und verträgt dieses Volumen problemlos.'},
+{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel — isoliert',s:'2 Sets',w:'1 Warm-Up + 1 Arbeitssatz',r:'8–10',rs:'2:30',g:'P',
+f:'Warm-Up ~50 % × 3–7. Lat aktiv anspannen, um den Trapez rauszunehmen — deine Notiz. Ellenbogen 15° gebeugt, kein Schwung aus dem Rumpf.',
+y:'Ein Arbeitssatz × 3 Einheiten = 3 Wochensätze gegenüber 4 in der Nicht-Badminton-Woche. Der Unterschied ist bewusst: Badminton belastet die Schulter über den Überkopfschlag zusätzlich, sodass der mediale Deltoid in dieser Woche indirektes Volumen aus dem Sport bekommt.'},
+
+{n:'Trizepsdrücken einarmig (Kabel) — mit Cuffs',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–11',rs:'1:35',g:'I',
+f:'Mit Cuffs statt Griff — deine Notiz. Die Cuffs eliminieren die Griffkraft als limitierenden Faktor, sodass der Trizeps tatsächlich zuerst versagt. Ellenbogen absolut fixiert am Körper, vollständige Streckung am Endpunkt.',
+y:'Einarmig verhindert, dass die stärkere Seite die schwächere kompensiert — bei einer Übung mit drei Einheiten pro Woche würde sich eine solche Asymmetrie sonst schnell einschleifen. Nach Chest Press und Schrägbank ist der Trizeps vorermüdet, die Isolation schöpft die Restkapazität aus.'},
 
 {n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–7',rs:'2:15',g:'I',
-f:'Warm-Up ~40 % × 12. Dritter Preacher-Curl-Tag der Woche. Am Tiefpunkt vollständig öffnen.',
-y:'3× wöchentlich Preacher Curl bei 5–7 Wdh: hohe Frequenz mit schwerer Last. Zusammen mit dem indirekten Volumen aus Klimmzügen und T-Bar Rudern erreicht der Bizeps 12 Sätze/Woche.'},
+f:'Warm-Up ~80 % × 4 — hier ist das Warm-Up bewusst schwer und kurz, weil der Bizeps aus Latzug und T-Bar Rudern bereits vollständig vorbereitet ist. Am Tiefpunkt vollständig öffnen, 1 Sek pausieren.',
+y:'5–7 Wdh ist schwer für den Bizeps, aber bei dreimal wöchentlicher Frequenz genau richtig: hohe mechanische Spannung bei niedrigem metabolischem Stress ist die Kombination, die sich innerhalb von 48 h erholt. Hohe Wiederholungen bis zum Brennen würden hier über die Woche akkumulieren.'},
 
-{n:'Trizepsdrücken (Kabel)',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–12',rs:'1:30',g:'I',
-f:'Warm-Up ~35 % × 12. Ellenbogen fixiert, vollständige Streckung am Endpunkt mit 1 Sek Halten.',
-y:'Nach Dip und Schrägbankdrücken ist der Trizeps bereits doppelt vorermüdet. Die Isolation am Ende schöpft die Restkapazität gezielt aus.'},
+{n:'Reverse Curl (Cable) — mit Band',t:'M. brachioradialis · M. brachialis · Unterarm-Extensoren',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'12',rs:'1:25',g:'A',
+f:'Mit dem Band als Mischung aus Hammer und Reverse Curl — deine Notiz. Handstellung zwischen neutral und proniert, Ellenbogen fixiert. Nach dem Preacher Curl ist kein Warm-Up nötig.',
+y:'Der Brachialis liegt unter dem Bizeps und drückt ihn optisch nach oben. Die kurze Pause von 1:25 ist hier vertretbar, weil die Übung leicht genug ist, dass die Erholung nicht der limitierende Faktor wird — das hält die Einheit trotz 11 Übungen unter 80 Minuten.'},
 
-{n:'Reverse Curl (Cable) — mit Band',t:'Brachioradialis · Brachialis · Unterarm-Extensoren',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'10–15',rs:'1:30',g:'A',
-f:'Mit Band als Mix aus Hammer und Reverse Curl. Ellenbogen fixiert, Handstellung zwischen neutral und proniert.',
-y:'Dritter Brachialis-Tag. Die Hybrid-Griffposition trifft Brachioradialis und Brachialis gleichzeitig — effizienter als zwei separate Übungen.'},
+{n:'Unterarm-Curls hinter dem Rücken (Langhantel) — Optional',t:'Unterarm-Flexoren · M. flexor carpi radialis et ulnaris',s:'2 Sets',w:'1 Arbeitssatz + 1 Drop-Satz',r:'20 + Drop',rs:'0:15',g:'O',
+f:'Optional laut deiner Routine. Ein Satz bis ~20 Wdh, dann direkt in den Drop-Satz bis zum Versagen. Volle Flexions-ROM.',
+y:'Als optional markiert, weil die Unterarme in dieser Woche dreimal indirektes Volumen aus Latzug, T-Bar Rudern und Reverse Curl bekommen. Bei Ellenbogen- oder Sehnenreizung ist das der erste Satz, der ersatzlos entfällt — direktes Unterarmtraining ist bei diesem Zugvolumen Feinschliff, keine Notwendigkeit.'}]},
 
-{n:'Unterarm-Curls hinter dem Rücken (Langhantel)',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'A',
-f:'Rest-Pause-Protokoll wie an den anderen Tagen. Letzter Unterarm-Tag vor der nächsten Ruhephase.',
-y:'Vierter Unterarm-Tag. Bei insgesamt 16 Sätzen pro Woche liegt das Volumen am oberen MAV-Rand — beobachte die Ellenbogensehnen und reduziere bei Reizungen.'}]},
-
-/* Mesozyklus Block 2 (Oktober): Ruecken-Prioritaet. Der eigentliche
-   Volumen-Tausch: Brust Dip (2 Arbeitssaetze) faellt weg, ein drittes
-   Ruecken-Element kommt an dieselbe Stelle in der Reihenfolge -- dieselbe
-   Position in der Einheit, umgekehrter Reiz. Pectoralis faellt dadurch von
-   10 auf 8 Saetze/Woche (unterer MAV-Rand), Latissimus steigt von 8 auf
-   10 (oberer MAV-Rand). Siehe VOL_BACK fuer die Tabelle. */
-upperB_back:{lb:'Upper B',ti:'Rücken · Brust · Variation',ac:'#b8922e',du:'85–95 Min',rp:'RPE 7–9',rr:'5–12 Wdh',
-lg:'Mesozyklus Block 2 (Oktober): Rücken-Priorität. Der Brust Dip pausiert für die Dauer des Blocks — an seiner Stelle in der Reihenfolge steht jetzt Einarmiges Kurzhantelrudern, das dritte Rückenelement neben Klimmzug und T-Bar. Damit fällt Brust von 10 auf 8 Sätze/Woche (unterer MAV-Rand), Rücken steigt von 8 auf 10 (oberer MAV-Rand) — eine echte Verschiebung, kein bloßes Umsortieren. Dieser Block bleibt über Oktober hinaus aktiv, bis eine dritte Priorität feststeht — kein automatischer Rücksprung zur Brust.',
-nt:[{i:'🔁',t:'Der Tausch: Brust Dip raus, Einarmiges Kurzhantelrudern rein — exakt an dessen Position als Übung 3. Das ist der einzige Eingriff, der tatsächlich Volumen zwischen den Muskeln verschiebt; alles andere in diesem Block ist nur umsortiert.'},
-{i:'🫁',t:'Überzüge mit tiefem Atmen: unverändert die Rader-Methode zur Thoraxerweiterung. Mit 18 Jahren ist der Rippenknorpel noch formbar — das gilt unabhängig vom aktiven Block.'},
-{i:'📐',t:'T-Bar Rudern hier weiterhin mit breitem Griff (vs. eng bei Upper A): mehr Rhomboiden und hintere Schulter. Jetzt an zweiter statt fünfter Stelle — mehr Kraftreserve für den Griff.'}],
+/* Mesozyklus Block 2 (Oktober): Ruecken-Prioritaet. Der Tausch in Upper B
+   trifft den Chest Press -- die redundanteste der drei Druckbewegungen,
+   da Fliegende (Adduktion) und Schraegbank (klavikulaer) bleiben. An seiner
+   Stelle steht das einarmige Kurzhantelrudern mit 2 Saetzen. Pectoralis
+   faellt pro Einheit von 4 auf 3, Ruecken steigt von 4 auf 6. */
+upperB_back:{lb:'Upper B',ti:'Rücken · Brust · Frequenz',ac:'#b8922e',du:'70–80 Min',rp:'RPE 7–9',rr:'5–20 Wdh',
+lg:'Mesozyklus Block 2 (Oktober): Rücken-Priorität. Der Chest Press pausiert für die Dauer des Blocks — an seiner Stelle steht Einarmiges Kurzhantelrudern, das dritte Rückenelement neben Latzug und T-Bar. Brust fällt in dieser Einheit von 4 auf 3 Arbeitssätze, Rücken steigt von 4 auf 6; über drei Einheiten pro Woche sind das 9 statt 12 Brust- und 18 statt 12 Rückensätze. Der Chest Press ist die richtige Übung dafür, weil ihr horizontaler Druckwinkel sich am stärksten mit den beiden verbleibenden Brustübungen überschneidet. Dieser Block bleibt über Oktober hinaus aktiv, bis eine dritte Priorität feststeht.',
+nt:[{i:'🔁',t:'Der Tausch: Chest Press raus, Einarmiges Kurzhantelrudern rein. In Upper A weicht stattdessen der Brust Dip — beide Male die Übung, deren Winkel am ehesten von den anderen mitabgedeckt wird.'},
+{i:'⚠️',t:'18 Rückensätze pro Woche ist am oberen Rand des sinnvoll Verarbeitbaren. Wenn Griffkraft oder Bizepssehnen nach zwei Wochen nachgeben, streiche zuerst den optionalen Unterarm-Satz, dann einen Satz T-Bar Rudern.'},
+{i:'📐',t:'Drei Zugwinkel pro Einheit: Latzug vertikal, T-Bar eng horizontal bilateral, Rudern unilateral. Das ist der Grund, warum das erhöhte Volumen hier wirkt und nicht nur ermüdet.'}],
 ex:[
-{n:'Klimmzug (Gewichtet)',t:'Latissimus dorsi · Teres major · Bizeps · Rhomboiden',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–12',rs:'2:30',g:'P',
-f:'Warm-Up mit Körpergewicht × 5, langsame Exzentrik und volle ROM. Am Tiefpunkt vollständige Armstreckung — kein halbes Hängen. Schulterblatt-Depression initiiert die Bewegung.',
-y:'Eröffnet jetzt die Einheit statt an zweiter Stelle zu stehen — die überlegene Latissimus-Übung bekommt den frischesten Zustand des Tages. Der volle ROM mit maximaler Dehnung am Tiefpunkt ist der stärkste Wachstumsreiz für den Lat.'},
+{n:'Fliegende (Maschine)',t:'Pectoralis major — mittlerer + sternaler Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'8–15',rs:'2:30',g:'I',
+f:'Warm-Up ~60 % × 6. Am Tiefpunkt 1 Sek maximale Dehnung halten, dann aktiv zusammendrücken.',
+y:'Bleibt als Einstieg stehen, obwohl Brust in diesem Block auf Erhaltung läuft: Die Übung belastet das Schultergelenk am wenigsten und dient damit gleichzeitig als Aufwärmen für die schweren Zugbewegungen danach.'},
 
-{n:'T-Bar Rudern — breiter Griff',t:'Rhomboiden · Trapez · Posteriore Schulter · Latissimus',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–9',rs:'2:30',g:'C',
-f:'Warm-Up ~50 % × 10. Breiter Griff → Ellenbogen weiter außen → mehr Rhomboiden und hintere Schulter. Shrugs am Ende, Schulterblätter aktiv kontrahieren.',
-y:'Zweite Rückenübung des Blocks, direkt nach Klimmzug statt an fünfter Stelle — mehr Kraftreserve für den schweren Zug. Der breite Griff verlagert den Reiz gegenüber Upper A (enger Griff) Richtung Rhomboiden und posteriore Schulter.'},
+{n:'Shoulder Press (Machine Plates)',t:'Anteriore + mediale Schulter · Trizeps synergistisch',s:'1 Set',w:'1 Arbeitssatz (kein Warm-Up)',r:'6–8',rs:'2:00',g:'C',
+f:'Ellenbogen leicht vor der Schulterebene halten. Schultern am Gipfelpunkt nicht hochziehen.',
+y:'Unverändert gegenüber dem Brust-Block. Der Mesozyklus verschiebt Volumen zwischen Brust und Rücken — die Schulter bleibt außen vor, sonst wäre es keine Priorisierung, sondern eine Volumenerhöhung.'},
+
+{n:'Latzug (Kabel)',t:'Latissimus dorsi · Teres major · Bizeps synergistisch',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–9',rs:'2:30',g:'P',
+f:'Warm-Up ~45 % × 8. Vollständige Streckung am oberen Punkt. Schulterblatt-Depression initiiert die Zugbewegung. Am Endpunkt 1 Sek halten.',
+y:'Erste von drei Zugbewegungen und im Rücken-Block die Prioritätsübung des Tages. Der vertikale Zug ist der Winkel, der den Latissimus in seiner vollen Länge trifft — deshalb steht er vor den beiden Ruderbewegungen, solange die Griffkraft noch vollständig ist.'},
 
 {n:'Einarmiges Kurzhantelrudern',t:'Latissimus dorsi · Rhomboiden · Teres major — unilateral',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'8–10',rs:'2:00',g:'X',
 f:'Auf der Bank abgestützt (Knie und Hand derselben Seite), freier Arm hängt vollständig gestreckt. Ellenbogen eng am Körper nach hinten-oben ziehen, am Endpunkt Schulterblatt aktiv retrahieren und 1 Sek halten. Kontrolliert bis zur vollen Dehnung ablassen.',
-y:'Ersetzt den Brust Dip für die Dauer des Rücken-Blocks — dritte Rückenübung an derselben Stelle in der Reihenfolge, an der sonst die erste Brustübung stünde. Unilateral erlaubt einen tieferen Dehnungsweg als jede bilaterale Variante, weil der Rücken nicht durch eine Stangenbreite limitiert wird, und deckt Kraft-Asymmetrien zwischen beiden Seiten auf, die Klimmzug und T-Bar nicht zeigen.'},
+y:'Ersetzt den Chest Press an exakt dessen Position. Unilateral erlaubt einen tieferen Dehnungsweg als jede bilaterale Variante, weil der Rücken nicht durch eine Stangenbreite limitiert wird, und deckt Kraft-Asymmetrien auf, die Latzug und T-Bar verdecken — bei drei Einheiten pro Woche schleift sich eine solche Asymmetrie sonst besonders schnell ein.'},
 
-{n:'Fliegende (Maschine)',t:'Pectoralis major — mittlerer + sternaler Anteil',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'7–11',rs:'2:15',g:'I',
-f:'Aufrechte Maschine bevorzugen, Sitz eher höher einstellen — deine Notiz. Die höhere Sitzposition verschiebt den Zugwinkel und trifft mehr mittlere bis untere Brustfasern. Am Tiefpunkt 1 Sek Dehnung halten.',
-y:'Nach drei Rückenübungen der Einstieg in den Brustteil der Einheit — bewusst später, weil Brust in diesem Block auf Erhaltungsvolumen läuft. Die Sitzhöhe bleibt der entscheidende Parameter für den Faserbereich.'},
+{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'2 Sets',w:'1 Warm-Up + 1 Arbeitssatz',r:'6–9',rs:'2:30',g:'C',
+f:'Warm-Up ~50 % × 6. Ellenbogen abgewinkelt halten, nicht ausgestellt — deine Notiz. Alternativ die Incline Machine Press.',
+y:'Die einzige verbleibende Druckbewegung neben den Fliegenden, und damit die, die nicht entfallen darf: Der klavikuläre Anteil bekommt aus keiner anderen Bewegung im Plan Volumen. Zusammen mit den Fliegenden bleiben 9 Brustsätze pro Woche — das liegt im Erhaltungsbereich, nicht im Abbau.'},
 
-{n:'Überzüge — tief atmen',t:'Latissimus · Pectoralis · Serratus anterior · Rippenknorpel',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'15–20',rs:'2:00',g:'X',
-f:'Leichtes Gewicht, hohe Wiederholungen. In der Dehnungsposition (Hantel hinter dem Kopf) maximal tief einatmen und den Brustkorb bewusst weiten. Beim Zurückführen ausatmen. Die Atmung ist hier wichtiger als das Gewicht.',
-y:'Unverändert gegenüber dem Brust-Block — die Rader-Methode zur Thoraxerweiterung ist blockunabhängig sinnvoll, solange die mediale Clavicula-Epiphyse offen ist. Zusätzlich trainiert sie den Serratus anterior.'},
+{n:'T-Bar Rudern — enger Griff',t:'Latissimus dorsi · Teres major · Rhomboiden',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–10',rs:'2:30',g:'C',
+f:'Warm-Up ~45 % × 8. Enger Griff → Ellenbogen nah am Körper → mehr Latissimus und Teres major. Shrugs am Ende — deine Notiz.',
+y:'Dritte Zugbewegung der Einheit. Steht bewusst nach dem einarmigen Rudern statt davor: Das T-Bar Rudern verlangt beidseitige Griffkraft gleichzeitig, das einarmige nur eine Hand — die umgekehrte Reihenfolge würde den schwereren bilateralen Zug durch Griffermüdung limitieren.'},
 
-{n:'Schrägbankdrücken (Smith Machine)',t:'Pectoralis major — klavikulärer Anteil · Anteriore Schulter · Trizeps',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–10',rs:'2:30',g:'C',
-f:'Warm-Up ~55 % × 8. Rumpf anspannen — deine Notiz. Der Rep-Bereich ist etwas höher als bei Upper A (4–6), was einen anderen Reiztyp setzt.',
-y:'Letzte Brustübung des Blocks statt der zweiten — bewusst spät positioniert, solange Brust auf Erhaltungsvolumen läuft. Der Rep-Bereich bleibt höher als bei Upper A für metabolischen statt mechanischen Reiz.'},
-
-{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel',s:'4 Sets',w:'1 Warm-Up + 3 Arbeitssätze',r:'6–9',rs:'2:30',g:'P',
-f:'Warm-Up ~40 % × 12. Lat anspannen um Trapez rauszunehmen. 3 Arbeitssätze wie bei Upper A.',
-y:'Insgesamt weiterhin 8 direkte Seitheben-Arbeitssätze pro Woche. Der Block ändert nichts an der Schulter-Planung.'},
-
-{n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–7',rs:'2:15',g:'I',
-f:'Warm-Up ~40 % × 12. Dritter Preacher-Curl-Tag der Woche. Am Tiefpunkt vollständig öffnen.',
-y:'Unverändert gegenüber dem Brust-Block. Zusammen mit dem indirekten Volumen aus Klimmzügen, T-Bar Rudern und jetzt auch dem einarmigen Rudern erreicht der Bizeps in diesem Block eher mehr als 12 Sätze/Woche.'},
-
-{n:'Trizepsdrücken (Kabel)',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'6–12',rs:'1:30',g:'I',
-f:'Warm-Up ~35 % × 12. Ellenbogen fixiert, vollständige Streckung am Endpunkt mit 1 Sek Halten.',
-y:'Nach Schrägbankdrücken vorermüdet — ohne den Dip diesmal nur einfach statt doppelt vorermüdet. Unverändert sonst gegenüber dem Brust-Block.'},
-
-{n:'Reverse Curl (Cable) — mit Band',t:'Brachioradialis · Brachialis · Unterarm-Extensoren',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'10–15',rs:'1:30',g:'A',
-f:'Mit Band als Mix aus Hammer und Reverse Curl. Ellenbogen fixiert, Handstellung zwischen neutral und proniert.',
+{n:'Seitheben (Maschine)',t:'Medialer Deltamuskel — isoliert',s:'2 Sets',w:'1 Warm-Up + 1 Arbeitssatz',r:'8–10',rs:'2:30',g:'P',
+f:'Warm-Up ~50 % × 3–7. Lat aktiv anspannen, um den Trapez rauszunehmen — deine Notiz.',
 y:'Unverändert gegenüber dem Brust-Block.'},
 
-{n:'Unterarm-Curls hinter dem Rücken (Langhantel)',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'A',
-f:'Rest-Pause-Protokoll wie an den anderen Tagen. Letzter Unterarm-Tag vor der nächsten Ruhephase.',
-y:'Unverändert gegenüber dem Brust-Block.'}]},
+{n:'Trizepsdrücken einarmig (Kabel) — mit Cuffs',t:'Trizeps — Caput laterale · Caput mediale',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–11',rs:'1:35',g:'I',
+f:'Mit Cuffs statt Griff — deine Notiz. Ellenbogen absolut fixiert am Körper, vollständige Streckung am Endpunkt.',
+y:'Ohne den Chest Press ist der Trizeps nur noch einfach vorermüdet statt doppelt — hier liegt entsprechend mehr Gewicht drin. Der einzige Muskel, der vom Rücken-Block indirekt profitiert.'},
+
+{n:'Preacher Curl (Maschine)',t:'Bizeps brachii — Caput breve · Brachialis',s:'3 Sets',w:'1 Warm-Up + 2 Arbeitssätze',r:'5–7',rs:'2:15',g:'I',
+f:'Warm-Up ~80 % × 4. Am Tiefpunkt vollständig öffnen, 1 Sek pausieren.',
+y:'Im Rücken-Block bekommt der Bizeps aus drei statt zwei Zugbewegungen indirektes Volumen, dreimal pro Woche. Wenn die Curls sich schwerer anfühlen, ist das erwartbar — reduziere das Gewicht, nicht die Sätze.'},
+
+{n:'Reverse Curl (Cable) — mit Band',t:'M. brachioradialis · M. brachialis · Unterarm-Extensoren',s:'2 Sets',w:'2 Arbeitssätze (kein Warm-Up)',r:'12',rs:'1:25',g:'A',
+f:'Mit dem Band als Mischung aus Hammer und Reverse Curl — deine Notiz. Ellenbogen fixiert.',
+y:'Unverändert gegenüber dem Brust-Block.'},
+
+{n:'Unterarm-Curls hinter dem Rücken (Langhantel) — Optional',t:'Unterarm-Flexoren · M. flexor carpi radialis et ulnaris',s:'2 Sets',w:'1 Arbeitssatz + 1 Drop-Satz',r:'20 + Drop',rs:'0:15',g:'O',
+f:'Optional. Ein Satz bis ~20 Wdh, dann direkt in den Drop-Satz bis zum Versagen.',
+y:'Im Rücken-Block der erste Kandidat zum Streichen: Bei drei Zugbewegungen × drei Einheiten bekommen die Unterarme so viel indirektes Volumen, dass direktes Training eher die Sehnen als den Muskel limitiert.'}]},
 
 zone2:{lb:'Zone 2',ti:'Aerobe Basis · Erholung',ac:'#2e9e6a',du:'40–60 Min',rp:'RPE 4–5',rr:'60–70 % HFmax',
 lg:'Niedrigste Intensität der Woche, aktive Erholung vor der nächsten Einheit. Die AMPK-Aktivierung ist minimal, sodass kein Interferenzeffekt mit dem Krafttag davor entsteht.',
@@ -381,43 +406,48 @@ y:'Zone 2 aktiviert PGC-1α, den Masterregulator der Mitochondriogenese. Mehr Mi
 f:'Alle Muskelgruppen der Woche systematisch durchgehen: Pectoralis, Latissimus, posteriore Schulter, Unterarme, Hüftbeuger, Hamstrings, Waden. Je 60–90 Sek.',
 y:'Wochenabschluss-Ritual. Signalisiert dem Nervensystem den vollständigen Übergang in den Erholungsmodus vor der nächsten Einheit.'}]}};
 
-/* VOL_CHEST = Mesozyklus Block 1 (September). VOL_BACK = Block 2 (Oktober),
-   nur die zwei mechanisch betroffenen Zeilen unterscheiden sich: Pectoralis
-   (SA verliert den Dip, -2) und Latissimus (SA gewinnt das einarmige
-   Rudern, +2) -- exakt der Tausch aus upperB_back, sonst nichts geraten. */
+/* Volumen je EINE Einheit des jeweiligen Programms, nicht pro Woche --
+   die Wochensumme rechnet renderVol() ueber WEEKFREQ aus. Das ist noetig,
+   weil die beiden Wochentypen seit der Umstellung voellig verschiedene
+   Einheiten enthalten: Nicht-Badminton = Sharms 1x + Upper A 2x + Lower 1x,
+   Badminton = Upper B 3x + Lower 1x.
+   d = direkte Arbeitssaetze, i = indirekte (synergistische) Saetze,
+   beide je Einheit. Fehlende Schluessel sind 0.
+   VOL_CHEST = Mesozyklus Block 1, VOL_BACK = Block 2; es unterscheiden sich
+   nur die fuenf Zeilen, die der Uebungstausch mechanisch betrifft. */
 export const VOL_CHEST=[
-{m:'Pectoralis',mo:0,mi:4,fr:0,sa:6,syn:0,mav:[8,16],n:'MI: Fliegende(2)+Schrägbank(2) · SA: Dip(2)+Fliegende(2)+Schrägbank(2)'},
-{m:'Latissimus',mo:0,mi:4,fr:0,sa:4,syn:0,mav:[8,14],n:'MI: Latzug(2)+Iso-Rudern(2) · SA: Klimmzug(2)+Überzüge(2)'},
-{m:'Rhomboiden / Trap',mo:0,mi:2,fr:0,sa:2,syn:4,mav:[6,12],n:'T-Bar(2) je Upper · Latzug/Klimmzug → 4 indir.'},
-{m:'Med. Deltoid',mo:2,mi:3,fr:0,sa:3,syn:2,mav:[6,14],n:'Seitheben MO(2)+MI(3)+SA(3) · Shoulder Press → 2 indir.'},
-{m:'Post. Deltoid',mo:2,mi:0,fr:0,sa:0,syn:4,mav:[6,12],n:'Reverse Fliegende(2) · T-Bar Rudern MI+SA → 4 indir. ✓'},
-{m:'Bizeps',mo:2,mi:2,fr:0,sa:2,syn:6,mav:[8,14],n:'Preacher 3× · alle Zugübungen → 6 indir.'},
-{m:'Trizeps',mo:4,mi:2,fr:0,sa:2,syn:4,mav:[6,14],n:'MO: JM Press(2)+Pushdown(2) · Drücken → 4 indir.'},
-{m:'Unterarm',mo:6,mi:4,fr:2,sa:4,syn:0,mav:[6,16],n:'Reverse Curl + Wrist Curl + Extension'},
-{m:'Core',mo:4,mi:0,fr:5,sa:0,syn:0,mav:[4,12],n:'MO: Crunch(2)+Beinheben(2) · FR: Crunch(3)+Beinheben(2)'},
-{m:'Obliques',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[2,8],n:'Side Bend(2)'},
-{m:'Quadrizeps',mo:0,mi:0,fr:4,sa:0,syn:0,mav:[8,16],n:'Beinpresse(2)+Beinstrecken(2) · + Sportarten',sport:1},
-{m:'Hamstrings',mo:0,mi:0,fr:2,sa:0,syn:2,mav:[6,12],n:'Beinbeugen(2) · Hyperext → 2 indir. · + Sportarten',sport:1},
-{m:'Gluteus',mo:0,mi:0,fr:2,sa:0,syn:1,mav:[4,12],n:'Hyperextension(2) · + Sportarten',sport:1},
-{m:'Adduktoren',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[2,8],n:'Hüftadduktion(2)'},
-{m:'Waden',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[4,10],n:'Wadenpressen(2) · + Sprungsportarten',sport:1}];
+{m:'Pectoralis',d:{ua:6,ub:4},i:{},mav:[8,16],n:'Upper A: Dip(2)+Fliegende(2)+Schrägbank(2) · Upper B: Fliegende(2)+Chest Press(1)+Schrägbank(1)'},
+{m:'Latissimus',d:{ua:4,ub:4},i:{},mav:[8,14],n:'Upper A: Klimmzug(2)+Überzüge(2) · Upper B: Latzug(2)+T-Bar eng(2)'},
+{m:'Rhomboiden / Trap',d:{ua:2},i:{ua:2,ub:4},mav:[6,12],n:'Upper A: T-Bar breiter Griff(2) direkt · indirekt aus Klimmzug bzw. Latzug + T-Bar eng'},
+{m:'Med. Deltoid',d:{sh:2,ua:2,ub:1},i:{sh:2,ub:1},mav:[6,14],n:'Seitheben in jeder Oberkörper-Einheit · Shoulder Press indirekt'},
+{m:'Post. Deltoid',d:{sh:2},i:{ua:2,ub:2},mav:[6,12],n:'Sharms: Reverse Fliegende(2) · T-Bar Rudern indirekt'},
+{m:'Bizeps',d:{sh:2,ua:2,ub:2},i:{ua:2,ub:4},mav:[8,14],n:'Preacher Curl in jeder Einheit · alle Zugübungen indirekt'},
+{m:'Trizeps',d:{sh:4,ua:2,ub:2},i:{ua:3,ub:3},mav:[6,14],n:'Sharms: JM Press(2)+Pushdown(2) · alle Drückbewegungen indirekt'},
+{m:'Unterarm',d:{sh:6,ua:3,ub:3,lo:2},i:{},mav:[6,16],n:'Reverse Curl + Wrist Curl + Extension'},
+{m:'Core',d:{sh:4,lo:5},i:{},mav:[4,12],n:'Sharms: Crunch(2)+Beinheben(2) · Lower: Crunch(3)+Beinheben(2)'},
+{m:'Obliques',d:{lo:2},i:{},mav:[2,8],n:'Lower: Side Bend(2)'},
+{m:'Quadrizeps',d:{lo:4},i:{},mav:[8,16],n:'Beinpresse(2)+Beinstrecken(2) · + Sportarten',sport:1},
+{m:'Hamstrings',d:{lo:2},i:{lo:2},mav:[6,12],n:'Beinbeugen(2) · Hyperextension indirekt · + Sportarten',sport:1},
+{m:'Gluteus',d:{lo:2},i:{lo:1},mav:[4,12],n:'Hyperextension(2) · + Sportarten',sport:1},
+{m:'Adduktoren',d:{lo:2},i:{},mav:[2,8],n:'Hüftadduktion(2)'},
+{m:'Waden',d:{lo:2},i:{},mav:[4,10],n:'Wadenpressen(2) · + Sprungsportarten',sport:1}];
 
 export const VOL_BACK=[
-{m:'Pectoralis',mo:0,mi:4,fr:0,sa:4,syn:0,mav:[8,16],n:'MI: Fliegende(2)+Schrägbank(2) · SA: Fliegende(2)+Schrägbank(2) — Dip pausiert im Rücken-Block'},
-{m:'Latissimus',mo:0,mi:4,fr:0,sa:6,syn:0,mav:[8,14],n:'MI: Latzug(2)+Iso-Rudern(2) · SA: Klimmzug(2)+Überzüge(2)+Einarmiges Rudern(2)'},
-{m:'Rhomboiden / Trap',mo:0,mi:2,fr:0,sa:2,syn:4,mav:[6,12],n:'T-Bar(2) je Upper · Latzug/Klimmzug → 4 indir.'},
-{m:'Med. Deltoid',mo:2,mi:3,fr:0,sa:3,syn:2,mav:[6,14],n:'Seitheben MO(2)+MI(3)+SA(3) · Shoulder Press → 2 indir.'},
-{m:'Post. Deltoid',mo:2,mi:0,fr:0,sa:0,syn:4,mav:[6,12],n:'Reverse Fliegende(2) · T-Bar Rudern MI+SA → 4 indir. ✓'},
-{m:'Bizeps',mo:2,mi:2,fr:0,sa:2,syn:7,mav:[8,14],n:'Preacher 3× · alle Zugübungen inkl. einarmiges Rudern → 7 indir.'},
-{m:'Trizeps',mo:4,mi:2,fr:0,sa:2,syn:4,mav:[6,14],n:'MO: JM Press(2)+Pushdown(2) · Drücken → 4 indir.'},
-{m:'Unterarm',mo:6,mi:4,fr:2,sa:4,syn:0,mav:[6,16],n:'Reverse Curl + Wrist Curl + Extension'},
-{m:'Core',mo:4,mi:0,fr:5,sa:0,syn:0,mav:[4,12],n:'MO: Crunch(2)+Beinheben(2) · FR: Crunch(3)+Beinheben(2)'},
-{m:'Obliques',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[2,8],n:'Side Bend(2)'},
-{m:'Quadrizeps',mo:0,mi:0,fr:4,sa:0,syn:0,mav:[8,16],n:'Beinpresse(2)+Beinstrecken(2) · + Sportarten',sport:1},
-{m:'Hamstrings',mo:0,mi:0,fr:2,sa:0,syn:2,mav:[6,12],n:'Beinbeugen(2) · Hyperext → 2 indir. · + Sportarten',sport:1},
-{m:'Gluteus',mo:0,mi:0,fr:2,sa:0,syn:1,mav:[4,12],n:'Hyperextension(2) · + Sportarten',sport:1},
-{m:'Adduktoren',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[2,8],n:'Hüftadduktion(2)'},
-{m:'Waden',mo:0,mi:0,fr:2,sa:0,syn:0,mav:[4,10],n:'Wadenpressen(2) · + Sprungsportarten',sport:1}];
+{m:'Pectoralis',d:{ua:4,ub:3},i:{},mav:[8,16],n:'Upper A: Fliegende(2)+Schrägbank(2) — Dip pausiert · Upper B: Fliegende(2)+Schrägbank(1) — Chest Press pausiert'},
+{m:'Latissimus',d:{ua:6,ub:6},i:{},mav:[8,14],n:'Upper A: Einarm. Rudern(2)+Klimmzug(2)+Überzüge(2) · Upper B: Latzug(2)+T-Bar eng(2)+Einarm. Rudern(2)'},
+{m:'Rhomboiden / Trap',d:{ua:2},i:{ua:3,ub:5},mav:[6,12],n:'Upper A: T-Bar breit(2) direkt · zusätzliches indirektes Volumen aus dem einarmigen Rudern'},
+{m:'Med. Deltoid',d:{sh:2,ua:2,ub:1},i:{sh:2,ub:1},mav:[6,14],n:'Unverändert — der Block verschiebt nur zwischen Brust und Rücken'},
+{m:'Post. Deltoid',d:{sh:2},i:{ua:2,ub:2},mav:[6,12],n:'Sharms: Reverse Fliegende(2) · T-Bar Rudern indirekt'},
+{m:'Bizeps',d:{sh:2,ua:2,ub:2},i:{ua:3,ub:6},mav:[8,14],n:'Preacher Curl direkt · drei statt zwei Zugübungen je Einheit indirekt'},
+{m:'Trizeps',d:{sh:4,ua:2,ub:2},i:{ua:2,ub:2},mav:[6,14],n:'Weniger indirektes Volumen, weil Dip bzw. Chest Press pausieren'},
+{m:'Unterarm',d:{sh:6,ua:3,ub:3,lo:2},i:{},mav:[6,16],n:'Reverse Curl + Wrist Curl + Extension'},
+{m:'Core',d:{sh:4,lo:5},i:{},mav:[4,12],n:'Sharms: Crunch(2)+Beinheben(2) · Lower: Crunch(3)+Beinheben(2)'},
+{m:'Obliques',d:{lo:2},i:{},mav:[2,8],n:'Lower: Side Bend(2)'},
+{m:'Quadrizeps',d:{lo:4},i:{},mav:[8,16],n:'Beinpresse(2)+Beinstrecken(2) · + Sportarten',sport:1},
+{m:'Hamstrings',d:{lo:2},i:{lo:2},mav:[6,12],n:'Beinbeugen(2) · Hyperextension indirekt · + Sportarten',sport:1},
+{m:'Gluteus',d:{lo:2},i:{lo:1},mav:[4,12],n:'Hyperextension(2) · + Sportarten',sport:1},
+{m:'Adduktoren',d:{lo:2},i:{},mav:[2,8],n:'Hüftadduktion(2)'},
+{m:'Waden',d:{lo:2},i:{},mav:[4,10],n:'Wadenpressen(2) · + Sprungsportarten',sport:1}];
 
 export const MEALS=[
 {d:'Montag',c:'#7a5ab5',tr:'Sharms',m:'Resteessen / Clean-Out-the-Fridge Pasta / Schupfnudelpfanne / Brotzeit',

@@ -193,12 +193,15 @@ transition:bottom .25s;z-index:200;max-width:90vw}
     background:#1a1408;border-left:2px solid var(--yel);border-radius:4px;padding:8px 12px;margin-bottom:12px;line-height:1.7"></div>
   <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
     Zählung: <strong style="color:var(--tx)">3 Sets = 1 Warm-Up + 2 Arbeitssätze</strong> · 2 Sets = 2 Arbeitssätze · 4 Sets = 1W + 3 Arbeitssätze.
-    Nur Arbeitssätze zählen. Synergisten = Mitarbeit als Nicht-Primärmuskel.
-    Spalten nach <strong style="color:var(--tx)">Programm</strong>, nicht nach Kalendertag — welcher Wochentag
-    welches Programm trägt, wechselt jede zweite Woche mit Badminton.
+    Nur Arbeitssätze zählen. Synergisten = Mitarbeit als Nicht-Primärmuskel, und sie zählen
+    <strong style="color:var(--tx)">halb</strong> — ein Rudersatz ist für den Bizeps kein ganzer Bizepssatz.
+    Spalten nach <strong style="color:var(--tx)">Programm</strong>, nicht nach Kalendertag. Die Zahl in der Spalte
+    ist die <strong style="color:var(--tx)">Wochensumme</strong> — also Sätze pro Einheit × Häufigkeit (im Spaltenkopf).
+    Tabelle und Hinweis oben beziehen sich immer auf die <strong style="color:var(--tx)">gerade laufende Woche</strong>;
+    Programme des jeweils anderen Wochentyps stehen leer.
   </div>
   <div style="overflow-x:auto"><table>
-    <thead><tr><th>Muskelgruppe</th><th>Sharms</th><th>Upper A</th><th>Lower</th><th>Upper B</th><th>Syn.</th><th>Total</th><th>MAV</th></tr></thead>
+    <thead><tr id="volhead"><th>Muskelgruppe</th><th>Sharms</th><th>Upper A</th><th>Upper B</th><th>Lower</th><th>Syn.</th><th>Total</th><th>MAV</th></tr></thead>
     <tbody id="vtb"></tbody>
   </table></div>
   <div class="lg">
@@ -207,10 +210,12 @@ transition:bottom .25s;z-index:200;max-width:90vw}
     <div class="lgi"><div class="lgd" style="background:var(--red)"></div>Über MAV</div>
   </div>
   <div class="card" style="margin-top:18px;border-left:3px solid var(--grn)">
-    <div style="font-family:var(--mono);font-size:9px;color:var(--grn);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">✓ Oberkörper vollständig im MAV</div>
+    <div style="font-family:var(--mono);font-size:9px;color:var(--grn);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">✓ Zwei Wochentypen, vergleichbares Volumen</div>
     <div style="font-size:12px;color:#999;line-height:1.8">
-      Alle Oberkörpermuskeln liegen im Maximum-Adaptive-Volume-Bereich. Besonders: <strong style="color:var(--wh)">Hintere Schulter jetzt bei 6 Sätzen</strong> — 2 direkt (Reverse Fliegende) + 4 indirekt durch T-Bar Rudern in Upper A und B. Damit ist die vorherige Unterversorgung gelöst.
-      Brust liegt bei 10 Sätzen (MI 4 + SA 6) im soliden Mittelfeld. Trizeps bei 8 direkt + 4 indirekt = 12.
+      <strong style="color:var(--wh)">Nicht-Badminton:</strong> Sharms + HIIT + Upper A 2× + Lower. Schwere Fassung, 2 Arbeitssätze je Übung, gewichtete Körpergewichts-Compounds (Dip, Klimmzug).
+      <strong style="color:var(--wh)">Badminton:</strong> Upper B 3× + Badminton + Lower, kein Sharms. Frequenz-Fassung, 1–2 Sätze je Übung, maschinenlastig.
+      Brust landet in beiden Fällen bei 12 Wochensätzen — einmal aus 2 × 6, einmal aus 3 × 4. Das ist der Punkt der Umstellung: dieselbe Wochensumme, verteilt auf die Frequenz, die zur jeweiligen Woche passt.
+      Bei drei Oberkörper-Einheiten ist weniger Gelenkbelastung je Einheit keine Sparmaßnahme, sondern die Voraussetzung dafür, dass dieselbe Muskulatur nach 48 h wieder belastbar ist.
     </div>
   </div>
   <div class="card" style="border-left:3px solid var(--blu)">
@@ -225,12 +230,15 @@ transition:bottom .25s;z-index:200;max-width:90vw}
     <div style="font-size:12px;color:#999;line-height:1.8">
       Zwei Vorgaben, die über dem reinen Volumen stehen: <strong style="color:var(--wh)">Zugvolumen zu Druckvolumen mindestens 2:1</strong> — Rudern, Face Pulls, Reverse Flys und Klimmzüge werden bei Kürzungen zuletzt gestrichen, Drückbewegungen zuerst. Und <strong style="color:var(--wh)">Seitheben an drei Tagen pro Woche</strong> mit hohen Wiederholungen: die laterale Schulter ist der direkteste Hebel für Schulterbreite, und die Schulterbreite ist der limitierende Faktor der Silhouette — nicht das Körpergewicht.
       Der tägliche Haltungsblock (thorakale Extension, Kinn-Retraktion) steht in der Mobility-Routine, die Begründung im Grooming-Tab.
+      <strong style="color:var(--wh)">Offene Lücke seit der Umstellung:</strong> Die hintere Schulter bekam ihr einziges direktes Volumen aus den Reverse Fliegenden in Sharms — und Sharms entfällt in der Badminton-Woche. Dort steht der posteriore Deltamuskel nur noch bei indirektem Volumen aus dem T-Bar Rudern und fällt unter MAV; die Tabelle zeigt das gelb. Das ist keine Fehlberechnung, sondern die tatsächliche Folge des Wegfalls. Wenn du es schließen willst, wäre Reverse Fliegende als zwölfte Übung in Upper B der direkteste Weg — sag Bescheid, dann baue ich es ein.
     </div>
   </div>
   <div class="card" style="border-left:3px solid var(--yel)">
     <div style="font-family:var(--mono);font-size:9px;color:var(--yel);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">🔄 Mesozyklus — Blockperiodisierung</div>
     <div style="font-size:12px;color:#999;line-height:1.8">
-      Man kann nicht dauerhaft jede Muskelgruppe gleichzeitig mit Maximalvolumen trainieren, ohne die Erholungskapazität zu übersteigen. Deshalb rotiert die Priorität monatsweise: <strong style="color:var(--wh)">September Brust, Oktober Rücken</strong>. Der Wechsel läuft über eine einzige Übung in Upper B — der Brust Dip weicht im Rücken-Block dem Einarmigen Kurzhantelrudern, an exakt derselben Stelle in der Reihenfolge. Dadurch sinkt Brust von 10 auf 8 Sätze/Woche (unterer MAV-Rand), Rücken steigt von 8 auf 10 (oberer MAV-Rand) — eine echte Verschiebung, kein Umsortieren. Upper A dreht in beiden Blöcken zusätzlich die Reihenfolge: die priorisierte Muskelgruppe eröffnet die Einheit, solange Kraft und Nervensystem frisch sind.
+      Man kann nicht dauerhaft jede Muskelgruppe gleichzeitig mit Maximalvolumen trainieren, ohne die Erholungskapazität zu übersteigen. Deshalb rotiert die Priorität monatsweise: <strong style="color:var(--wh)">September Brust, Oktober Rücken</strong>. Der Wechsel läuft je Programm über <strong style="color:var(--wh)">genau eine Übung</strong> — in Upper A weicht der Brust Dip, in Upper B der Chest Press, beide dem Einarmigen Kurzhantelrudern an exakt derselben Stelle in der Reihenfolge. Gewählt wurde jeweils die Druckbewegung, deren Winkel von den verbleibenden Brustübungen am ehesten mitabgedeckt wird.
+      Effekt in der Nicht-Badminton-Woche: Brust 12 → 8 Sätze, Rücken 8 → 12. In der Badminton-Woche: Brust 12 → 9, Rücken 12 → 18. Eine echte Verschiebung, kein Umsortieren.
+      <strong style="color:var(--wh)">Warnung zur Badminton-Woche im Rücken-Block:</strong> 18 Rückensätze plus das indirekte Volumen bei Bizeps und Rhomboiden liegt über dem MAV — die Tabelle zeigt das rot an, und das ist kein Anzeigefehler. Wenn Griffkraft oder Bizepssehnen nach zwei Wochen nachgeben, streiche zuerst den optionalen Unterarm-Satz, dann einen Satz T-Bar Rudern.
       Ab November ist noch keine weitere Rotation festgelegt — der Rücken-Block bleibt aktiv, bis eine dritte Priorität feststeht. Kein automatischer Rücksprung zur Brust.
     </div>
   </div>

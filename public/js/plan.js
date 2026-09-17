@@ -2,7 +2,7 @@
    der Wochentag-Kalender wechselt jetzt alle 14 Tage zwischen zwei
    Belegungen (WEEKPLAN.a/.b), Trainingsinhalt kommt aus S nach
    Programm-Identitaet, nicht mehr nach Wochentag. */
-import { TG, S, WEEKPLAN, REF_BADMINTON_MONDAY, MESO_SCHEDULE, MESO_DEFAULT, VOL_CHEST, VOL_BACK, MEALS, FOODTIPS, TIMING, SLEEP, STIPS, MOBSEQ, MOBMILES, EVE, MOR, HYDRATION } from './plan-data.js';
+import { TG, S, WEEKPLAN, WEEKFREQ, REF_BADMINTON_MONDAY, MESO_SCHEDULE, MESO_DEFAULT, VOL_CHEST, VOL_BACK, MEALS, FOODTIPS, TIMING, SLEEP, STIPS, MOBSEQ, MOBMILES, EVE, MOR, HYDRATION } from './plan-data.js';
 
 /* Mesozyklus: welche Muskelgruppe im Kalendermonat priorisiert wird.
    Betrifft nur upperA/upperB -- resolveProgram() biegt genau diese beiden
@@ -32,7 +32,8 @@ function isBadmintonWeek(date=new Date()){
   const diffDays=Math.round((mondayOf(date)-new Date(y,m,day))/86400000);
   return (((Math.round(diffDays/7))%2)+2)%2===0;
 }
-const getWeekPlan=()=>WEEKPLAN[isBadmintonWeek()?'b':'a'];
+const weekKey=()=>isBadmintonWeek()?'b':'a';
+const getWeekPlan=()=>WEEKPLAN[weekKey()];
 
 function renderDayBar(){
   const plan=getWeekPlan();
@@ -95,15 +96,45 @@ function renderDay(id){
   document.getElementById('dc').innerHTML=h;
 }
 
+/* Spalten der Volumentabelle: Anzeigename, Programmschluessel (fuer WEEKFREQ)
+   und Datenschluessel (fuer VOL.d/.i). Ein Programm, das im aktiven Wochentyp
+   nicht vorkommt, bleibt als Spalte stehen, wird aber leer dargestellt --
+   sonst waere nicht erkennbar, was die andere Woche enthaelt. */
+const PROGCOL=[{l:'Sharms',p:'sharms',k:'sh'},{l:'Upper A',p:'upperA',k:'ua'},
+               {l:'Upper B',p:'upperB',k:'ub'},{l:'Lower',p:'lower',k:'lo'}];
+
 function renderVol(){
   const block=activeMesoBlock(), VOL=block==='back'?VOL_BACK:VOL_CHEST;
+  const wk=weekKey(), freq=WEEKFREQ[wk], badminton=wk==='b';
+
+  /* Kopfzeile traegt die Frequenz, weil dieselbe Zahl in der Spalte je nach
+     Wochentyp aus einer, zwei oder drei Einheiten stammt. */
+  const head=document.getElementById('volhead');
+  if(head) head.innerHTML='<th>Muskelgruppe</th>'
+    +PROGCOL.map(c=>{const f=freq[c.p]||0;
+      return `<th style="color:${f?'var(--dim)':'var(--bd)'}">${c.l}${f?` ×${f}`:''}</th>`;}).join('')
+    +'<th>Syn.</th><th>Total</th><th>MAV</th>';
+
   const info=document.getElementById('mesoinfo');
   const monatsname=new Date().toLocaleDateString('de-DE',{month:'long',year:'numeric'});
-  if(info) info.innerHTML=block==='back'
-    ? `<b>Aktiver Mesozyklus: Rücken-Priorität</b> (${monatsname}) — Brust Dip pausiert zugunsten von Einarmigem Kurzhantelrudern in Upper B.`
-    : `<b>Aktiver Mesozyklus: Brust-Priorität</b> (${monatsname}) — Standardplan, Brust Dip aktiv.`;
+  if(info) info.innerHTML=
+    `<b>Diese Woche: ${badminton?'Badminton-Woche':'Nicht-Badminton-Woche'}</b> — `
+    +(badminton
+      ? 'Upper B 3× (DI, DO, SA) + Lower. Sharms entfällt, Schultern und Arme laufen über die drei Upper-B-Einheiten mit.'
+      : 'Sharms + HIIT + Upper A 2× (MI, SA) + Lower.')
+    +`<br><b>Aktiver Mesozyklus: ${block==='back'?'Rücken':'Brust'}-Priorität</b> (${monatsname}) — `
+    +(block==='back'
+      ? 'Brust Dip (Upper A) und Chest Press (Upper B) pausieren zugunsten von Einarmigem Kurzhantelrudern.'
+      : 'Standardplan, beide Brustübungen aktiv.');
+
   document.getElementById('vtb').innerHTML=VOL.map(r=>{
-    const tot=r.mo+r.mi+r.fr+r.sa+r.syn,[lo,hi]=r.mav;
+    const cols=PROGCOL.map(c=>(freq[c.p]||0)*((r.d&&r.d[c.k])||0));
+    /* Indirekte Saetze zaehlen halb (gaengige Konvention, u.a. Israetel).
+       Bei 1:1 wuerde die Badminton-Woche mit drei Zugbewegungen x drei
+       Einheiten fuer den Bizeps 24 Saetze ausweisen -- eine Zahl, die nur
+       die Zaehlweise beschreibt, nicht die Belastung. */
+    const syn=Math.round(PROGCOL.reduce((s,c)=>s+(freq[c.p]||0)*((r.i&&r.i[c.k])||0),0)/2);
+    const tot=cols.reduce((s,v)=>s+v,0)+syn,[lo,hi]=r.mav;
     const ok=tot>=lo&&tot<=hi,over=tot>hi;
     const col=over?'#c94535':ok?'#2e9e6a':r.sport?'#3a7bbf':'#b8922e';
     const pct=Math.min(100,(tot/hi)*100);
@@ -111,8 +142,8 @@ function renderVol(){
       <td><div>${r.m}${r.sport?' <span style="color:#3a7bbf;font-size:9px">🏃</span>':''}</div>
       <div class="vbw"><div class="vb" style="width:${pct}%;background:${col}"></div></div>
       <div class="vn">${r.n}</div></td>
-      ${[r.mo,r.mi,r.fr,r.sa].map(v=>`<td style="color:${v>0?'var(--tx)':'var(--bd)'};${v>0?'font-weight:500':''}">${v>0?v:'—'}</td>`).join('')}
-      <td style="color:${r.syn>0?'var(--dim)':'var(--bd)'}">${r.syn>0?r.syn:'—'}</td>
+      ${cols.map(v=>`<td style="color:${v>0?'var(--tx)':'var(--bd)'};${v>0?'font-weight:500':''}">${v>0?v:'—'}</td>`).join('')}
+      <td style="color:${syn>0?'var(--dim)':'var(--bd)'}">${syn>0?syn:'—'}</td>
       <td style="color:${col};font-weight:700;font-size:14px">${tot}</td>
       <td style="color:var(--dim);font-size:10px">${lo}–${hi}</td></tr>`;
   }).join('');
