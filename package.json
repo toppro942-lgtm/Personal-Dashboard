@@ -1,0 +1,13 @@
+{
+  "name": "personal-dashboard",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Trainings-, Health- und Finanz-Dashboard. Zero-Dependency Node-Backend (node:http + node:sqlite).",
+  "engines": { "node": ">=22.5.0" },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "init:secrets": "node server/scripts/gen-secrets.js"
+  }
+}

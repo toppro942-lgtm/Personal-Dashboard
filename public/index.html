@@ -102,6 +102,62 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
 .morrow{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:8px;margin-bottom:7px;border:1px solid var(--bd);border-left:3px solid var(--grn)}
 .morn{width:24px;height:24px;border-radius:50%;background:#0a1f14;color:var(--grn);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mortxt{font-size:12px;color:var(--tx);line-height:1.5}
+
+/* Unterschritte in der Morgenroutine */
+.substep{list-style:none;margin:7px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.substep li{position:relative;padding-left:14px;font-size:11px;color:var(--mut);line-height:1.65}
+.substep li::before{content:'';position:absolute;left:3px;top:7px;width:4px;height:4px;
+border-radius:50%;background:var(--grn);opacity:.65}
+
+/* Grooming: Nachschlage-Sektionen */
+.gsec{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--gc);
+border-radius:9px;padding:15px 17px;margin-bottom:11px}
+.gsect{font-family:var(--srf);font-size:17px;color:var(--wh);margin-bottom:5px}
+.glead{font-size:12px;color:var(--mut);line-height:1.8;max-width:62ch}
+.gblock{margin-top:13px}
+.gh{font-family:var(--mono);font-size:8px;letter-spacing:1.8px;text-transform:uppercase;
+color:var(--gc);margin-bottom:6px}
+.gl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.gl li{position:relative;padding-left:15px;font-size:12px;color:var(--tx);line-height:1.7}
+.gl li::before{content:'';position:absolute;left:3px;top:8px;width:5px;height:1px;background:var(--gc);opacity:.8}
+.gquote{margin-top:13px;background:#0c0c0c;border:1px solid var(--bd);border-radius:7px;padding:12px 14px}
+.gqh{font-family:var(--mono);font-size:8px;letter-spacing:1.8px;text-transform:uppercase;
+color:var(--dim);margin-bottom:7px}
+.gqt{font-family:var(--srf);font-size:15px;color:var(--wh);line-height:1.65}
+.gwarn{margin-top:11px;background:#1a0e0c;border-left:2px solid var(--red);border-radius:5px;
+padding:9px 12px;font-size:11px;color:#d08a80;line-height:1.7}
+.gnote{margin-top:9px;background:#1a1408;border-left:2px solid var(--yel);border-radius:5px;
+padding:9px 12px;font-size:11px;color:#c9a870;line-height:1.7}
+
+/* --- Health / Finanzen --- */
+.btn{background:var(--s2);border:1px solid var(--bd);color:var(--tx);font-family:var(--mono);font-size:10px;
+letter-spacing:1px;text-transform:uppercase;padding:7px 12px;border-radius:5px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--mut);color:var(--wh)}
+.btn.danger{color:var(--red);border-color:#3a1a16}
+.btn.primary{background:#0e1a26;border-color:var(--blu);color:#9fc4e8}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.frm{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:13px 15px;margin-bottom:12px}
+.fld{display:flex;flex-direction:column;gap:4px;flex:1 1 120px;min-width:0}
+.fld label{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
+.fld input,.fld select{background:#0c0c0c;border:1px solid var(--bd);border-radius:5px;color:var(--tx);
+font-family:var(--mono);font-size:12px;padding:7px 9px;width:100%}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--blu)}
+.txrow{display:grid;grid-template-columns:44px 1fr 130px 96px 26px;gap:9px;align-items:center;
+background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:9px 11px;margin-bottom:5px}
+@media(max-width:600px){.txrow{grid-template-columns:44px 1fr 90px;grid-template-areas:'d m a' 'c c x'}
+.txrow .txcat{grid-area:c}.txrow .txdel{grid-area:x}}
+.txdate{font-family:var(--mono);font-size:10px;color:var(--dim)}
+.txparty{font-size:12px;color:var(--wh);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.txmain{min-width:0}
+.txcat{background:#0c0c0c;border:1px solid var(--bd);border-radius:4px;color:var(--mut);font-size:10px;padding:4px 5px;max-width:100%}
+.txamt{font-family:var(--mono);font-size:12px;text-align:right;font-weight:500}
+.txdel{background:none;border:none;color:var(--dim);cursor:pointer;font-size:12px}
+.txdel:hover{color:var(--red)}
+.toast{position:fixed;left:50%;bottom:-70px;transform:translateX(-50%);background:var(--s2);border:1px solid var(--bd);
+border-left:3px solid var(--grn);border-radius:6px;padding:11px 16px;font-size:12px;color:var(--wh);
+transition:bottom .25s;z-index:200;max-width:90vw}
+.toast.on{bottom:22px}
+.toast.err{border-left-color:var(--red)}
 </style>
 </head>
 <body>
@@ -117,6 +173,10 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
     <button class="tb" onclick="tab('mob',this)">Mobility</button>
     <button class="tb" onclick="tab('eve',this)">Abend</button>
     <button class="tb" onclick="tab('mor',this)">Morgen</button>
+    <button class="tb" onclick="tab('groom',this)">Grooming</button>
+    <button class="tb" onclick="tab('health',this)">Health</button>
+    <button class="tb" onclick="tab('fin',this)">Finanzen</button>
+    <button class="tb" onclick="tab('wealth',this)">Vermögen</button>
   </div>
 </div></div>
 
@@ -129,12 +189,19 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
 <!-- VOLUMEN -->
 <div id="t-vol" class="tc"><div class="ct">
   <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Wochenvolumen</div>
+  <div id="mesoinfo" style="font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--wh);
+    background:#1a1408;border-left:2px solid var(--yel);border-radius:4px;padding:8px 12px;margin-bottom:12px;line-height:1.7"></div>
   <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
     Zählung: <strong style="color:var(--tx)">3 Sets = 1 Warm-Up + 2 Arbeitssätze</strong> · 2 Sets = 2 Arbeitssätze · 4 Sets = 1W + 3 Arbeitssätze.
-    Nur Arbeitssätze zählen. Synergisten = Mitarbeit als Nicht-Primärmuskel.
+    Nur Arbeitssätze zählen. Synergisten = Mitarbeit als Nicht-Primärmuskel, und sie zählen
+    <strong style="color:var(--tx)">halb</strong> — ein Rudersatz ist für den Bizeps kein ganzer Bizepssatz.
+    Spalten nach <strong style="color:var(--tx)">Programm</strong>, nicht nach Kalendertag. Die Zahl in der Spalte
+    ist die <strong style="color:var(--tx)">Wochensumme</strong> — also Sätze pro Einheit × Häufigkeit (im Spaltenkopf).
+    Tabelle und Hinweis oben beziehen sich immer auf die <strong style="color:var(--tx)">gerade laufende Woche</strong>;
+    Programme des jeweils anderen Wochentyps stehen leer.
   </div>
   <div style="overflow-x:auto"><table>
-    <thead><tr><th>Muskelgruppe</th><th>MO</th><th>MI</th><th>FR</th><th>SA</th><th>Syn.</th><th>Total</th><th>MAV</th></tr></thead>
+    <thead><tr id="volhead"><th>Muskelgruppe</th><th>Sharms</th><th>Upper A</th><th>Upper B</th><th>Lower</th><th>Syn.</th><th>Total</th><th>MAV</th></tr></thead>
     <tbody id="vtb"></tbody>
   </table></div>
   <div class="lg">
@@ -143,10 +210,12 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
     <div class="lgi"><div class="lgd" style="background:var(--red)"></div>Über MAV</div>
   </div>
   <div class="card" style="margin-top:18px;border-left:3px solid var(--grn)">
-    <div style="font-family:var(--mono);font-size:9px;color:var(--grn);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">✓ Oberkörper vollständig im MAV</div>
+    <div style="font-family:var(--mono);font-size:9px;color:var(--grn);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">✓ Zwei Wochentypen, vergleichbares Volumen</div>
     <div style="font-size:12px;color:#999;line-height:1.8">
-      Alle Oberkörpermuskeln liegen im Maximum-Adaptive-Volume-Bereich. Besonders: <strong style="color:var(--wh)">Hintere Schulter jetzt bei 6 Sätzen</strong> — 2 direkt (Reverse Fliegende) + 4 indirekt durch T-Bar Rudern in Upper A und B. Damit ist die vorherige Unterversorgung gelöst.
-      Brust liegt bei 10 Sätzen (MI 4 + SA 6) im soliden Mittelfeld. Trizeps bei 8 direkt + 4 indirekt = 12.
+      <strong style="color:var(--wh)">Nicht-Badminton:</strong> Sharms + HIIT + Upper A 2× + Lower. Schwere Fassung, 2 Arbeitssätze je Übung, gewichtete Körpergewichts-Compounds (Dip, Klimmzug).
+      <strong style="color:var(--wh)">Badminton:</strong> Upper B 3× + Badminton + Lower, kein Sharms. Frequenz-Fassung, 1–2 Sätze je Übung, maschinenlastig.
+      Brust landet in beiden Fällen bei 12 Wochensätzen — einmal aus 2 × 6, einmal aus 3 × 4. Das ist der Punkt der Umstellung: dieselbe Wochensumme, verteilt auf die Frequenz, die zur jeweiligen Woche passt.
+      Bei drei Oberkörper-Einheiten ist weniger Gelenkbelastung je Einheit keine Sparmaßnahme, sondern die Voraussetzung dafür, dass dieselbe Muskulatur nach 48 h wieder belastbar ist.
     </div>
   </div>
   <div class="card" style="border-left:3px solid var(--blu)">
@@ -154,6 +223,23 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
     <div style="font-size:12px;color:#999;line-height:1.8">
       Quadrizeps (4), Hamstrings (4) und Waden (2) liegen unter dem klassischen MAV — das ist bei deinem Setup <strong style="color:var(--wh)">kein Problem</strong>. Durch Badminton, Beachvolleyball, Fußball, Wandern, Radfahren, Schlittschuh und Surfen erhalten die Beine kontinuierlich hohen Reiz aus multiplen Bewegungsmustern: Sprünge, Sprints, Richtungswechsel, Ausdauerbelastung.
       Sportartspezifische Belastung ist für Beinmuskulatur funktional oft wertvoller als isoliertes Maschinenvolumen. Der Lower-Tag deckt die schweren Grundmuster ab (Beinpresse niedrige Wdh) — der Rest kommt aus dem Sport.
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--red)">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">↔ Haltung & Schulterbreite — Priorisierung</div>
+    <div style="font-size:12px;color:#999;line-height:1.8">
+      Zwei Vorgaben, die über dem reinen Volumen stehen: <strong style="color:var(--wh)">Zugvolumen zu Druckvolumen mindestens 2:1</strong> — Rudern, Face Pulls, Reverse Flys und Klimmzüge werden bei Kürzungen zuletzt gestrichen, Drückbewegungen zuerst. Und <strong style="color:var(--wh)">Seitheben an drei Tagen pro Woche</strong> mit hohen Wiederholungen: die laterale Schulter ist der direkteste Hebel für Schulterbreite, und die Schulterbreite ist der limitierende Faktor der Silhouette — nicht das Körpergewicht.
+      Der tägliche Haltungsblock (thorakale Extension, Kinn-Retraktion) steht in der Mobility-Routine, die Begründung im Grooming-Tab.
+      <strong style="color:var(--wh)">Offene Lücke seit der Umstellung:</strong> Die hintere Schulter bekam ihr einziges direktes Volumen aus den Reverse Fliegenden in Sharms — und Sharms entfällt in der Badminton-Woche. Dort steht der posteriore Deltamuskel nur noch bei indirektem Volumen aus dem T-Bar Rudern und fällt unter MAV; die Tabelle zeigt das gelb. Das ist keine Fehlberechnung, sondern die tatsächliche Folge des Wegfalls. Wenn du es schließen willst, wäre Reverse Fliegende als zwölfte Übung in Upper B der direkteste Weg — sag Bescheid, dann baue ich es ein.
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--yel)">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--yel);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">🔄 Mesozyklus — Blockperiodisierung</div>
+    <div style="font-size:12px;color:#999;line-height:1.8">
+      Man kann nicht dauerhaft jede Muskelgruppe gleichzeitig mit Maximalvolumen trainieren, ohne die Erholungskapazität zu übersteigen. Deshalb rotiert die Priorität monatsweise: <strong style="color:var(--wh)">September Brust, Oktober Rücken</strong>. Der Wechsel läuft je Programm über <strong style="color:var(--wh)">genau eine Übung</strong> — in Upper A weicht der Brust Dip, in Upper B der Chest Press, beide dem Einarmigen Kurzhantelrudern an exakt derselben Stelle in der Reihenfolge. Gewählt wurde jeweils die Druckbewegung, deren Winkel von den verbleibenden Brustübungen am ehesten mitabgedeckt wird.
+      Effekt in der Nicht-Badminton-Woche: Brust 12 → 8 Sätze, Rücken 8 → 12. In der Badminton-Woche: Brust 12 → 9, Rücken 12 → 18. Eine echte Verschiebung, kein Umsortieren.
+      <strong style="color:var(--wh)">Warnung zur Badminton-Woche im Rücken-Block:</strong> 18 Rückensätze plus das indirekte Volumen bei Bizeps und Rhomboiden liegt über dem MAV — die Tabelle zeigt das rot an, und das ist kein Anzeigefehler. Wenn Griffkraft oder Bizepssehnen nach zwei Wochen nachgeben, streiche zuerst den optionalen Unterarm-Satz, dann einen Satz T-Bar Rudern.
+      Ab November ist noch keine weitere Rotation festgelegt — der Rücken-Block bleibt aktiv, bis eine dritte Priorität feststeht. Kein automatischer Rücksprung zur Brust.
     </div>
   </div>
 </div></div>
@@ -206,11 +292,11 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
 <div id="t-mob" class="tc"><div class="ct">
   <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Mobility-Routine</div>
   <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:16px">
-    Täglich, nach warmem Duschen, vor dem Schlafen · 25 Min · Primär PNF (Contract-Relax)
+    Täglich, nach warmem Duschen, vor dem Schlafen · ~30 Min · Primär PNF (Contract-Relax), eingeleitet durch den Haltungsblock
   </div>
 
   <div class="macro" style="grid-template-columns:repeat(3,1fr)">
-    <div class="mac"><div class="macv" style="color:#7a5ab5">25</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
+    <div class="mac"><div class="macv" style="color:#7a5ab5">30</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
     <div class="mac"><div class="macv" style="color:#7a5ab5">8s · 30s</div><div class="macl" style="color:#7a5ab5">An · Halten</div><div class="macs">×3 pro Muskel</div></div>
     <div class="mac"><div class="macv" style="color:#7a5ab5">Abends</div><div class="macl" style="color:#7a5ab5">Timing</div><div class="macs">nach Dusche</div></div>
   </div>
@@ -269,24 +355,98 @@ td:first-child{text-align:left;color:var(--tx);font-weight:500;font-family:var(-
   <div id="morlist"></div>
 </div></div>
 
+
+
+<!-- GROOMING -->
+<div id="t-groom" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Grooming &amp; Erscheinung</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:8px;max-width:62ch">
+    Nachschlagewissen, kein Tagesablauf. Was täglich zu tun ist, steht dort, wo es hingehört:
+    Haut morgens und Haare in der <strong style="color:var(--tx)">Morgenroutine</strong>,
+    Haut abends in der <strong style="color:var(--tx)">Abendroutine</strong>,
+    Haltungsübungen in der <strong style="color:var(--tx)">Mobility-Routine</strong>.
+  </div>
+  <div id="groomlist"></div>
+</div></div>
+
+<!-- HEALTH -->
+<div id="t-health" class="tc"><div class="ct">
+  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Health-Daten</div>
+  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:16px">
+    Objektive Gegenprobe zu Schlaf- und Trainingsplan. Quellen: manuelle Eingabe, Google Fit (deprecated)
+    oder beliebige Clients über <code>POST /api/health/metrics</code>.
+  </div>
+
+  <div class="ctl">Erfassen</div>
+  <form class="frm" id="hform">
+    <div class="fld"><label>Datum</label><input type="date" name="day" id="hday" required></div>
+    <div class="fld"><label>Metrik</label><select name="metric" required>
+      <option value="steps">Schritte</option>
+      <option value="resting_hr">Ruhepuls (bpm)</option>
+      <option value="sleep_minutes">Schlaf (Minuten)</option>
+      <option value="active_kcal">Aktive kcal</option>
+      <option value="weight_kg">Gewicht (kg)</option>
+      <option value="hrv_ms">HRV (ms)</option>
+    </select></div>
+    <div class="fld"><label>Wert</label><input type="number" name="value" step="any" required></div>
+    <button class="btn primary" type="submit">Speichern</button>
+  </form>
+
+  <div class="ctl">Letzte 14 Tage</div>
+  <div class="grid2" id="hcards"></div>
+
+  <div class="ctl">Google-Integration</div>
+  <div class="card" id="gstatus"></div>
+</div></div>
+
+<!-- FINANZEN -->
+<div id="t-fin" class="tc"><div class="ct">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+    <div>
+      <div style="font-family:var(--srf);font-size:19px;color:var(--wh)">Finanzübersicht</div>
+      <div style="font-size:12px;color:var(--dim)">Integer-Cent-Arithmetik · CSV-Import statt PSD2-Aggregator</div>
+    </div>
+    <div class="fld" style="flex:0 0 140px"><label>Monat</label><input type="month" id="fmonth"></div>
+  </div>
+
+  <div class="macro" id="fkpi"></div>
+
+  <div class="ctl">Buchung erfassen</div>
+  <form class="frm" id="ftxform">
+    <div class="fld" style="flex:0 0 130px"><label>Datum</label><input type="date" name="day" id="ftxday" required></div>
+    <div class="fld" style="flex:0 0 110px"><label>Betrag €</label><input type="text" name="amount" inputmode="decimal" placeholder="-42,35" required></div>
+    <div class="fld"><label>Gegenpartei</label><input type="text" name="party" placeholder="REWE"></div>
+    <div class="fld"><label>Zweck</label><input type="text" name="purpose"></div>
+    <div class="fld" style="flex:0 0 150px"><label>Kategorie</label><select name="category" id="ftxcat"></select></div>
+    <button class="btn primary" type="submit">Erfassen</button>
+  </form>
+
+  <div class="ctl">CSV-Import</div>
+  <form class="frm" id="fimport">
+    <div class="fld"><label>Datei</label><input type="file" id="fcsv" accept=".csv,.txt" required></div>
+    <div class="fld" style="flex:0 0 150px"><label>Bank-Profil</label><select id="fprofile">
+      <option value="generic">Generisch</option><option value="dkb">DKB</option>
+      <option value="sparkasse">Sparkasse</option><option value="n26">N26</option>
+    </select></div>
+    <button class="btn" type="submit">Importieren</button>
+  </form>
+  <div class="vn" style="margin:-6px 0 14px">Dubletten werden über einen Hash aus Konto, Datum, Betrag, Gegenpartei und Zweck erkannt — überlappende Exporte sind unkritisch.</div>
+
+  <div class="ctl">Budgets</div>
+  <div class="grid2" id="fbudget"></div>
+
+  <div class="ctl">Buchungen</div>
+  <div id="ftx"></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
 <div style="text-align:center;padding:14px;border-top:1px solid var(--bd)">
   <div style="font-size:8px;font-family:var(--mono);color:var(--dim);letter-spacing:.3px">
     Israetel 2019 · Maeo 2021/22 · Schoenfeld 2010 · Mah 2011 · Hoppe 2004 · Res 2012
   </div>
 </div>
 
-<script>
-const AC={mo:'#7a5ab5',di:'#c94535',mi:'#b8922e',do:'#2e9e6a',fr:'#3a7bbf',sa:'#b8922e',so:'#2e9e6a'};
-const DAYS=[
- {id:'mo',s:'MO',n:'Sharms'},{id:'di',s:'DI',n:'HIIT'},{id:'mi',s:'MI',n:'Upper A'},
- {id:'do',s:'DO',n:'Rest'},{id:'fr',s:'FR',n:'Lower'},{id:'sa',s:'SA',n:'Upper B'},{id:'so',s:'SO',n:'Zone 2'}];
-
-const TG={C:{b:'#0e1a26',c:'#3a7bbf',t:'COMPOUND'},I:{b:'#1f1a0a',c:'#b8922e',t:'ISOLATION'},
-P:{b:'#260e0e',c:'#c94535',t:'PRIORITÄT'},G:{b:'#0a1f14',c:'#2e9e6a',t:'GESUNDHEIT'},
-K:{b:'#180e26',c:'#7a5ab5',t:'CORE'},A:{b:'#1a0e1a',c:'#7a5ab5',t:'ARMGESUND'},
-O:{b:'#181818',c:'#4f4f4f',t:'OPTIONAL'},X:{b:'#261a0e',c:'#b86830',t:'SPEZIAL'},
-N:{b:'#181818',c:'#757575',t:'INFO'}};
-
-const S={
-mo:{lb:'MO · Sharms',ti:'Schultern · Arme · Core',ac:'#7a5ab5',du:'80–90 Min',rp:'RPE 7–9',rr:'5–16 Wdh',
-lg:'Schultern zuerst (Compound → Isolation), dann Arme, Core als Abschluss. Nach zwei Ruhetagen (SO Zone 2 + Erholung) sind die Schultern vollständig frisch. Die niedrigen Wiederholungszahlen (6–8) bei Shoulder Press und Seitheben setzen
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>
