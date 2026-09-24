@@ -9,6 +9,17 @@ Ein self-contained HTML-Dashboard (Vanilla JS, kein Framework, kein Build-Step) 
 - **Mobility** — PNF-Dehnroutine, Ablauf, Meilensteine
 - **Abend** — Countdown-Timeline T-120 bis T-0
 - **Morgen** — Feste Schrittfolge + Hydration-Tracking
+- **✦ Aura** (Starttab) — Score 0–1000 aus vier Säulen (Körper, Geist, Persönlichkeit, Seele). Tagesaufgaben werden je Datum aus dem Plan abgeleitet (Trainingstag inkl. Wochentyp/Mesozyklus, Schlafzeiten, Morgen-, Abend-, Mobility-, Hautroutine); dazu 22-Tage-Gewohnheiten, 90-Tage-Laster-Zähler, 12-Wochen-Heatmap
+- **Grooming · Health · Finanzen · Vermögen** — siehe Live-Artifact
+
+## Aura — Datenmodell
+- `aura/config` — `{habits:[{id,name,p,start}], vices:[{id,name,start,since,resets,best}]}`
+- `aura/mYYYY-MM` — `{month, days:{'YYYY-MM-DD':{t:{taskId:bool}, tot:{…}}}}` (ein Dokument pro Monat, feldgenaue `update()`-Merges)
+- Speicher: Artifact-DB (`claude.use('db')`); lokal geöffnet fällt die Aura auf `localStorage` zurück
+- Score: je Säule erledigt/gesamt über die letzten 14 abgeschlossenen Tage, Mittel × 10. Tage vor dem ersten Eintrag zählen nicht.
+
+## Tests
+`node tests/aura.test.cjs all` — Playwright (Chromium) mit nachgebauter Artifact-DB: Syntax, Regression aller Tabs, Persistenz, Score-Mathematik, Gewohnheiten/Laster, Fallback ohne DB, 390-px-Layout.
 
 ## Struktur
 - Single-File HTML: `<style>` im `<head>`, HTML-Grundgerüst im `<body>`, alle Daten + Render-Logik in `<script>` am Ende
@@ -36,4 +47,4 @@ Zwei neue Integrationen sind gewünscht, die einen echten Backend-Layer brauchen
 - Env-Variablen für alle Secrets (`.env`, niemals committen)
 
 ## Datei
-`dashboard.html` — der komplette aktuelle Stand, direkt lauffähig durch Öffnen im Browser.
+`dashboard.html` — der komplette aktuelle Stand (entspricht dem Live-Artifact), direkt lauffähig durch Öffnen im Browser.
