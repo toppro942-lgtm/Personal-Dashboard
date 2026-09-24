@@ -2,7 +2,8 @@
    Aufruf: node tests/aura.test.cjs <fall>   (Faelle: syntax regression persist score habits nodb mobile all)
    Die Artifact-Datenbank wird im Browser durch einen Nachbau derselben
    Schnittstelle ersetzt (doc/collection, get/set/update, orderBy/limit/where),
-   der seinen Stand in localStorage haelt -- so ueberleben Daten ein Neuladen. */
+   der seinen Stand in localStorage haelt -- so ueberleben Daten ein Neuladen.
+   window.__dbDelay (ms) simuliert die Laufzeit einer echten Datenbankanfrage. */
 const path = require('path');
 const fs = require('fs');
 const vm = require('vm');
@@ -10,7 +11,7 @@ const vm = require('vm');
 let pw;
 try { pw = require('playwright'); } catch { pw = require('/opt/node22/lib/node_modules/playwright'); }
 
-const FILE = path.resolve(__dirname, '..', 'dashboard.html');
+const FILE = process.env.DASH_FILE ? path.resolve(process.env.DASH_FILE) : path.resolve(__dirname, '..', 'dashboard.html');
 const URL = 'file://' + FILE;
 const ALL_IDS = ['train','mob','protein','water','casein','sleep','journal','plan','caff','screen','read',
                  'wake','skinam','hair','skinpm','bed','light','release','outside','grat','breath'];
@@ -19,6 +20,7 @@ const BODY_MIND = ['train','mob','protein','water','casein','sleep','journal','p
 const MOCK = `
 (() => {
   const KEY = '__mockdb';
+  const wait = () => new Promise(r => setTimeout(r, window.__dbDelay || 0));
   const load = () => JSON.parse(localStorage.getItem(KEY) || '{}');
   const save = o => localStorage.setItem(KEY, JSON.stringify(o));
   const deepFreeze = o => { if (o && typeof o === 'object') { Object.values(o).forEach(deepFreeze); Object.freeze(o); } return o; };
@@ -28,10 +30,10 @@ const MOCK = `
     if (v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k])) merge(a[k], v);
     else a[k] = JSON.parse(JSON.stringify(v)); } return a; };
   const docRef = p => ({ id: p.split('/').pop(), path: p,
-    get: async () => snap(p, load()),
-    set: async d => { if (!d || typeof d !== 'object' || Array.isArray(d)) throw {code:'invalid_argument',message:'body'};
+    get: async () => { await wait(); return snap(p, load()); },
+    set: async d => { await wait(); if (!d || typeof d !== 'object' || Array.isArray(d)) throw {code:'invalid_argument',message:'body'};
                       const o = load(); o[p] = JSON.parse(JSON.stringify(d)); save(o); },
-    update: async d => { const o = load(); if (!(p in o)) throw {code:'invalid_argument',message:'missing'}; merge(o[p], d); save(o); },
+    update: async d => { await wait(); const o = load(); if (!(p in o)) throw {code:'invalid_argument',message:'missing'}; merge(o[p], d); save(o); },
     delete: async () => { const o = load(); delete o[p]; save(o); } });
   const query = (c, st) => ({
     where: (f, op, v) => query(c, {...st, w:[...(st.w||[]), [f, op, v]]}),
@@ -58,8 +60,9 @@ const ok = (name, cond, info = '') => { if (!cond) throw new Error(`${name} fehl
 const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return iso(d); };
 
-async function open(browser, { mock = true, seed = null, width = 1100 } = {}) {
-  const ctx = await browser.newContext({ viewport: { width, height: 900 } });
+async function open(browser, { mock = true, seed = null, width = 1100, delay = 0, touch = false } = {}) {
+  const ctx = await browser.newContext({ viewport: { width, height: 900 }, hasTouch: touch, isMobile: touch });
+  if (delay) await ctx.addInitScript(d => { window.__dbDelay = d; }, delay);
   /* Fonts nicht aus dem Netz laden: leeres CSS statt Netzwerkfehler im Log. */
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, r => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
   if (seed) await ctx.addInitScript(s => { if (!localStorage.getItem('__seeded')) { localStorage.setItem('__mockdb', s); localStorage.setItem('__seeded', '1'); } }, JSON.stringify(seed));
@@ -197,9 +200,25 @@ const CASES = {
     await page.waitForSelector('#auvices [data-vrel]');
     ok('0 Tage', (await page.textContent('#auvices .aubig')).replace(/\s/g, '') === '0Tagefrei');
     ok('Vorschlag weg', !(await page.$('#auvsug [data-sug="Snooze-Taste"]')));
-    await page.click('#auvices [data-vrel]'); await page.click('#auvices [data-vrel]');
-    await page.waitForFunction(() => document.querySelector('#auvices .aucard .hmeta:last-of-type')?.textContent.includes('1 Rückfall')
-      || document.querySelector('#auvices').textContent.includes('1 Rückfall'));
+    ok('Start heute: kein Rückfall', await page.$eval('#auvices [data-vrel]', b => b.disabled && b.textContent.includes('ab heute')));
+    await page.click('#auvices [data-vdel]'); await page.click('#auvices [data-vdel]');
+    await page.waitForFunction(() => !document.querySelector('#auvices .aucard'));
+
+    /* Rueckfall an einem Zaehler, der seit 5 Tagen laeuft; danach ist der
+       Knopf fuer heute gesperrt -- Mehrfachtipps zaehlen nicht mehrfach. */
+    const since = addDays(-5);
+    await page.evaluate(s => { const o = JSON.parse(localStorage.getItem('__mockdb'));
+      o['aura/config'].vices = [{ id:'v5', name:'Handy im Bett', start:s, since:s, resets:[], best:0 }];
+      localStorage.setItem('__mockdb', JSON.stringify(o)); }, since);
+    await page.reload();
+    await page.waitForFunction(() => !document.getElementById('austat').textContent.includes('geladen'));
+    ok('5 Tage', (await page.textContent('#auvices .aubig')).replace(/\s/g, '') === '5Tagefrei');
+    await page.click('#auvices [data-vrel]');
+    ok('Rückfall armiert', (await page.textContent('#auvices [data-vrel]')) === 'Zähler zurücksetzen?');
+    await page.click('#auvices [data-vrel]');
+    await page.waitForFunction(() => document.querySelector('#auvices [data-vrel]').textContent === 'Heute zurückgesetzt');
+    ok('Rekord 5, 1 Rückfall', (await page.textContent('#auvices .aucard')).includes('Rekord 5 · 1 Rückfall'));
+    ok('gesperrt', await page.$eval('#auvices [data-vrel]', b => b.disabled));
     await page.click('#auvices [data-vdel]'); await page.click('#auvices [data-vdel]');
     await page.waitForFunction(() => !document.querySelector('#auvices .aucard'));
     const cfg = await page.evaluate(() => JSON.parse(localStorage.getItem('__mockdb'))['aura/config']);
@@ -217,6 +236,52 @@ const CASES = {
     await page.waitForFunction(() => !document.getElementById('austat').textContent.includes('geladen'));
     ok('lokal persistent', await page.$eval('#autasks [data-id="read"]', b => b.getAttribute('aria-checked')) === 'true');
     ok('Health-Hinweis', (await page.textContent('#hbody')).includes('nicht verfügbar'));
+    ok('keine Fehler', !errors.length, errors.join('\n'));
+    await ctx.close();
+  },
+
+  /* Echte Datenbank-Laufzeit (350 ms je Anfrage): Doppeltipp, schnelle
+     Tippfolgen, Tippen waehrend des Speicherns und direkt nach dem Anlegen. */
+  async latency(browser) {
+    const { ctx, page, errors } = await open(browser, { delay: 350, width: 390, touch: true });
+    const state = id => page.$eval(`#autasks [data-id="${id}"]`, b => b.getAttribute('aria-checked'));
+    const stored = () => page.evaluate(() => { const t = new Date(), k = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+      return (JSON.parse(localStorage.getItem('__mockdb'))['aura/m' + k.slice(0, 7)] || { days:{} }).days[k]?.t || {}; });
+
+    /* 1) Doppeltipp: Anzeige springt sofort auf aus und bleibt dort. */
+    await page.tap('#autasks [data-id="read"]'); await page.waitForTimeout(120); await page.tap('#autasks [data-id="read"]');
+    const seen = [];
+    for (let i = 0; i < 25; i++) { seen.push(await state('read')); await page.waitForTimeout(100); }
+    ok('kein Zurückspringen', seen.every(x => x === 'false'), seen.join(','));
+    ok('DB: read aus', (await stored()).read !== true, JSON.stringify(await stored()));
+
+    /* 2) Gewohnheit anlegen und sofort weitertippen. */
+    await page.tap('#auhname'); await page.fill('#auhname', 'Kalt duschen'); await page.tap('#auhform button[type=submit]');
+    await page.waitForTimeout(150);
+    for (const id of ['journal', 'plan', 'caff', 'grat']) { await page.tap(`#autasks [data-id="${id}"]`); await page.waitForTimeout(90); }
+    await page.waitForFunction(() => document.querySelectorAll('#auhabits .aucard').length === 1, null, { timeout: 10000 });
+    await page.waitForTimeout(4500);
+    const s1 = await stored();
+    ok('alle vier gespeichert', ['journal','plan','caff','grat'].every(k => s1[k] === true), JSON.stringify(s1));
+    ok('alle vier angezeigt', (await Promise.all(['journal','plan','caff','grat'].map(state))).every(x => x === 'true'));
+    ok('Eingabe geschlossen', await page.evaluate(() => document.activeElement?.id !== 'auhname'));
+
+    /* 3) Finger liegt auf dem Button, waehrend ein anderer Haken fertig
+       speichert und neu gezeichnet wird: der Tipp darf nicht verloren gehen. */
+    await page.click('#autasks [data-id="light"]');
+    const box = await page.$eval('#autasks [data-id="breath"]', b => { const r = b.getBoundingClientRect(); return { x: r.x + 20, y: r.y + 10 }; });
+    await page.mouse.move(box.x, box.y); await page.mouse.down();
+    await page.waitForTimeout(1300);                     // Speichern von "light" endet in dieser Zeit
+    await page.mouse.up();
+    await page.waitForTimeout(1500);
+    ok('Tipp überlebt Neuzeichnen', (await state('breath')) === 'true' && (await stored()).breath === true, JSON.stringify(await stored()));
+
+    /* 4) Wiederholtes Anlegen per Doppeltipp erzeugt nur einen Eintrag. */
+    await page.fill('#auvname', 'Snooze-Taste');
+    await page.tap('#auvform button[type=submit]'); await page.tap('#auvform button[type=submit]').catch(() => {});
+    await page.waitForTimeout(2500);
+    const n = await page.evaluate(() => JSON.parse(localStorage.getItem('__mockdb'))['aura/config'].vices.length);
+    ok('ein Zähler', n === 1, String(n));
     ok('keine Fehler', !errors.length, errors.join('\n'));
     await ctx.close();
   },

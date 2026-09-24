@@ -2704,8 +2704,15 @@ const auWd = iso => (auDate(iso).getDay() + 6) % 7;            // 0 = Montag
 const auLabel = iso => auDate(iso).toLocaleDateString('de-DE', { weekday:'short', day:'2-digit', month:'2-digit' });
 const auMin = s => { const m = String(s).match(/(\d+)\s*h\s*(\d+)?/); return m ? (+m[1]) * 60 + (+(m[2] || 0)) : null; };
 
-const AU = { db:null, local:false, ready:false, busy:0, today:TODAY(), view:TODAY(),
-             cfg:{ habits:[], vices:[] }, months:{} };
+const AU = { db:null, local:false, ready:false, busy:0, cfgBusy:false, today:TODAY(), view:TODAY(),
+             cfg:{ habits:[], vices:[] }, months:{}, exists:{},
+             /* Noch nicht bestaetigte Haken: 'iso|id' -> {iso,id,val,seq}. Sie werden
+                nach jedem Serverstand wieder darueber gelegt, damit ein zweiter Tipp
+                nicht vom Ergebnis des ersten Schreibvorgangs ueberschrieben wird. */
+             pend:new Map(), seq:0,
+             /* Zweistufige Bestaetigung als Zustand, nicht als DOM-Text -- sonst
+                setzt jedes Neuzeichnen sie zurueck. key -> Timer */
+             armed:new Map() };
 
 /* ---------- Lokaler Ersatzspeicher mit derselben Schnittstelle ---------- */
 function auLocalDb() {
@@ -2878,9 +2885,22 @@ async function auLoad() {
   const months = auMonthsNeeded();
   const snaps = await Promise.all(months.map(m => AU.db.doc('aura/m' + m).get()));
   const next = {};
-  months.forEach((m, i) => { const d = snaps[i].exists ? clone(snaps[i].data()) : null; next[m] = { month:m, days:(d && d.days) || {} }; });
+  months.forEach((m, i) => {
+    const d = snaps[i].exists ? clone(snaps[i].data()) : null;
+    next[m] = { month:m, days:(d && d.days) || {} };
+    AU.exists[m] = snaps[i].exists;
+  });
   AU.months = next;
+  auOverlay();
 }
+
+function auApply(iso, id, val) {
+  const m = iso.slice(0, 7);
+  const month = AU.months[m] || (AU.months[m] = { month:m, days:{} });
+  const rec = month.days[iso] || (month.days[iso] = { t:{} });
+  rec.t = { ...(rec.t || {}), [id]: val };
+}
+const auOverlay = () => { for (const q of AU.pend.values()) auApply(q.iso, q.id, q.val); };
 
 function auTotals(iso) {
   const infos = auInfos(), tot = {};
@@ -2893,13 +2913,26 @@ function auTotals(iso) {
    angekommen ist. */
 async function auWriteTask(iso, id, val) {
   const m = iso.slice(0, 7), ref = AU.db.doc('aura/m' + m);
-  const snap = await ref.get();
-  if (!snap.exists) await ref.set({ month:m, days:{} });
-  await ref.update({ days: { [iso]: { t: { [id]: val }, tot: auTotals(iso) } } });
+  const patch = { days: { [iso]: { t: { [id]: val }, tot: auTotals(iso) } } };
+  /* Normalfall: Monatsdokument existiert -> direkt update (1 Anfrage).
+     Nur wenn es fehlt, wird es angelegt. Ein fehlgeschlagenes update fuehrt
+     NIE blind zu set(): das wuerde bei einem anderen Fehler den ganzen Monat
+     ueberschreiben -- erst nachsehen, ob das Dokument wirklich fehlt. */
+  try {
+    if (!AU.exists[m]) throw { code:'missing' };
+    await ref.update(patch);
+  } catch (e) {
+    const snap = await ref.get();
+    if (snap.exists) { if (e && e.code !== 'missing') throw e; await ref.update(patch); }
+    else { await ref.set({ month:m, days:{} }); await ref.update(patch); }
+    AU.exists[m] = true;
+  }
   const back = await ref.get();
   const d = back.exists ? clone(back.data()) : null;
   AU.months[m] = { month:m, days:(d && d.days) || {} };
-  return AU.months[m].days[iso]?.t?.[id] === val;
+  const ok = AU.months[m].days[iso]?.t?.[id] === val;
+  auOverlay();
+  return ok;
 }
 
 async function auSaveCfg(mutate) {
@@ -2918,37 +2951,74 @@ async function auSaveCfg(mutate) {
 const auErr = e => (e && (e.message || e.code)) || String(e);
 
 async function auToggle(iso, task) {
-  if (!AU.ready) return;
-  const cur = auDone(iso, task).done, val = !cur, m = iso.slice(0, 7);
-  /* Optimistisch anzeigen, bei Fehler auf den Serverstand zuruecksetzen. */
-  const month = AU.months[m] || (AU.months[m] = { month:m, days:{} });
-  const rec = month.days[iso] || (month.days[iso] = { t:{} });
-  rec.t = { ...(rec.t || {}), [task.id]: val };
+  if (!AU.ready || !task) return;
+  const key = iso + '|' + task.id, val = !auDone(iso, task).done, seq = ++AU.seq;
+  AU.pend.set(key, { iso, id:task.id, val, seq });
+  auApply(iso, task.id, val);
   AU.busy++; renderAura();
   try {
-    const ok = await auSerial(() => auWriteTask(iso, task.id, val));
+    const ok = await auSerial(async () => {
+      /* Schon ein neuerer Tipp auf denselben Haken unterwegs: dieser
+         Schreibvorgang entfaellt, der neuere schreibt den Endstand. */
+      if (AU.pend.get(key)?.seq !== seq) return true;
+      const r = await auWriteTask(iso, task.id, val);
+      if (AU.pend.get(key)?.seq === seq) AU.pend.delete(key);
+      return r;
+    });
     if (!ok) toast('Der Haken kam auf dem Server nicht an — bitte noch einmal tippen.', true);
   } catch (e) {
+    if (AU.pend.get(key)?.seq === seq) AU.pend.delete(key);
     toast('Speichern fehlgeschlagen: ' + auErr(e), true);
-    try { await auLoad(); } catch {}
+    try { await auSerial(auLoad); } catch {}
   } finally { AU.busy--; renderAura(); }
 }
 
 async function auCfgAction(mutate, okMsg) {
-  if (!AU.ready) return toast('Aura lädt noch …', true);
-  AU.busy++;
-  try { await auSerial(() => auSaveCfg(mutate)); if (okMsg) toast(okMsg); }
-  catch (e) { toast('Speichern fehlgeschlagen: ' + auErr(e), true); }
-  finally { AU.busy--; renderAura(); }
+  if (!AU.ready) { toast('Aura lädt noch …', true); return false; }
+  /* Eine Aenderung an Gewohnheiten/Lastern zur Zeit: Mehrfachtipps auf
+     „Rückfall" oder „Starten" loesen sonst mehrere Schreibvorgaenge aus. */
+  if (AU.cfgBusy) return false;
+  AU.cfgBusy = true; AU.busy++; renderAura();
+  try { await auSerial(() => auSaveCfg(mutate)); if (okMsg) toast(okMsg); return true; }
+  catch (e) { toast('Speichern fehlgeschlagen: ' + auErr(e), true); return false; }
+  finally { AU.cfgBusy = false; AU.busy--; renderAura(); }
 }
 
 /* Loeschen/Rueckfall: der Viewer zeigt kein confirm() -- zweiter Tipp
-   innerhalb von 4 s bestaetigt. */
-function auArm(btn, label, run) {
-  if (btn.dataset.armed === '1') { clearTimeout(btn._t); run(); return; }
-  btn.dataset.armed = '1'; btn.classList.add('armed');
-  const orig = btn.textContent; btn.textContent = label;
-  btn._t = setTimeout(() => { btn.dataset.armed = ''; btn.classList.remove('armed'); btn.textContent = orig; }, 4000);
+   innerhalb von 4 s bestaetigt. Der Zustand liegt in AU.armed und wird beim
+   Zeichnen gelesen, damit ein Neuzeichnen ihn nicht verliert. */
+function auArm(key, run) {
+  if (AU.armed.has(key)) { clearTimeout(AU.armed.get(key)); AU.armed.delete(key); renderAura(); run(); return; }
+  AU.armed.set(key, setTimeout(() => { AU.armed.delete(key); renderAura(); }, 4000));
+  renderAura();
+}
+
+/* DOM abgleichen statt ersetzen: Knoten bleiben erhalten, deren Inhalt sich
+   nicht aendert. Ohne das ersetzt ein Neuzeichnen nach Speicherende den
+   Button unter dem Finger -- zwischen Beruehren und Loslassen -- und der
+   Tipp geht verloren. Elemente mit data-key werden nur mit gleichem
+   Schluessel abgeglichen, sonst ausgetauscht. */
+function auMorph(el, html) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  auPatch(el, tpl.content);
+}
+function auPatch(from, to) {
+  const next = [...to.childNodes];
+  next.forEach((n, i) => {
+    const o = from.childNodes[i];
+    if (!o) { from.appendChild(n.cloneNode(true)); return; }
+    if (o.nodeType !== n.nodeType || o.nodeName !== n.nodeName
+        || (n.nodeType === 1 && o.getAttribute('data-key') !== n.getAttribute('data-key'))) {
+      from.replaceChild(n.cloneNode(true), o); return;
+    }
+    if (n.nodeType !== 1) { if (o.nodeValue !== n.nodeValue) o.nodeValue = n.nodeValue; return; }
+    for (const { name } of [...o.attributes]) if (!n.hasAttribute(name)) o.removeAttribute(name);
+    for (const { name, value } of [...n.attributes]) if (o.getAttribute(name) !== value) o.setAttribute(name, value);
+    if ('disabled' in o) o.disabled = n.hasAttribute('disabled');
+    auPatch(o, n);
+  });
+  while (from.childNodes.length > next.length) from.removeChild(from.lastChild);
 }
 
 /* ---------- Darstellung ---------- */
@@ -3029,24 +3099,20 @@ function renderAuTasks(infos) {
     + ` · Mesozyklus ${activeMesoBlock(auDate(iso)) === 'back' ? 'Rücken' : 'Brust'}`;
 
   const tasks = auDayTasks(iso, infos), dis = !AU.ready ? ' disabled' : '';
-  document.getElementById('autasks').innerHTML = PILLARS.map(p => {
+  auMorph(document.getElementById('autasks'), PILLARS.map(p => {
     const list = tasks.filter(t => t.p === p.id);
     const done = list.filter(t => auDone(iso, t).done).length;
-    return `<section class="aupcol" style="--pc:${p.c}" aria-label="${p.n}">
+    return `<section class="aupcol" style="--pc:${p.c}" aria-label="${p.n}" data-key="${p.id}">
       <div class="aupch"><b>${p.n}</b><span class="hmeta">${done}/${list.length}</span></div>
       ${list.map(t => {
         const st = auDone(iso, t);
         const auto = st.auto ? ` <span class="auto">· Health ${fmtMetric('sleep_minutes', st.min)}</span>` : '';
-        return `<button type="button" class="autask" role="checkbox" aria-checked="${st.done}" data-id="${ESC(t.id)}"${dis}>
+        return `<button type="button" class="autask" role="checkbox" aria-checked="${st.done}" data-key="${iso}|${ESC(t.id)}" data-id="${ESC(t.id)}" data-day="${iso}"${dis}>
           <span class="aubox" aria-hidden="true">✓</span>
           <span class="autx"><span class="aut">${ESC(t.t)}</span><span class="aus">${ESC(t.s)}${auto}</span></span></button>`;
       }).join('')}
     </section>`;
-  }).join('');
-  document.querySelectorAll('#autasks .autask').forEach(b => b.onclick = () => {
-    const t = tasks.find(x => x.id === b.dataset.id);
-    if (t) auToggle(iso, t);
-  });
+  }).join(''));
 }
 
 function renderAuHabits(infos) {
@@ -3054,69 +3120,58 @@ function renderAuHabits(infos) {
   const active = hs.filter(h => !infos.get(h.id).doneAt).length;
   document.getElementById('auhcount').textContent = hs.length ? `${active} aktiv · ${hs.length - active} gefestigt` : '';
   if (!hs.length) {
-    box.innerHTML = `<div class="empty">Noch keine Gewohnheit. Starte eine — sie erscheint ab heute in ihrer Säule
-      unter den Tagesaufgaben. Nach 22 erledigten Tagen gilt sie als gefestigt und zählt nicht mehr in den Score.</div>`;
+    auMorph(box, `<div class="empty" data-key="empty">Noch keine Gewohnheit. Starte eine — sie erscheint ab heute in ihrer Säule
+      unter den Tagesaufgaben. Nach 22 erledigten Tagen gilt sie als gefestigt und zählt nicht mehr in den Score.</div>`);
     return;
   }
-  const iso = AU.view;
-  box.innerHTML = hs.map(h => {
+  const iso = AU.view, lock = !AU.ready || AU.cfgBusy ? ' disabled' : '';
+  auMorph(box, hs.map(h => {
     const info = infos.get(h.id), p = PILLARS.find(x => x.id === h.p) || PILLARS[0];
     const on = auRaw(iso, 'h_' + h.id) === true, done = !!info.doneAt, pct = info.count / AU_HABIT_DAYS * 100;
     const canCheck = iso >= h.start && (!done || iso <= info.doneAt);
-    return `<article class="aucard${done ? ' done' : ''}" style="--pc:${p.c}">
+    const armed = AU.armed.has('hdel:' + h.id);
+    return `<article class="aucard${done ? ' done' : ''}" style="--pc:${p.c}" data-key="h${h.id}">
       <div class="auch"><b>${ESC(h.name)}</b><span class="hmeta">${p.n}</span></div>
       <div class="aubig">${info.count}<small>/ ${AU_HABIT_DAYS} Tage</small></div>
       <div class="aupt" style="--pc:${done ? '#2e9e6a' : p.c}"><div class="aupf" style="width:${pct}%"></div></div>
       <div class="hmeta">${done ? `gefestigt am ${info.doneAt.split('-').reverse().join('.')}` : `Serie ${info.streak} · seit ${h.start.split('-').reverse().join('.')}`}</div>
       <div class="auacts">
-        ${canCheck ? `<button type="button" class="aubtn${on ? ' on' : ''}" data-hcheck="${h.id}"${AU.ready ? '' : ' disabled'}>${on ? '✓ ' : ''}${iso === AU.today ? 'Heute' : auLabel(iso)} erledigt</button>` : ''}
-        <button type="button" class="aubtn warn" data-hdel="${h.id}"${AU.ready ? '' : ' disabled'}>Löschen</button>
+        ${canCheck ? `<button type="button" class="aubtn${on ? ' on' : ''}" data-key="c${iso}" data-hcheck="${h.id}" data-day="${iso}"${AU.ready ? '' : ' disabled'}>${on ? '✓ ' : ''}${iso === AU.today ? 'Heute' : auLabel(iso)} erledigt</button>` : ''}
+        <button type="button" class="aubtn warn${armed ? ' armed' : ''}" data-key="d" data-hdel="${h.id}"${lock}>${armed ? 'Wirklich löschen?' : 'Löschen'}</button>
       </div></article>`;
-  }).join('');
-  box.querySelectorAll('[data-hcheck]').forEach(b => b.onclick = () => {
-    const h = AU.cfg.habits.find(x => x.id === b.dataset.hcheck);
-    if (h) auToggle(iso, { id:'h_' + h.id, p:h.p });
-  });
-  box.querySelectorAll('[data-hdel]').forEach(b => b.onclick = () => auArm(b, 'Wirklich löschen?', () =>
-    auCfgAction(c => { c.habits = c.habits.filter(x => x.id !== b.dataset.hdel); }, 'Gewohnheit gelöscht')));
+  }).join(''));
 }
 
 function renderAuVices() {
   const box = document.getElementById('auvices'), vs = AU.cfg.vices, today = AU.today;
   document.getElementById('auvcount').textContent = vs.length ? `${vs.length} im Zähler` : '';
-  document.getElementById('auvsug').innerHTML = AU_VICE_SUGGEST
+  auMorph(document.getElementById('auvsug'), AU_VICE_SUGGEST
     .filter(s => !vs.some(v => v.name.toLowerCase() === s.toLowerCase()))
-    .map(s => `<button type="button" class="ausug" data-sug="${ESC(s)}">+ ${ESC(s)}</button>`).join('');
-  document.querySelectorAll('#auvsug [data-sug]').forEach(b => b.onclick = () => {
-    const f = document.getElementById('auvname'); f.value = b.dataset.sug; f.focus();
-  });
+    .map(s => `<button type="button" class="ausug" data-key="${ESC(s)}" data-sug="${ESC(s)}">+ ${ESC(s)}</button>`).join(''));
   if (!vs.length) {
-    box.innerHTML = `<div class="empty">Kein Zähler aktiv. Ein Laster zählt ab dem Start jeden Tag hoch; ein Rückfall setzt ihn
-      auf null, der Rekord bleibt. 90 Tage am Stück gelten als gebrochen.</div>`;
+    auMorph(box, `<div class="empty" data-key="empty">Kein Zähler aktiv. Ein Laster zählt ab dem Start jeden Tag hoch; ein Rückfall setzt ihn
+      auf null, der Rekord bleibt. 90 Tage am Stück gelten als gebrochen.</div>`);
     return;
   }
-  box.innerHTML = vs.map(v => {
+  const lock = !AU.ready || AU.cfgBusy ? ' disabled' : '';
+  auMorph(box, vs.map(v => {
     const days = Math.max(0, auDiff(v.since, today)), best = Math.max(v.best || 0, days);
     const done = days >= AU_VICE_DAYS, pct = Math.min(100, days / AU_VICE_DAYS * 100);
-    return `<article class="aucard${done ? ' done' : ''}" style="--pc:var(--pbody)">
+    /* Mehrere Rueckfaelle am selben Tag sind ein Rueckfall: der Zaehler
+       steht ohnehin auf null. Gezaehlt werden Tage, nicht Tipps. */
+    const relDays = new Set(v.resets || []).size, since0 = v.since === today;
+    const armRel = AU.armed.has('vrel:' + v.id), armDel = AU.armed.has('vdel:' + v.id);
+    return `<article class="aucard${done ? ' done' : ''}" style="--pc:var(--pbody)" data-key="v${v.id}">
       <div class="auch"><b>${ESC(v.name)}</b><span class="hmeta">${done ? 'gebrochen' : `noch ${AU_VICE_DAYS - days} Tage`}</span></div>
       <div class="aubig">${days}<small>${days === 1 ? 'Tag' : 'Tage'} frei</small></div>
       <div class="aupt" style="--pc:${done ? '#2e9e6a' : 'var(--pbody)'}"><div class="aupf" style="width:${pct}%"></div></div>
-      <div class="hmeta">Rekord ${best} · ${(v.resets || []).length} ${(v.resets || []).length === 1 ? 'Rückfall' : 'Rückfälle'} · seit ${v.start.split('-').reverse().join('.')}</div>
+      <div class="hmeta">Rekord ${best} · ${relDays} ${relDays === 1 ? 'Rückfall' : 'Rückfälle'} · seit ${v.start.split('-').reverse().join('.')}</div>
       <div class="auacts">
-        <button type="button" class="aubtn" data-vrel="${v.id}"${AU.ready ? '' : ' disabled'}>Rückfall</button>
-        <button type="button" class="aubtn warn" data-vdel="${v.id}"${AU.ready ? '' : ' disabled'}>Löschen</button>
+        <button type="button" class="aubtn${armRel ? ' armed' : ''}" data-key="r" data-vrel="${v.id}"${since0 ? ' disabled' : lock}>${
+          since0 ? ((v.resets || []).includes(today) ? 'Heute zurückgesetzt' : 'Läuft ab heute') : armRel ? 'Zähler zurücksetzen?' : 'Rückfall'}</button>
+        <button type="button" class="aubtn warn${armDel ? ' armed' : ''}" data-key="d" data-vdel="${v.id}"${lock}>${armDel ? 'Wirklich löschen?' : 'Löschen'}</button>
       </div></article>`;
-  }).join('');
-  box.querySelectorAll('[data-vrel]').forEach(b => b.onclick = () => auArm(b, 'Zähler zurücksetzen?', () =>
-    auCfgAction(c => {
-      const v = c.vices.find(x => x.id === b.dataset.vrel); if (!v) return;
-      const t = TODAY();
-      v.best = Math.max(v.best || 0, Math.max(0, auDiff(v.since, t)));
-      v.resets = [...(v.resets || []), t].slice(-60); v.since = t;
-    }, 'Zähler zurückgesetzt — Rekord bleibt')));
-  box.querySelectorAll('[data-vdel]').forEach(b => b.onclick = () => auArm(b, 'Wirklich löschen?', () =>
-    auCfgAction(c => { c.vices = c.vices.filter(x => x.id !== b.dataset.vdel); }, 'Zähler gelöscht')));
+  }).join(''));
 }
 
 function renderAuHeat(infos, first) {
@@ -3138,18 +3193,63 @@ function renderAuHeat(infos, first) {
       h += `<span class="auc${iso === today ? ' today' : ''}" style="background:${shade(s.rate)}" data-tip="${iso}|${Math.round(s.rate * 100)} %|${s.d} von ${s.n} Aufgaben"></span>`;
     }
   });
-  box.innerHTML = h;
+  auMorph(box, h);
   box.setAttribute('aria-label', 'Erledigungsquote der letzten 12 Wochen');
-  box.querySelectorAll('[data-tip]').forEach(el => {
-    const [iso, v, d] = el.dataset.tip.split('|');
-    el.addEventListener('pointermove', ev => showTip(`<b>${auLabel(iso)}</b><span class="tipv">${v}</span><span class="tipd">${d}</span>`, ev));
-    el.addEventListener('pointerleave', hideTip);
-  });
 }
 
 /* ---------- Verdrahtung ---------- */
 function wireAura() {
   document.getElementById('auhpil').innerHTML = PILLARS.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
+
+  /* Ein Listener je Bereich statt Handler an jedem Button: die Knoten
+     ueberleben das Neuzeichnen, und der Handler liest immer den aktuellen
+     Stand statt einer beim Zeichnen eingefangenen Kopie. */
+  document.getElementById('autasks').addEventListener('click', e => {
+    const b = e.target.closest('.autask');
+    if (!b || b.disabled) return;
+    const iso = b.dataset.day, t = auDayTasks(iso, auInfos()).find(x => x.id === b.dataset.id);
+    auToggle(iso, t);
+  });
+  document.getElementById('auhabits').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b || b.disabled) return;
+    if (b.dataset.hcheck) {
+      const h = AU.cfg.habits.find(x => x.id === b.dataset.hcheck);
+      if (h) auToggle(b.dataset.day, { id:'h_' + h.id, p:h.p });
+    } else if (b.dataset.hdel) {
+      const id = b.dataset.hdel;
+      auArm('hdel:' + id, () => auCfgAction(c => { c.habits = c.habits.filter(x => x.id !== id); }, 'Gewohnheit gelöscht'));
+    }
+  });
+  document.getElementById('auvices').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b || b.disabled) return;
+    if (b.dataset.vrel) {
+      const id = b.dataset.vrel;
+      auArm('vrel:' + id, () => auCfgAction(c => {
+        const v = c.vices.find(x => x.id === id), t = TODAY();
+        if (!v || v.since === t) return;                    // heute schon auf null
+        v.best = Math.max(v.best || 0, Math.max(0, auDiff(v.since, t)));
+        v.resets = [...(v.resets || []), t].slice(-60); v.since = t;
+      }, 'Zähler zurückgesetzt — Rekord bleibt'));
+    } else if (b.dataset.vdel) {
+      const id = b.dataset.vdel;
+      auArm('vdel:' + id, () => auCfgAction(c => { c.vices = c.vices.filter(x => x.id !== id); }, 'Zähler gelöscht'));
+    }
+  });
+  document.getElementById('auvsug').addEventListener('click', e => {
+    const b = e.target.closest('[data-sug]');
+    if (!b) return;
+    const f = document.getElementById('auvname'); f.value = b.dataset.sug; f.focus();
+  });
+  const heat = document.getElementById('auheat');
+  heat.addEventListener('pointermove', e => {
+    const c = e.target.closest('[data-tip]');
+    if (!c) return hideTip();
+    const [iso, v, d] = c.dataset.tip.split('|');
+    showTip(`<b>${auLabel(iso)}</b><span class="tipv">${v}</span><span class="tipd">${d}</span>`, e);
+  });
+  heat.addEventListener('pointerleave', hideTip);
   document.getElementById('auprev').onclick = () => { if (auDiff(AU.view, AU.today) < AU_BACK) { AU.view = auAdd(AU.view, -1); renderAura(); } };
   document.getElementById('aunext').onclick = () => { if (AU.view < AU.today) { AU.view = auAdd(AU.view, 1); renderAura(); } };
 
@@ -3159,9 +3259,15 @@ function wireAura() {
     const p = PILLARS.some(x => x.id === f.get('pillar')) ? f.get('pillar') : 'body';
     if (!name) return toast('Name der Gewohnheit fehlt', true);
     if (AU.cfg.habits.some(h => h.name.toLowerCase() === name.toLowerCase())) return toast('Diese Gewohnheit läuft schon', true);
-    const id = Math.random().toString(36).slice(2, 10);
-    auCfgAction(c => { c.habits.push({ id, name, p, start: TODAY() }); }, `„${name}" gestartet`)
-      .then(() => { if (AU.cfg.habits.some(h => h.id === id)) e.target.reset(); });
+    const id = Math.random().toString(36).slice(2, 10), btn = e.target.querySelector('[type=submit]');
+    btn.disabled = true;
+    auCfgAction(c => { if (!c.habits.some(h => h.name.toLowerCase() === name.toLowerCase())) c.habits.push({ id, name, p, start: TODAY() }); }, `„${name}" gestartet`)
+      .then(() => {
+        btn.disabled = false;
+        /* Tastatur schliessen: sonst verschiebt ihr Einklappen beim naechsten
+           Tipp das Layout unter dem Finger. */
+        if (AU.cfg.habits.some(h => h.id === id)) { e.target.reset(); document.activeElement?.blur?.(); }
+      });
   });
 
   document.getElementById('auvform').addEventListener('submit', e => {
@@ -3169,9 +3275,13 @@ function wireAura() {
     const name = String(new FormData(e.target).get('name') || '').trim().slice(0, 60);
     if (!name) return toast('Name fehlt', true);
     if (AU.cfg.vices.some(v => v.name.toLowerCase() === name.toLowerCase())) return toast('Dafür läuft schon ein Zähler', true);
-    const id = Math.random().toString(36).slice(2, 10), t = TODAY();
-    auCfgAction(c => { c.vices.push({ id, name, start:t, since:t, resets:[], best:0 }); }, `Zähler für „${name}" läuft`)
-      .then(() => { if (AU.cfg.vices.some(v => v.id === id)) e.target.reset(); });
+    const id = Math.random().toString(36).slice(2, 10), t = TODAY(), btn = e.target.querySelector('[type=submit]');
+    btn.disabled = true;
+    auCfgAction(c => { if (!c.vices.some(v => v.name.toLowerCase() === name.toLowerCase())) c.vices.push({ id, name, start:t, since:t, resets:[], best:0 }); }, `Zähler für „${name}" läuft`)
+      .then(() => {
+        btn.disabled = false;
+        if (AU.cfg.vices.some(v => v.id === id)) { e.target.reset(); document.activeElement?.blur?.(); }
+      });
   });
 
   /* Mitternacht bei offener Seite: Tag weiterschalten. Zurueck im
