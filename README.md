@@ -10,11 +10,13 @@ Ein self-contained HTML-Dashboard (Vanilla JS, kein Framework, kein Build-Step) 
 - **Abend** — Countdown-Timeline T-120 bis T-0
 - **Morgen** — Feste Schrittfolge + Hydration-Tracking
 - **✦ Aura** (Starttab) — Score 0–1000 aus vier Säulen (Körper, Geist, Persönlichkeit, Seele). Tagesaufgaben werden je Datum aus dem Plan abgeleitet (Trainingstag inkl. Wochentyp/Mesozyklus, Schlafzeiten, Morgen-, Abend-, Mobility-, Hautroutine); dazu 22-Tage-Gewohnheiten, 90-Tage-Laster-Zähler, 12-Wochen-Heatmap
-- **Grooming · Health · Finanzen · Vermögen** — siehe Live-Artifact
+- **Me** (neben Aura) — Habits, Hobbys, Laster als Listen im Stil der Aura-App (Säule, Level, tippen = bearbeiten); gleicher Speicher wie der Aura-Tab. Darunter **Looksmaxxing** (ehemals Grooming)
+- **Health · Finanzen · Vermögen** — siehe Live-Artifact
+- **Vollbild** — erster Tipp nach dem Öffnen schaltet ein (Browser erlauben es nicht ohne Nutzeraktion); Knopf oben rechts, abschaltbar
 
 ## Aura — Datenmodell
-- `aura/config` — `{habits:[{id,name,p,start}], vices:[{id,name,start,since,resets,best}]}`
-- `aura/mYYYY-MM` — `{month, days:{'YYYY-MM-DD':{t:{taskId:bool}, tot:{…}}}}` (ein Dokument pro Monat, feldgenaue `update()`-Merges)
+- `aura/config` — `{habits:[{id,name,p,start}], hobbies:[{id,name,p,start}], vices:[{id,name,p?,start,since,resets,best}]}`
+- `aura/mYYYY-MM` — `{month, days:{'YYYY-MM-DD':{t:{taskId|h_<habit>|b_<hobby>:bool}, tot:{…}}}}` — Hobby-Sessions (`b_`) zählen nicht in den Score (ein Dokument pro Monat, feldgenaue `update()`-Merges)
 - Speicher: Artifact-DB (`claude.use('db')`); lokal geöffnet fällt die Aura auf `localStorage` zurück
 - Score: je Säule erledigt/gesamt über die letzten 14 abgeschlossenen Tage, Mittel × 10. Tage vor dem ersten Eintrag zählen nicht.
 

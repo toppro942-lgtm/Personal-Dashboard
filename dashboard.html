@@ -355,13 +355,56 @@ background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:12px 1
 .auc.today{outline:1px solid var(--mut);outline-offset:1px}
 .aulg{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:8px}
 .aulg span{width:11px;height:11px;border-radius:2px;display:inline-block}
+/* ===== Me — Listen im Stil der Aura-App ===== */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hi{position:relative}
+.fsbtn{position:absolute;right:0;top:0;display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--bd);
+color:var(--mut);border-radius:6px;padding:5px 9px;cursor:pointer;font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase}
+.fsbtn svg{width:12px;height:12px}
+.fsbtn:hover,.fsbtn[aria-pressed="true"]{color:var(--wh);border-color:var(--mut)}
+.fsbtn:focus-visible{outline:2px solid var(--blu);outline-offset:1px}
+.mesec{margin-bottom:30px}
+@media(max-width:560px){.fsbtn span{display:none}.fsbtn{padding:6px}.hi h1{padding-right:34px}}
+.mesh{display:flex;align-items:baseline;gap:4px 10px;margin-bottom:6px;flex-wrap:wrap}
+.mesh h2{font-family:var(--srf);font-style:italic;font-weight:400;font-size:28px;color:var(--wh);line-height:1.1}
+.mesh .hmeta{margin-left:auto}
+.meic{font-size:20px;color:var(--wh);width:24px;text-align:center}
+.merow{display:flex;align-items:center;gap:10px;border-bottom:1px solid #161616;min-height:52px}
+.mename{flex:1;min-width:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:none;border:none;
+text-align:left;cursor:pointer;padding:10px 2px;color:var(--wh);font-family:var(--sans)}
+.mename:focus-visible,.mechk:focus-visible{outline:2px solid var(--blu);outline-offset:1px;border-radius:6px}
+.men{font-size:17px;letter-spacing:.2px;overflow-wrap:anywhere}
+.mepill{font-size:11px;padding:3px 10px;border-radius:12px;color:var(--pc);
+background:color-mix(in srgb,var(--pc) 16%,transparent);white-space:nowrap}
+.melvl{font-family:var(--mono);font-size:13px;color:#4a4a4a;white-space:nowrap;font-variant-numeric:tabular-nums}
+.melvl.max{color:#4fb98a}
+.mechk{width:30px;height:30px;border-radius:50%;border:1.5px solid #333;background:none;color:transparent;
+cursor:pointer;flex-shrink:0;font-size:13px;display:flex;align-items:center;justify-content:center}
+.mechk[aria-checked="true"]{background:var(--pc);border-color:var(--pc);color:#fff}
+.mechk:disabled{opacity:.4;cursor:progress}
+.merow.open .men{color:#d4695a}
+.meedit{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;background:var(--s1);border:1px solid var(--bd);
+border-radius:9px;padding:12px 14px;margin:8px 0 10px}
+.meedit .fld{flex:1 1 150px}
+.meinfo{flex-basis:100%;font-family:var(--mono);font-size:10px;color:var(--mut);line-height:1.6}
+.meadd{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.meadd input,.meadd select{background:#0a0a0a;border:1px solid var(--bd);border-radius:6px;color:var(--tx);
+font-family:var(--sans);font-size:13px;padding:8px 10px}
+.meadd input{flex:1 1 180px;min-width:0}
+.meadd select{flex:0 0 auto}
+.meadd input:focus-visible,.meadd select:focus-visible{outline:2px solid var(--blu);outline-offset:1px}
+.meempty{font-size:12px;color:var(--dim);padding:10px 2px}
 </style>
 
 <div class="hdr"><div class="hi">
+  <button type="button" class="fsbtn" id="fsbtn" aria-pressed="false" title="Vollbild" hidden>
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    <span id="fslbl">Vollbild</span></button>
   <div class="hl">Trainings-Dashboard · Final</div>
   <h1>Sharms · HIIT · Upper A/B · Lower</h1>
   <div class="tabs">
     <button class="tb aura on" onclick="tab('aura',this)">✦ Aura</button>
+    <button class="tb" onclick="tab('me',this)">Me</button>
     <button class="tb" onclick="tab('plan',this)">Trainingstage</button>
     <button class="tb" onclick="tab('vol',this)">Volumen</button>
     <button class="tb" onclick="tab('food',this)">Ernährung</button>
@@ -369,7 +412,6 @@ background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:12px 1
     <button class="tb" onclick="tab('mob',this)">Mobility</button>
     <button class="tb" onclick="tab('eve',this)">Abend</button>
     <button class="tb" onclick="tab('mor',this)">Morgen</button>
-    <button class="tb" onclick="tab('groom',this)">Grooming</button>
     <button class="tb" onclick="tab('health',this)">Health</button>
     <button class="tb" onclick="tab('fin',this)">Finanzen</button>
     <button class="tb" onclick="tab('wealth',this)">Vermögen</button>
@@ -480,7 +522,7 @@ background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:12px 1
     <div style="font-family:var(--mono);font-size:9px;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px">↔ Haltung & Schulterbreite — Priorisierung</div>
     <div style="font-size:12px;color:#999;line-height:1.8">
       Zwei Vorgaben, die über dem reinen Volumen stehen: <strong style="color:var(--wh)">Zugvolumen zu Druckvolumen mindestens 2:1</strong> — Rudern, Face Pulls, Reverse Flys und Klimmzüge werden bei Kürzungen zuletzt gestrichen, Drückbewegungen zuerst. Und <strong style="color:var(--wh)">Seitheben an drei Tagen pro Woche</strong> mit hohen Wiederholungen: die laterale Schulter ist der direkteste Hebel für Schulterbreite, und die Schulterbreite ist der limitierende Faktor der Silhouette — nicht das Körpergewicht.
-      Der tägliche Haltungsblock (thorakale Extension, Kinn-Retraktion) steht in der Mobility-Routine, die Begründung im Grooming-Tab.
+      Der tägliche Haltungsblock (thorakale Extension, Kinn-Retraktion) steht in der Mobility-Routine, die Begründung unter Looksmaxxing im Me-Tab.
       <strong style="color:var(--wh)">Offene Lücke seit der Umstellung:</strong> Die hintere Schulter bekam ihr einziges direktes Volumen aus den Reverse Fliegenden in Sharms — und Sharms entfällt in der Badminton-Woche. Dort steht der posteriore Deltamuskel nur noch bei indirektem Volumen aus dem T-Bar Rudern und fällt unter MAV; die Tabelle zeigt das gelb. Das ist keine Fehlberechnung, sondern die tatsächliche Folge des Wegfalls. Wenn du es schließen willst, wäre Reverse Fliegende als zwölfte Übung in Upper B der direkteste Weg — sag Bescheid, dann baue ich es ein.
     </div>
   </div>
@@ -608,14 +650,49 @@ background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:12px 1
 
 
 
-<!-- GROOMING -->
-<div id="t-groom" class="tc"><div class="ct">
-  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Grooming &amp; Erscheinung</div>
+<!-- ME: Habits, Hobbys, Laster (gleicher Stand wie der Aura-Tab) + Looksmaxxing -->
+<div id="t-me" class="tc"><div class="ct" id="mebody">
+  <section class="mesec" aria-labelledby="meh-h">
+    <div class="mesh"><span class="meic" aria-hidden="true">✦</span><h2 id="meh-h">Habits</h2><span class="hmeta">tippen zum Bearbeiten</span></div>
+    <div id="mehabits"></div>
+    <form class="meadd" id="meaddh">
+      <label class="vh" for="meaddhn">Neue Gewohnheit</label>
+      <input type="text" id="meaddhn" name="name" maxlength="60" placeholder="+ Gewohnheit" required>
+      <select id="meaddhp" name="pillar" aria-label="Säule"></select>
+      <button class="btn go" type="submit">Starten</button>
+    </form>
+    <div class="ausugs" id="mehsug"></div>
+  </section>
+
+  <section class="mesec" aria-labelledby="meb-h">
+    <div class="mesh"><span class="meic" aria-hidden="true">☼</span><h2 id="meb-h">Hobbys</h2><span class="hmeta">Level steigt mit jeder Session</span></div>
+    <div id="mehobbies"></div>
+    <form class="meadd" id="meaddb">
+      <label class="vh" for="meaddbn">Neues Hobby</label>
+      <input type="text" id="meaddbn" name="name" maxlength="60" placeholder="+ Hobby" required>
+      <select id="meaddbp" name="pillar" aria-label="Säule"></select>
+      <button class="btn go" type="submit">Hinzufügen</button>
+    </form>
+    <div class="ausugs" id="mebsug"></div>
+  </section>
+
+  <section class="mesec" aria-labelledby="mev-h">
+    <div class="mesh"><span class="meic" aria-hidden="true">☠</span><h2 id="mev-h">Laster</h2><span class="hmeta">90 Tage am Stück = gebrochen</span></div>
+    <div id="mevices"></div>
+    <form class="meadd" id="meaddv">
+      <label class="vh" for="meaddvn">Neues Laster</label>
+      <input type="text" id="meaddvn" name="name" maxlength="60" placeholder="+ Laster" required>
+      <select id="meaddvp" name="pillar" aria-label="Säule"></select>
+      <button class="btn go" type="submit">Zähler starten</button>
+    </form>
+  </section>
+
+  <div class="sechead" style="margin-top:30px"><h2>Looksmaxxing</h2></div>
   <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:8px;max-width:62ch">
     Nachschlagewissen, kein Tagesablauf. Was täglich zu tun ist, steht dort, wo es hingehört:
     Haut morgens und Haare in der <strong style="color:var(--tx)">Morgenroutine</strong>,
     Haut abends in der <strong style="color:var(--tx)">Abendroutine</strong>,
-    Haltungsübungen in der <strong style="color:var(--tx)">Mobility-Routine</strong>.
+    Haltungsübungen in der <strong style="color:var(--tx)">Mobility-Routine</strong> — abgehakt wird alles im Aura-Tab.
   </div>
   <div id="groomlist"></div>
 </div></div>
@@ -2705,7 +2782,8 @@ const auLabel = iso => auDate(iso).toLocaleDateString('de-DE', { weekday:'short'
 const auMin = s => { const m = String(s).match(/(\d+)\s*h\s*(\d+)?/); return m ? (+m[1]) * 60 + (+(m[2] || 0)) : null; };
 
 const AU = { db:null, local:false, ready:false, busy:0, cfgBusy:false, today:TODAY(), view:TODAY(),
-             cfg:{ habits:[], vices:[] }, months:{}, exists:{},
+             cfg:{ habits:[], hobbies:[], vices:[] }, months:{}, exists:{},
+             edit:null,   /* offener Editor im Me-Tab: 'h:<id>' | 'b:<id>' | 'v:<id>' */
              /* Noch nicht bestaetigte Haken: 'iso|id' -> {iso,id,val,seq}. Sie werden
                 nach jedem Serverstand wieder darueber gelegt, damit ein zweiter Tipp
                 nicht vom Ergebnis des ersten Schreibvorgangs ueberschrieben wird. */
@@ -2829,7 +2907,9 @@ function auFirstDay() {
   let first = null;
   for (const m of Object.values(AU.months))
     for (const [d, r] of Object.entries(m.days || {}))
-      if (r && r.t && Object.keys(r.t).length && (!first || d < first)) first = d;
+      /* Hobby-Sessions (b_) zaehlen nicht in den Score -- ein Tag nur mit
+         Hobby eroeffnet deshalb auch kein Score-Fenster. */
+      if (r && r.t && Object.keys(r.t).some(k => !k.startsWith('b_')) && (!first || d < first)) first = d;
   return first;
 }
 
@@ -2866,9 +2946,22 @@ function auStreak(first, infos) {
 }
 
 /* ---------- Speicher ---------- */
+/* Fehlende oder fremde Felder nie als Absturz durchreichen: jede Liste ist
+   ein Array, jeder Eintrag hat id, Namen und Startdatum. */
+function auNormCfg(c) {
+  const list = (a, extra) => (Array.isArray(a) ? a : [])
+    .filter(x => x && typeof x.id === 'string' && typeof x.name === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x.start || ''))
+    .map(extra || (x => x));
+  return {
+    habits:  list(c && c.habits),
+    hobbies: list(c && c.hobbies),
+    vices:   list(c && c.vices, v => ({ ...v, since: /^\d{4}-\d{2}-\d{2}$/.test(v.since || '') ? v.since : v.start }))
+  };
+}
+
 function auMonthsNeeded() {
   let from = auAdd(AU.today, -7 * 12 - 7);
-  for (const h of AU.cfg.habits) if (h.start < from) from = h.start;
+  for (const h of [...AU.cfg.habits, ...AU.cfg.hobbies]) if (h.start < from) from = h.start;
   const lim = auAdd(AU.today, -730);
   if (from < lim) from = lim;
   const out = [];
@@ -2881,7 +2974,7 @@ function auMonthsNeeded() {
 async function auLoad() {
   const c = await AU.db.doc('aura/config').get();
   const cfg = c.exists ? clone(c.data()) : {};
-  AU.cfg = { habits: Array.isArray(cfg.habits) ? cfg.habits : [], vices: Array.isArray(cfg.vices) ? cfg.vices : [] };
+  AU.cfg = auNormCfg(cfg);
   const months = auMonthsNeeded();
   const snaps = await Promise.all(months.map(m => AU.db.doc('aura/m' + m).get()));
   const next = {};
@@ -2939,13 +3032,12 @@ async function auSaveCfg(mutate) {
   const ref = AU.db.doc('aura/config');
   const snap = await ref.get();
   const cfg = snap.exists ? clone(snap.data()) : {};
-  cfg.habits = Array.isArray(cfg.habits) ? cfg.habits : [];
-  cfg.vices = Array.isArray(cfg.vices) ? cfg.vices : [];
+  Object.assign(cfg, auNormCfg(cfg));
   mutate(cfg);
   await ref.set(cfg);
   const back = await ref.get();
   const b = back.exists ? clone(back.data()) : {};
-  AU.cfg = { habits: Array.isArray(b.habits) ? b.habits : [], vices: Array.isArray(b.vices) ? b.vices : [] };
+  AU.cfg = auNormCfg(b);
 }
 
 const auErr = e => (e && (e.message || e.code)) || String(e);
@@ -3087,6 +3179,7 @@ function renderAura() {
   renderAuHabits(infos);
   renderAuVices();
   renderAuHeat(infos, first);
+  renderMe(infos);
 }
 
 function renderAuTasks(infos) {
@@ -3197,6 +3290,217 @@ function renderAuHeat(infos, first) {
   box.setAttribute('aria-label', 'Erledigungsquote der letzten 12 Wochen');
 }
 
+
+/* ============================================================
+   Me — Habits, Hobbys, Laster als Listen wie in der Aura-App.
+   Kein eigener Speicher: dieselbe aura/config wie der Aura-Tab, gezeichnet
+   aus demselben AU-Zustand. Jede Aenderung hier erscheint dort sofort und
+   umgekehrt. Hobby-Sessions liegen als b_<id> in den Monatsdokumenten und
+   zaehlen bewusst nicht in den Score: ein Hobby ist keine Tagespflicht,
+   ein ausgelassener Tag soll keine Saeule senken.
+   ============================================================ */
+const ME_HABIT_LV = [0, 4, 9, 15, 22];                     // lvl 1–5, lvl 5 = gefestigt
+const ME_HOBBY_LV = [0, 3, 8, 15, 25, 40, 60, 90, 130];    // lvl 1–9
+const ME_HABIT_SUG = [['Augenkontakt halten','pers'], ['Mehr lächeln','pers'], ['Englisch-Podcast 10 Min','mind'], ['Kalt duschen','body']];
+/* Hobbys aus deinem Plan: die Sportarten aus dem Volumen-Tab, dazu
+   Englisch (C1-Ziel) und Finanzen. */
+const ME_HOBBY_SUG = [['Badminton','body'], ['Beachvolleyball','body'], ['Fußball','body'], ['Wandern','soul'], ['Radfahren','body'],
+                      ['Schlittschuh','body'], ['Surfen','soul'], ['Englisch C1','mind'], ['Investieren & Finanzen','mind']];
+const meLevel = (n, lv) => { let l = 1; lv.forEach((t, i) => { if (n >= t) l = i + 1; }); return l; };
+const mePil = id => PILLARS.find(p => p.id === id);
+
+function meHobbyCount(b) {
+  let n = 0;
+  for (let d = b.start; d <= AU.today; d = auAdd(d, 1)) if (auRaw(d, 'b_' + b.id) === true) n++;
+  return n;
+}
+
+async function auRelapse(id) {
+  return auCfgAction(c => {
+    const v = c.vices.find(x => x.id === id), t = TODAY();
+    if (!v || v.since === t) return;                        // heute schon auf null
+    v.best = Math.max(v.best || 0, Math.max(0, auDiff(v.since, t)));
+    v.resets = [...(v.resets || []), t].slice(-60); v.since = t;
+  }, 'Zähler zurückgesetzt — Rekord bleibt');
+}
+async function auRemove(list, id) {
+  const msg = { habits:'Gewohnheit gelöscht', hobbies:'Hobby gelöscht', vices:'Zähler gelöscht' }[list];
+  const ok = await auCfgAction(c => { c[list] = c[list].filter(x => x.id !== id); }, msg);
+  if (ok && AU.edit && AU.edit.endsWith(':' + id)) { AU.edit = null; renderAura(); }
+  return ok;
+}
+const auNameTaken = (list, name, exceptId) =>
+  AU.cfg[list].some(x => x.id !== exceptId && x.name.toLowerCase() === name.toLowerCase());
+
+function meRow(kind, item, right, check) {
+  const p = mePil(item.p), key = kind + ':' + item.id, open = AU.edit === key;
+  return `<div class="merow${open ? ' open' : ''}" data-key="${key}" style="--pc:${p ? p.c : 'var(--mut)'}">
+      <button type="button" class="mename" data-edit="${key}" aria-expanded="${open}">
+        <span class="men">${ESC(item.name)}</span>${p ? `<span class="mepill">${p.n}</span>` : ''}</button>
+      ${right}${check || ''}</div>${open ? meEditor(kind, item) : ''}`;
+}
+
+function meEditor(kind, item) {
+  const key = kind + ':' + item.id, lock = !AU.ready || AU.cfgBusy ? ' disabled' : '';
+  const armDel = AU.armed.has('mdel:' + key), armRel = AU.armed.has('vrel:' + item.id);
+  let info = '', extra = '';
+  if (kind === 'h') {
+    const inf = auHabitInfo(item), lv = meLevel(inf.count, ME_HABIT_LV), nx = ME_HABIT_LV[lv];
+    info = `${inf.count}/${AU_HABIT_DAYS} Tage · Serie ${inf.streak} · ${nx != null ? `${nx - inf.count} bis lvl ${lv + 1}` : 'gefestigt'} · seit ${item.start.split('-').reverse().join('.')}`;
+  } else if (kind === 'b') {
+    const n = meHobbyCount(item), lv = meLevel(n, ME_HOBBY_LV), nx = ME_HOBBY_LV[lv];
+    info = `${n} ${n === 1 ? 'Session' : 'Sessions'} · ${nx != null ? `${nx - n} bis lvl ${lv + 1}` : 'Maximallevel'} · seit ${item.start.split('-').reverse().join('.')}`;
+  } else {
+    const days = Math.max(0, auDiff(item.since, AU.today)), rel = new Set(item.resets || []).size, since0 = item.since === AU.today;
+    info = `${days} ${days === 1 ? 'Tag' : 'Tage'} frei · Rekord ${Math.max(item.best || 0, days)} · ${rel} ${rel === 1 ? 'Rückfall' : 'Rückfälle'} · seit ${item.start.split('-').reverse().join('.')}`;
+    extra = `<button type="button" class="aubtn${armRel ? ' armed' : ''}" data-key="r" data-mrel="${item.id}"${since0 ? ' disabled' : lock}>${
+      since0 ? ((item.resets || []).includes(AU.today) ? 'Heute zurückgesetzt' : 'Läuft ab heute') : armRel ? 'Zähler zurücksetzen?' : 'Rückfall'}</button>`;
+  }
+  const opts = (kind === 'v' ? '<option value="">ohne Säule</option>' : '')
+    + PILLARS.map(p => `<option value="${p.id}"${item.p === p.id ? ' selected' : ''}>${p.n}</option>`).join('');
+  return `<div class="meedit" data-key="e:${key}">
+      <div class="fld"><label for="meedname">Name</label><input type="text" id="meedname" maxlength="60" value="${ESC(item.name)}"></div>
+      <div class="fld" style="flex:0 0 150px"><label for="meedpil">Säule</label><select id="meedpil">${opts}</select></div>
+      <button type="button" class="btn go" data-key="s" data-msave="${key}"${lock}>Speichern</button>
+      ${extra}
+      <button type="button" class="aubtn warn${armDel ? ' armed' : ''}" data-key="d" data-mdel="${key}"${lock}>${armDel ? 'Wirklich löschen?' : 'Löschen'}</button>
+      <div class="meinfo">${info}</div>
+    </div>`;
+}
+
+function renderMe(infos) {
+  if (!document.getElementById('mebody')) return;
+  const today = AU.today, dis = AU.ready ? '' : ' disabled';
+  if (AU.edit) {                                               // Eintrag inzwischen geloescht (anderer Tab)?
+    const [k, id] = AU.edit.split(':'), list = { h:'habits', b:'hobbies', v:'vices' }[k];
+    if (!AU.cfg[list].some(x => x.id === id)) AU.edit = null;
+  }
+  const chk = (id, p, on, label) => `<button type="button" class="mechk" role="checkbox" aria-checked="${on}" aria-label="${label}"
+      data-key="c" data-tog="${id}" data-pil="${p || ''}"${dis}>✓</button>`;
+
+  auMorph(document.getElementById('mehabits'), AU.cfg.habits.length ? AU.cfg.habits.map(h => {
+    const inf = infos.get(h.id), lv = meLevel(inf.count, ME_HABIT_LV), done = !!inf.doneAt;
+    const canCheck = today >= h.start && (!done || today <= inf.doneAt);
+    return meRow('h', h, `<span class="melvl${done ? ' max' : ''}">${done ? '✓ ' : ''}lvl ${lv}</span>`,
+      canCheck ? chk('h_' + h.id, h.p, auRaw(today, 'h_' + h.id) === true, `${h.name} heute erledigt`) : '');
+  }).join('') : '<div class="meempty" data-key="empty">Noch keine Gewohnheit — unten starten oder einen Vorschlag antippen.</div>');
+
+  auMorph(document.getElementById('mehobbies'), AU.cfg.hobbies.length ? AU.cfg.hobbies.map(b => {
+    const n = meHobbyCount(b), lv = meLevel(n, ME_HOBBY_LV);
+    return meRow('b', b, `<span class="melvl">lvl ${lv}</span>`, chk('b_' + b.id, b.p, auRaw(today, 'b_' + b.id) === true, `${b.name} heute gemacht`));
+  }).join('') : '<div class="meempty" data-key="empty">Noch kein Hobby — Vorschläge aus deinem Plan stehen unten.</div>');
+
+  auMorph(document.getElementById('mevices'), AU.cfg.vices.length ? AU.cfg.vices.map(v => {
+    const days = Math.max(0, auDiff(v.since, today));
+    return meRow('v', v, `<span class="melvl${days >= AU_VICE_DAYS ? ' max' : ''}">${Math.min(days, AU_VICE_DAYS)}/${AU_VICE_DAYS}</span>`);
+  }).join('') : '<div class="meempty" data-key="empty">Kein Zähler aktiv.</div>');
+
+  const sug = (box, list, pool) => auMorph(document.getElementById(box), pool
+    .filter(([n]) => !auNameTaken(list, n))
+    .map(([n, p]) => `<button type="button" class="ausug" data-key="${ESC(n)}" data-msug="${ESC(n)}" data-pil="${p}">+ ${ESC(n)}</button>`).join(''));
+  sug('mehsug', 'habits', ME_HABIT_SUG);
+  sug('mebsug', 'hobbies', ME_HOBBY_SUG);
+}
+
+function wireMe() {
+  const pilOpts = PILLARS.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
+  document.getElementById('meaddhp').innerHTML = pilOpts;
+  document.getElementById('meaddbp').innerHTML = pilOpts;
+  document.getElementById('meaddvp').innerHTML = '<option value="">ohne Säule</option>' + pilOpts;
+
+  /* Anlegen: eine Funktion fuer alle drei Listen. */
+  const add = (formId, list, make, msg) => document.getElementById(formId).addEventListener('submit', e => {
+    e.preventDefault();
+    const f = new FormData(e.target), name = String(f.get('name') || '').trim().slice(0, 60);
+    const p = PILLARS.some(x => x.id === f.get('pillar')) ? f.get('pillar') : null;
+    if (!name) return toast('Name fehlt', true);
+    if (auNameTaken(list, name)) return toast('Gibt es schon', true);
+    const id = Math.random().toString(36).slice(2, 10), btn = e.target.querySelector('[type=submit]');
+    btn.disabled = true;
+    auCfgAction(c => { if (!c[list].some(x => x.name.toLowerCase() === name.toLowerCase())) c[list].push(make(id, name, p, TODAY())); }, msg(name))
+      .then(() => {
+        btn.disabled = false;
+        if (AU.cfg[list].some(x => x.id === id)) { e.target.reset(); document.activeElement?.blur?.(); }
+      });
+  });
+  add('meaddh', 'habits',  (id, name, p, t) => ({ id, name, p: p || 'body', start: t }), n => `„${n}" gestartet`);
+  add('meaddb', 'hobbies', (id, name, p, t) => ({ id, name, p: p || 'body', start: t }), n => `„${n}" hinzugefügt`);
+  add('meaddv', 'vices',   (id, name, p, t) => ({ id, name, ...(p ? { p } : {}), start: t, since: t, resets: [], best: 0 }), n => `Zähler für „${n}" läuft`);
+
+  document.getElementById('mebody').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b || b.disabled) return;
+    const d = b.dataset;
+    if (d.msug) {
+      const form = b.closest('.mesec').querySelector('form');
+      form.querySelector('input').value = d.msug; form.querySelector('select').value = d.pil;
+      form.querySelector('input').focus();
+    } else if (d.edit) {
+      AU.edit = AU.edit === d.edit ? null : d.edit; renderAura();
+      if (AU.edit) document.getElementById('meedname')?.focus();
+    } else if (d.tog) {
+      auToggle(AU.today, { id: d.tog, p: d.pil || 'body' });
+    } else if (d.msave) {
+      const [k, id] = d.msave.split(':'), list = { h:'habits', b:'hobbies', v:'vices' }[k];
+      const name = document.getElementById('meedname').value.trim().slice(0, 60), pv = document.getElementById('meedpil').value;
+      const p = PILLARS.some(x => x.id === pv) ? pv : null;
+      if (!name) return toast('Name fehlt', true);
+      if (auNameTaken(list, name, id)) return toast('Gibt es schon', true);
+      auCfgAction(c => {
+        const it = c[list].find(x => x.id === id); if (!it) return;
+        it.name = name;
+        if (p) it.p = p; else if (k === 'v') delete it.p;
+      }, 'Gespeichert').then(ok => { if (ok) { AU.edit = null; renderAura(); } });
+    } else if (d.mrel) {
+      auArm('vrel:' + d.mrel, () => auRelapse(d.mrel));
+    } else if (d.mdel) {
+      const [k, id] = d.mdel.split(':');
+      auArm('mdel:' + d.mdel, () => auRemove({ h:'habits', b:'hobbies', v:'vices' }[k], id));
+    }
+  });
+  /* Enter im Namensfeld speichert. */
+  document.getElementById('mebody').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.id === 'meedname') { e.preventDefault(); document.querySelector('[data-msave]')?.click(); }
+    if (e.key === 'Escape' && AU.edit) { AU.edit = null; renderAura(); }
+  });
+}
+
+/* ============================================================
+   Vollbild. Browser erlauben requestFullscreen nur als Folge einer
+   Nutzeraktion -- beim reinen Oeffnen der Seite geht es nicht. Deshalb:
+   der erste Tipp nach dem Oeffnen schaltet ein (einmal pro Seitenaufruf,
+   abschaltbar), dazu der Knopf oben rechts. Wo die Umgebung kein Vollbild
+   anbietet (iPhone-Safari, manche App-Ansichten), bleibt der Knopf weg.
+   ============================================================ */
+function wireFullscreen() {
+  const root = document.documentElement, btn = document.getElementById('fsbtn');
+  const req = root.requestFullscreen || root.webkitRequestFullscreen;
+  const enabled = (document.fullscreenEnabled || document.webkitFullscreenEnabled) && req;
+  if (!enabled) return;
+  const isFs = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+  const pref = () => { try { return localStorage.getItem('dash-autofs') !== '0'; } catch { return true; } };
+  const setPref = on => { try { localStorage.setItem('dash-autofs', on ? '1' : '0'); } catch {} };
+  const enter = () => { try { const r = req.call(root, { navigationUI:'hide' }); if (r && r.catch) r.catch(() => {}); } catch {} };
+  const exit = () => { try { const r = (document.exitFullscreen || document.webkitExitFullscreen).call(document); if (r && r.catch) r.catch(() => {}); } catch {} };
+  const sync = () => { btn.setAttribute('aria-pressed', String(isFs())); document.getElementById('fslbl').textContent = isFs() ? 'Beenden' : 'Vollbild'; };
+
+  btn.hidden = false; sync();
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (isFs()) { setPref(false); exit(); } else { setPref(true); enter(); }
+  });
+  document.addEventListener('fullscreenchange', sync);
+  document.addEventListener('webkitfullscreenchange', sync);
+  /* Nach dem Klick-Handler des Ziels (Bubble-Phase am window): der Tipp
+     wirkt erst, dann wechselt die Ansicht -- kein verschobener Tipp. */
+  let tried = false;
+  addEventListener('click', () => {
+    if (tried) return;
+    tried = true;
+    if (pref() && !isFs()) enter();
+  });
+}
+
 /* ---------- Verdrahtung ---------- */
 function wireAura() {
   document.getElementById('auhpil').innerHTML = PILLARS.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
@@ -3217,25 +3521,14 @@ function wireAura() {
       const h = AU.cfg.habits.find(x => x.id === b.dataset.hcheck);
       if (h) auToggle(b.dataset.day, { id:'h_' + h.id, p:h.p });
     } else if (b.dataset.hdel) {
-      const id = b.dataset.hdel;
-      auArm('hdel:' + id, () => auCfgAction(c => { c.habits = c.habits.filter(x => x.id !== id); }, 'Gewohnheit gelöscht'));
+      auArm('hdel:' + b.dataset.hdel, () => auRemove('habits', b.dataset.hdel));
     }
   });
   document.getElementById('auvices').addEventListener('click', e => {
     const b = e.target.closest('button');
     if (!b || b.disabled) return;
-    if (b.dataset.vrel) {
-      const id = b.dataset.vrel;
-      auArm('vrel:' + id, () => auCfgAction(c => {
-        const v = c.vices.find(x => x.id === id), t = TODAY();
-        if (!v || v.since === t) return;                    // heute schon auf null
-        v.best = Math.max(v.best || 0, Math.max(0, auDiff(v.since, t)));
-        v.resets = [...(v.resets || []), t].slice(-60); v.since = t;
-      }, 'Zähler zurückgesetzt — Rekord bleibt'));
-    } else if (b.dataset.vdel) {
-      const id = b.dataset.vdel;
-      auArm('vdel:' + id, () => auCfgAction(c => { c.vices = c.vices.filter(x => x.id !== id); }, 'Zähler gelöscht'));
-    }
+    if (b.dataset.vrel) auArm('vrel:' + b.dataset.vrel, () => auRelapse(b.dataset.vrel));
+    else if (b.dataset.vdel) auArm('vdel:' + b.dataset.vdel, () => auRemove('vices', b.dataset.vdel));
   });
   document.getElementById('auvsug').addEventListener('click', e => {
     const b = e.target.closest('[data-sug]');
@@ -3321,6 +3614,8 @@ renderSleep(); renderMob(); renderEve(); renderMor(); renderGroom();
 wireForms();
 wireWealth();
 wireAura();
+wireMe();
+wireFullscreen();
 initStore();
 initAura();
 </script>

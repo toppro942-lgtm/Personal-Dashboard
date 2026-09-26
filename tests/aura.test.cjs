@@ -121,7 +121,7 @@ const CASES = {
     ok('21 Aufgaben', n === 21, String(n));
     await page.click('#autasks [data-id="journal"]');
     await page.waitForFunction(() => { const b = document.querySelector('#autasks [data-id="journal"]');
-      return b && b.getAttribute('aria-checked') === 'true' && !b.disabled; });
+      return b && b.getAttribute('aria-checked') === 'true' && AU.busy === 0 && AU.pend.size === 0; });
     const meta = await page.textContent('#aumeta');
     ok('Heute 1/21', meta.includes('Heute 1/21'), meta);
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('__mockdb')));
@@ -135,7 +135,7 @@ const CASES = {
     await page.waitForFunction(() => document.querySelector('#autasks [data-id="journal"]').getAttribute('aria-checked') === 'false');
     await page.click('#auprev');
     await page.click('#autasks [data-id="grat"]');
-    await page.waitForFunction(() => { const b = document.querySelector('#autasks [data-id="grat"]'); return b.getAttribute('aria-checked') === 'true' && !b.disabled; });
+    await page.waitForFunction(() => { const b = document.querySelector('#autasks [data-id="grat"]'); return b.getAttribute('aria-checked') === 'true' && AU.busy === 0 && AU.pend.size === 0; });
     const s2 = await page.evaluate(() => JSON.parse(localStorage.getItem('__mockdb')));
     const y = addDays(-1);
     ok('gestern gespeichert', s2['aura/m' + y.slice(0, 7)]?.days?.[y]?.t?.grat === true);
@@ -231,7 +231,7 @@ const CASES = {
     const { ctx, page, errors } = await open(browser, { mock: false });
     ok('lokal', (await page.textContent('#austat')).includes('lokal'));
     await page.click('#autasks [data-id="read"]');
-    await page.waitForFunction(() => { const b = document.querySelector('#autasks [data-id="read"]'); return b.getAttribute('aria-checked') === 'true' && !b.disabled; });
+    await page.waitForFunction(() => { const b = document.querySelector('#autasks [data-id="read"]'); return b.getAttribute('aria-checked') === 'true' && AU.busy === 0 && AU.pend.size === 0; });
     await page.reload();
     await page.waitForFunction(() => !document.getElementById('austat').textContent.includes('geladen'));
     ok('lokal persistent', await page.$eval('#autasks [data-id="read"]', b => b.getAttribute('aria-checked')) === 'true');
@@ -286,6 +286,115 @@ const CASES = {
     await ctx.close();
   },
 
+  /* Me-Tab: Listen, Bearbeiten, Synchronitaet mit dem Aura-Tab. */
+  async me(browser) {
+    const start = addDays(-20), sessions = [-19, -17, -15, -12, -9, -6, -4, -2].map(addDays);
+    const seed = { 'aura/config': { habits: [], vices: [], hobbies: [{ id:'bb1', name:'Badminton', p:'body', start }] } };
+    for (const d of sessions) { const m = 'aura/m' + d.slice(0, 7); seed[m] = seed[m] || { month: d.slice(0, 7), days: {} };
+      seed[m].days[d] = { t: { b_bb1: true } }; }
+    const { ctx, page, errors } = await open(browser, { seed });
+    const tabs = await page.$$eval('.tabs .tb', bs => bs.map(b => b.textContent.trim()));
+    ok('Me neben Aura', tabs[0] === '✦ Aura' && tabs[1] === 'Me' && !tabs.includes('Grooming'), JSON.stringify(tabs));
+    ok('Score ohne Hobby-Tage', (await page.textContent('#auring .num')) === '–');
+    await page.click('.tabs .tb >> text=Me');
+    ok('Looksmaxxing darunter', (await page.$$('#t-me #groomlist .gsec')).length === 7
+      && (await page.textContent('#t-me')).includes('Looksmaxxing'));
+    ok('Hobby lvl 3 (8 Sessions)', (await page.textContent('#mehobbies .merow')).includes('lvl 3'), await page.textContent('#mehobbies'));
+    ok('Vorschlag Badminton weg', !(await page.$('#mebsug [data-msug="Badminton"]')));
+
+    /* Hobby heute: gespeichert, Score bleibt leer. */
+    await page.click('#mehobbies [data-tog="b_bb1"]');
+    await page.waitForFunction(() => document.querySelector('#mehobbies [data-tog="b_bb1"]').getAttribute('aria-checked') === 'true'
+      && AU.busy === 0 && AU.pend.size === 0);
+    const t = iso(new Date());
+    const dbm = await page.evaluate(k => JSON.parse(localStorage.getItem('__mockdb'))['aura/m' + k.slice(0, 7)], t);
+    ok('Hobby-Session in DB', dbm?.days?.[t]?.t?.b_bb1 === true, JSON.stringify(dbm));
+    ok('Score weiter leer', (await page.textContent('#auring .num')) === '–');
+
+    /* Habit ueber Vorschlag in Me anlegen -> im Aura-Tab sichtbar (Karte + Aufgabe in Persönlichkeit). */
+    await page.click('#mehsug [data-msug="Augenkontakt halten"]');
+    ok('Säule aus Vorschlag', (await page.inputValue('#meaddhp')) === 'pers');
+    await page.click('#meaddh button[type=submit]');
+    await page.waitForSelector('#mehabits .merow');
+    ok('Aura-Karte', (await page.textContent('#auhabits')).includes('Augenkontakt halten'));
+    const persTasks = await page.$$eval('#autasks .aupcol', cs => cs[2].textContent);
+    ok('Aura-Aufgabe', persTasks.includes('Augenkontakt halten'));
+    /* Haken in Me -> Aura-Karte an; Haken in Aura -> Me aus. */
+    await page.click('#mehabits .mechk');
+    await page.waitForFunction(() => document.querySelector('#auhabits [data-hcheck]')?.classList.contains('on'));
+    await page.click('.tabs .tb >> text=Aura');
+    await page.click('#auhabits [data-hcheck]');
+    await page.waitForFunction(() => document.querySelector('#mehabits .mechk').getAttribute('aria-checked') === 'false');
+    await page.click('.tabs .tb >> text=Me');
+
+    /* Umbenennen + Säule ändern per Editor. */
+    await page.click('#mehabits .mename');
+    await page.waitForSelector('#meedname');
+    await page.fill('#meedname', 'Blickkontakt halten'); await page.selectOption('#meedpil', 'soul');
+    await page.click('[data-msave]');
+    await page.waitForFunction(() => !document.getElementById('meedname') && document.querySelector('#mehabits .men').textContent === 'Blickkontakt halten');
+    ok('Aura umbenannt', (await page.$$eval('#autasks .aupcol', cs => cs[3].textContent)).includes('Blickkontakt halten'));
+
+    /* Laster mit Säule in Me -> Aura-Zähler; Editor: Rückfall am Starttag gesperrt; Löschen zweistufig. */
+    await page.fill('#meaddvn', 'Doomscrolling'); await page.selectOption('#meaddvp', 'mind');
+    await page.click('#meaddv button[type=submit]');
+    await page.waitForSelector('#mevices .merow');
+    ok('0/90', (await page.textContent('#mevices .merow')).includes('0/90'));
+    ok('Aura-Zähler', (await page.textContent('#auvices')).includes('Doomscrolling'));
+    await page.click('#mevices .mename');
+    ok('Rückfall gesperrt', await page.$eval('[data-mrel]', b => b.disabled));
+    await page.click('[data-mdel]');
+    ok('armiert', (await page.textContent('[data-mdel]')) === 'Wirklich löschen?');
+    await page.click('[data-mdel]');
+    await page.waitForFunction(() => !document.querySelector('#mevices .merow') && !document.querySelector('#auvices .aucard'));
+
+    /* Habit + Hobby löschen über Editor. */
+    await page.click('#mehabits .mename'); await page.click('[data-mdel]'); await page.click('[data-mdel]');
+    await page.waitForFunction(() => !document.querySelector('#mehabits .merow') && !document.querySelector('#auhabits .aucard'));
+    await page.click('#mehobbies .mename'); await page.click('[data-mdel]'); await page.click('[data-mdel]');
+    await page.waitForFunction(() => !document.querySelector('#mehobbies .merow'));
+    const cfg = await page.evaluate(() => JSON.parse(localStorage.getItem('__mockdb'))['aura/config']);
+    ok('config leer', !cfg.habits.length && !cfg.vices.length && !cfg.hobbies.length, JSON.stringify(cfg));
+    ok('keine Fehler', !errors.length, errors.join('\n'));
+    await ctx.close();
+  },
+
+  async fullscreen(browser) {
+    const stub = () => {
+      Object.defineProperty(Document.prototype, 'fullscreenEnabled', { get: () => true, configurable: true });
+      Element.prototype.requestFullscreen = function () { window.__fs = (window.__fs || 0) + 1; return Promise.resolve(); };
+    };
+    const ctx = await browser.newContext({ viewport: { width: 1100, height: 900 } });
+    await ctx.route(/fonts\.(googleapis|gstatic)\.com/, r => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
+    await ctx.addInitScript(MOCK); await ctx.addInitScript(stub);
+    const page = await ctx.newPage(); const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    await page.goto(URL);
+    await page.waitForFunction(() => !document.getElementById('austat').textContent.includes('geladen'));
+    ok('Knopf sichtbar', await page.$eval('#fsbtn', b => !b.hidden));
+    ok('nicht beim Laden', (await page.evaluate(() => window.__fs || 0)) === 0);
+    await page.click('#autasks [data-id="read"]');
+    ok('erster Tipp', (await page.evaluate(() => window.__fs || 0)) === 1);
+    await page.waitForFunction(() => document.querySelector('#autasks [data-id="read"]').getAttribute('aria-checked') === 'true');
+    await page.click('#autasks [data-id="plan"]');
+    ok('nur einmal', (await page.evaluate(() => window.__fs || 0)) === 1);
+    await page.evaluate(() => localStorage.setItem('dash-autofs', '0'));
+    await page.reload();
+    await page.waitForFunction(() => !document.getElementById('austat').textContent.includes('geladen'));
+    await page.click('#autasks [data-id="caff"]');
+    ok('abgeschaltet', (await page.evaluate(() => window.__fs || 0)) === 0);
+    await page.click('#fsbtn');
+    ok('Knopf', (await page.evaluate(() => window.__fs || 0)) === 1 && (await page.evaluate(() => localStorage.getItem('dash-autofs'))) === '1');
+    ok('keine Fehler', !errors.length, errors.join('\n'));
+    await ctx.close();
+
+    /* Ohne Vollbild-Unterstuetzung: Knopf versteckt, kein Fehler. */
+    const o = await open(browser);
+    const hidden = await o.page.evaluate(() => document.fullscreenEnabled ? 'n/a' : document.getElementById('fsbtn').hidden);
+    ok('ohne API versteckt', hidden === true || hidden === 'n/a', String(hidden));
+    await o.ctx.close();
+  },
+
   async mobile(browser) {
     const { ctx, page, errors } = await open(browser, { width: 390 });
     await page.fill('#auhname', 'Ein sehr langer Gewohnheitsname ohne Umbruchmöglichkeiten_xxxxxxxxxxxxxxxx');
@@ -294,7 +403,7 @@ const CASES = {
     const w = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
     ok('kein Querscrollen', w.sw <= w.cw, JSON.stringify(w));
     const others = {};
-    for (const t of ['Trainingstage','Health','Finanzen','Vermögen']) {
+    for (const t of ['Me','Trainingstage','Health','Finanzen','Vermögen']) {
       await page.click(`.tabs .tb >> text=${t}`);
       others[t] = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
     }
