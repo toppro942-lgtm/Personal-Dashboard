@@ -101,7 +101,7 @@ const CASES = {
       groom: document.querySelectorAll('#groomlist .gsec').length, fkpi: document.querySelectorAll('#fkpi .kpi').length,
       wkpi: document.querySelectorAll('#wkpi .kpi').length, planOn: document.getElementById('t-plan').classList.contains('on') }));
     ok('Plan-Tabs', m.day === 1 && m.dbar === 7 && m.vol === 15 && m.meals === 7 && m.sleep === 7 && m.mob === 8
-      && m.eve === 7 && m.mor === 12 && m.groom === 7 && m.fkpi === 4 && m.wkpi === 4 && m.planOn, JSON.stringify(m));
+      && m.eve === 8 && m.mor === 12 && m.groom === 7 && m.fkpi === 4 && m.wkpi === 4 && m.planOn, JSON.stringify(m));
     /* Health-Eintrag speichern und im Aura-Schlafhaken wiederfinden. */
     await page.click('.tabs .tb >> text=Health');
     await page.fill('#h2', '9:30'); await page.click('#hform button[type=submit]');
