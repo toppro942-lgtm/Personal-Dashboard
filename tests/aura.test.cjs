@@ -110,9 +110,9 @@ const CASES = {
     const sleepAuto = await page.$eval('#autasks [data-id="sleep"]', b => ({ c: b.getAttribute('aria-checked'), t: b.textContent }));
     ok('Schlaf aus Health', sleepAuto.c === 'true' && sleepAuto.t.includes('Health'), JSON.stringify(sleepAuto));
     const eve = await page.$$eval('#evetl .tltime', e => e.map(x => x.textContent.trim()));
-    ok('Abend-Zeiten', eve.join('|') === 'T-120 Min|T-90 Min|T-75 Min|T-45 Min|T-35 Min|T-30 Min|T-15 Min|T-0 Min', eve.join('|'));
+    ok('Abend-Zeiten', eve.join('|') === 'T-120 Min|T-90 Min|T-85 Min|T-45 Min|T-30 Min|T-30 Min|T-15 Min|T-0 Min', eve.join('|'));
     const bad = await page.$eval('#evetl', e => e.textContent);
-    ok('kein Alttext', !bad.includes('T-25') && !bad.includes('50 Minuten'));
+    ok('kein Alttext', !bad.includes('T-25') && !bad.includes('T-75') && !bad.includes('45 Minuten'));
     ok('keine Fehler', !errors.length, errors.join('\n'));
     await ctx.close();
     return m;
