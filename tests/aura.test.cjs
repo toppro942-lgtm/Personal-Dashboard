@@ -14,8 +14,8 @@ try { pw = require('playwright'); } catch { pw = require('/opt/node22/lib/node_m
 const FILE = process.env.DASH_FILE ? path.resolve(process.env.DASH_FILE) : path.resolve(__dirname, '..', 'dashboard.html');
 const URL = 'file://' + FILE;
 const ALL_IDS = ['train','mob','protein','water','casein','sleep','journal','plan','caff','screen','read',
-                 'wake','skinam','hair','skinpm','bed','light','release','outside','grat','breath'];
-const BODY_MIND = ['train','mob','protein','water','casein','sleep','journal','plan','caff','screen','read'];
+                 'wake','skinam','hair','skinpm','bed','light','release','outside','grat','breath','hang'];
+const BODY_MIND = ['train','mob','protein','water','casein','sleep','hang','journal','plan','caff','screen','read'];
 
 const MOCK = `
 (() => {
@@ -90,7 +90,7 @@ const CASES = {
     const { ctx, page, errors } = await open(browser);
     await page.waitForFunction(() => document.querySelectorAll('#hcards .hcard').length === 6, null, { timeout: 10000 });
     const tabs = await page.$$eval('.tabs .tb', bs => bs.map(b => b.textContent.trim()));
-    ok('12 Tabs', tabs.length === 12, JSON.stringify(tabs));
+    ok('13 Tabs', tabs.length === 13, JSON.stringify(tabs));
     for (let i = 0; i < tabs.length; i++) await page.click(`.tabs .tb >> nth=${i}`);
     await page.click('.tabs .tb >> text=Trainingstage');
     const m = await page.evaluate(() => ({
@@ -100,7 +100,7 @@ const CASES = {
       eve: document.querySelectorAll('#evetl .tlitem').length, mor: document.querySelectorAll('#morlist .morrow').length,
       groom: document.querySelectorAll('#groomlist .gsec').length, fkpi: document.querySelectorAll('#fkpi .kpi').length,
       wkpi: document.querySelectorAll('#wkpi .kpi').length, planOn: document.getElementById('t-plan').classList.contains('on') }));
-    ok('Plan-Tabs', m.day === 1 && m.dbar === 7 && m.vol === 15 && m.meals === 7 && m.sleep === 7 && m.mob === 8
+    ok('Plan-Tabs', m.day === 1 && m.dbar === 7 && m.vol === 15 && m.meals === 7 && m.sleep === 7 && m.mob === 9
       && m.eve === 8 && m.mor === 12 && m.groom === 7 && m.fkpi === 4 && m.wkpi === 4 && m.planOn, JSON.stringify(m));
     /* Health-Eintrag speichern und im Aura-Schlafhaken wiederfinden. */
     await page.click('.tabs .tb >> text=Health');
@@ -118,12 +118,13 @@ const CASES = {
     const { ctx, page, errors } = await open(browser);
     ok('Aura ist Starttab', await page.$eval('#t-aura', e => e.classList.contains('on')));
     const n = await page.$$eval('#autasks .autask', b => b.length);
-    ok('21 Aufgaben', n === 21, String(n));
+    const want = await page.evaluate(() => auDayTasks(AU.today, auInfos()).length);   // 21, an Hang-Tagen 22
+    ok('Aufgaben', n === want && (n === 21 || n === 22), `${n}/${want}`);
     await page.click('#autasks [data-id="journal"]');
     await page.waitForFunction(() => { const b = document.querySelector('#autasks [data-id="journal"]');
       return b && b.getAttribute('aria-checked') === 'true' && AU.busy === 0 && AU.pend.size === 0; });
     const meta = await page.textContent('#aumeta');
-    ok('Heute 1/21', meta.includes('Heute 1/21'), meta);
+    ok('Heute 1/n', meta.includes(`Heute 1/${want}`), meta);
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('__mockdb')));
     const t = iso(new Date());
     ok('in DB', stored['aura/m' + t.slice(0, 7)]?.days?.[t]?.t?.journal === true, JSON.stringify(stored['aura/m' + t.slice(0, 7)]));
@@ -395,6 +396,43 @@ const CASES = {
     await o.ctx.close();
   },
 
+  async sporttest(browser) {
+    const { ctx, page, errors } = await open(browser);
+    const tabs = await page.$$eval('.tabs .tb', bs => bs.map(b => b.textContent.trim()));
+    ok('Tab nach Me', tabs[2] === 'Sporttest', JSON.stringify(tabs));
+    const T = d => page.evaluate(x => stTasksFor(x).map(t => t.t).join(''), d);
+    ok('vor Start keine Aufgabe', (await T('2026-09-29')) === '');
+    ok('Mittwoch kein Hang', (await T('2026-10-07')) === '');
+    ok('Einstiegstest', (await T('2026-10-02')).includes('Einstiegstest'));
+    await page.click('.tabs .tb >> text=Sporttest');
+    ok('Mobility-Block', (await page.$$('#mobseq .ec')).length === 9);
+
+    await page.fill('#sthang', 'abc'); await page.click('#stform button[type=submit]');
+    ok('ungültig nicht gespeichert', (await page.evaluate(() => ST.log.length)) === 0);
+    await page.fill('#stday', '2026-10-01'); await page.fill('#sthang', '1:00'); await page.fill('#streach', '+3');
+    await page.click('#stform button[type=submit]');
+    await page.waitForFunction(() => ST.log.length === 1 && !ST.busy);
+    ok('Karte Hang', (await page.textContent('#stcards')).includes('1:00 min'));
+    ok('Karte Reach', (await page.textContent('#stcards')).includes('+3 cm'));
+    ok('Basis 5×35 s', (await T('2026-10-02')) === 'Dead Hang: 5 × 35 s', await T('2026-10-02'));
+    ok('Testsonntag', (await T('2026-10-11')).startsWith('Testtag'), await T('2026-10-11'));
+    ok('Kapazität FR schwer', (await T('2026-11-27')).includes('schwer'), await T('2026-11-27'));
+    ok('Kapazität DI 4×45 s', (await T('2026-12-01')) === 'Dead Hang: 4 × 45 s', await T('2026-12-01'));
+    ok('Pause vor Test', (await T('2027-03-28')) === '');
+    ok('Testtag selbst', (await T('2027-03-30')).includes('Testtag'));
+    ok('Plan 4 Phasen', (await page.$$('#stplan .stph')).length === 4);
+
+    await page.reload();
+    await page.waitForFunction(() => !document.getElementById('austat').textContent.includes('geladen') && ST.log.length === 1);
+    ok('persistent', (await page.evaluate(() => JSON.parse(localStorage.getItem('__mockdb'))['tests/main'].log[0].hang)) === 60);
+    await page.click('.tabs .tb >> text=Sporttest');
+    await page.click('[data-stdel]'); ok('armiert', (await page.textContent('[data-stdel]')) === 'Löschen?');
+    await page.click('[data-stdel]');
+    await page.waitForFunction(() => ST.log.length === 0 && !ST.busy);
+    ok('keine Fehler', !errors.length, errors.join('\n'));
+    await ctx.close();
+  },
+
   async mobile(browser) {
     const { ctx, page, errors } = await open(browser, { width: 390 });
     await page.fill('#auhname', 'Ein sehr langer Gewohnheitsname ohne Umbruchmöglichkeiten_xxxxxxxxxxxxxxxx');
@@ -403,7 +441,7 @@ const CASES = {
     const w = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
     ok('kein Querscrollen', w.sw <= w.cw, JSON.stringify(w));
     const others = {};
-    for (const t of ['Me','Trainingstage','Health','Finanzen','Vermögen']) {
+    for (const t of ['Me','Sporttest','Trainingstage','Health','Finanzen','Vermögen']) {
       await page.click(`.tabs .tb >> text=${t}`);
       others[t] = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
     }

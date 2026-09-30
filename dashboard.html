@@ -394,6 +394,30 @@ font-family:var(--sans);font-size:13px;padding:8px 10px}
 .meadd select{flex:0 0 auto}
 .meadd input:focus-visible,.meadd select:focus-visible{outline:2px solid var(--blu);outline-offset:1px}
 .meempty{font-size:12px;color:var(--dim);padding:10px 2px}
+
+/* ===== Sporttest ===== */
+.sthero{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;background:var(--s1);
+border:1px solid var(--bd);border-radius:9px;padding:16px 18px}
+.stbig{font-family:var(--srf);font-size:44px;color:var(--wh);line-height:1;font-variant-numeric:tabular-nums}
+.stphase{font-family:var(--srf);font-size:22px;color:#d4695a;line-height:1.2}
+.sttarget{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:10px;color:var(--mut);margin-top:4px}
+.stweek{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:9px}
+.stday{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--pbody);border-radius:9px;padding:12px 14px}
+.stday.test{border-left-color:#b08a2a}
+.stday.today{border-color:var(--mut)}
+.stday h3{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--mut);font-weight:500;margin-bottom:5px}
+.stday b{display:block;font-size:14px;color:var(--wh);font-weight:600;margin-bottom:3px}
+.stday p{font-size:11px;color:var(--mut);line-height:1.6}
+.stph{display:grid;grid-template-columns:118px 1fr;gap:12px;padding:11px 14px;background:var(--s1);border:1px solid var(--bd);
+border-radius:9px;margin-bottom:7px}
+.stph.on{border-color:#c94535;background:#140c0b}
+.stph .d{font-family:var(--mono);font-size:10px;color:var(--mut);line-height:1.6}
+.stph b{font-size:13px;color:var(--wh)}
+.stph p{font-size:11px;color:var(--mut);line-height:1.7;margin-top:3px}
+@media(max-width:520px){.stph{grid-template-columns:1fr;gap:4px}.sthero{grid-template-columns:1fr;gap:10px}}
+.strow{display:grid;grid-template-columns:90px 1fr 1fr auto;gap:10px;align-items:center;padding:9px 6px;border-bottom:1px solid var(--bd);
+font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+.strow span:first-child{color:var(--dim);font-size:10px}
 </style>
 
 <div class="hdr"><div class="hi">
@@ -405,6 +429,7 @@ font-family:var(--sans);font-size:13px;padding:8px 10px}
   <div class="tabs">
     <button class="tb aura on" onclick="tab('aura',this)">✦ Aura</button>
     <button class="tb" onclick="tab('me',this)">Me</button>
+    <button class="tb" onclick="tab('st',this)">Sporttest</button>
     <button class="tb" onclick="tab('plan',this)">Trainingstage</button>
     <button class="tb" onclick="tab('vol',this)">Volumen</button>
     <button class="tb" onclick="tab('food',this)">Ernährung</button>
@@ -471,6 +496,51 @@ font-family:var(--sans);font-size:13px;padding:8px 10px}
   wohin sich der Score mit dem aktuellen Stand bewegt. Die Aufgaben kommen aus deinem Plan: Trainingstag
   (Wochentyp und Mesozyklus), Schlafzeiten, Morgen-, Abend-, Mobility- und Hautroutine. Aktive Gewohnheiten
   zählen in ihrer Säule mit, bis sie nach 22 erledigten Tagen gefestigt sind.</p>
+</div></div>
+
+<!-- SPORTTEST: Dead Hang + Stand and Reach in 6 Monaten -->
+<div id="t-st" class="tc"><div class="ct" id="stbody">
+  <div class="sechead" style="margin-top:0">
+    <h2>Sporttest</h2><span class="hmeta" id="ststat">wird geladen …</span>
+  </div>
+  <div class="sthero">
+    <div><div class="stbig" id="stdays">–</div><div class="kpil">Tage bis zum Test</div></div>
+    <div><div class="stphase" id="stphase">–</div><div class="hmeta" id="stphased"></div></div>
+  </div>
+  <div class="hgrid" id="stcards" style="margin-top:10px"></div>
+
+  <div class="sechead"><h2>Diese Woche</h2><span class="hmeta">DI · FR · SO, Test jeden 2. Sonntag</span></div>
+  <div id="stweek"></div>
+
+  <div class="sechead"><h2>Messung eintragen</h2></div>
+  <form class="frm" id="stform">
+    <div class="fld" style="flex:0 0 148px"><label for="stday">Datum</label><input type="date" id="stday" name="day" required></div>
+    <div class="fld"><label for="sthang">Dead Hang</label><input type="text" id="sthang" name="hang" inputmode="numeric" placeholder="1:05 oder 65"></div>
+    <div class="fld"><label for="streach">Stand and Reach (cm)</label><input type="text" id="streach" name="reach" inputmode="decimal" placeholder="+8,5"></div>
+    <button class="btn go" type="submit">Speichern</button>
+  </form>
+  <p class="lead" style="margin-top:8px">Ein Feld reicht. Hang in Sekunden oder als <b>m:ss</b>, Reichweite in cm unter der
+  Standfläche positiv, darüber negativ. Immer unter gleichen Bedingungen messen: nach 10 Min Aufwärmen, nicht direkt nach dem Dehnen.</p>
+
+  <div class="sechead"><h2>Plan · 6 Monate</h2></div>
+  <div id="stplan"></div>
+
+  <div class="sechead"><h2>Technik &amp; Testtag</h2></div>
+  <div id="sttech"></div>
+
+  <div class="sechead"><h2>Verlauf</h2></div>
+  <div id="stlog"></div>
+
+  <div class="sechead"><h2>Ziele &amp; Testdatum</h2></div>
+  <form class="frm" id="stcfg">
+    <div class="fld" style="flex:0 0 148px"><label for="stdate">Testdatum</label><input type="date" id="stdate" name="date" required></div>
+    <div class="fld"><label for="sttgh">Ziel Dead Hang (s)</label><input type="text" id="sttgh" name="hang" inputmode="numeric"></div>
+    <div class="fld"><label for="sttgr">Ziel Stand and Reach (cm)</label><input type="text" id="sttgr" name="reach" inputmode="decimal"></div>
+    <button class="btn" type="submit">Übernehmen</button>
+  </form>
+  <p class="lead" style="margin-top:8px"><b>Dead Hang 120 s = 15 Punkte</b> laut deiner Lehrerin. Für Stand and Reach lag
+  keine offizielle Tabelle vor — die +15 cm sind ein vorläufiges Spitzenniveau für 18-Jährige. Lass dir die
+  Punktetabelle geben und trag hier den Wert für 15 Punkte ein; Plan und Anzeige rechnen dann damit.</p>
 </div></div>
 
 <!-- PLAN -->
@@ -585,11 +655,11 @@ font-family:var(--sans);font-size:13px;padding:8px 10px}
 <div id="t-mob" class="tc"><div class="ct">
   <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Mobility-Routine</div>
   <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:16px">
-    Täglich, nach warmem Duschen, vor dem Schlafen · ~30 Min · Primär PNF (Contract-Relax), eingeleitet durch den Haltungsblock
+    Täglich, nach warmem Duschen, vor dem Schlafen · ~35 Min · Primär PNF (Contract-Relax), eingeleitet durch den Haltungsblock
   </div>
 
   <div class="macro" style="grid-template-columns:repeat(3,1fr)">
-    <div class="mac"><div class="macv" style="color:#7a5ab5">30</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
+    <div class="mac"><div class="macv" style="color:#7a5ab5">35</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
     <div class="mac"><div class="macv" style="color:#7a5ab5">8s · 30s</div><div class="macl" style="color:#7a5ab5">An · Halten</div><div class="macs">×3 pro Muskel</div></div>
     <div class="mac"><div class="macv" style="color:#7a5ab5">Abends</div><div class="macl" style="color:#7a5ab5">Timing</div><div class="macs">nach Dusche</div></div>
   </div>
@@ -1362,6 +1432,7 @@ const MOBSEQ=[
 {n:'Hamstrings',x:'Liegend mit Band PNF × 3/Seite + Vorwärtsbeuge 2×60s',d:'Liegende Position mit Band für kontrollierten Widerstand im PNF-Zyklus, danach Vorwärtsbeuge zur beidseitigen Integration.',c:'#b8922e'},
 {n:'Adduktoren',x:'Grätsch-Sitz 2×90s + Schmetterling PNF × 3',d:'Grätsch-Sitz als lange statische Haltung, danach Schmetterling-Position im PNF-Zyklus für die mediale Oberschenkelmuskulatur.',c:'#2e9e6a'},
 {n:'Hüftkapsel',x:'Figure-4 je 90s/Seite',d:'Figure-4-Position für Kapsel- und Außenrotatoren-Mobilität. Lange statische Haltezeit statt PNF, da die Hüftkapsel selbst nicht kontrahierbar ist.',c:'#3a7bbf'},
+{n:'Stand-and-Reach-Block',x:'Stehende Vorbeuge PNF × 3 + Waden 2×45s',d:'Füße geschlossen, Knie gestreckt, aus der Hüfte abkippen. PNF: 8 s die Fersen/Fußsohlen aktiv in den Boden drücken, lösen, tiefer sinken, 30 s halten. Danach Wadendehnung an der Wand — verkürzte Waden kosten beim Test Zentimeter. Nie federn: Wippen löst den Dehnreflex aus und blockiert genau die Tiefe, die gemessen wird.',c:'#c94535'},
 {n:'Spagat-Einstieg',x:'erst ab Monat 3–4, progressiv',d:'Erst hinzufügen, wenn die vorherigen Elemente ausreichend Grundbeweglichkeit geschaffen haben. Zu früher Einstieg erhöht das Verletzungsrisiko ohne Zeitvorteil.',c:'#7a5ab5'}];
 
 const MOBMILES=[
@@ -2841,7 +2912,7 @@ function auTasksFor(iso) {
       : { t:`Training: ${name}`, s:`${prog.ti} · ${prog.du}` };
   return [
     { id:'train',   p:'body', ...train },
-    { id:'mob',     p:'body', t:'Mobility-Routine · ~30 Min', s:'Haltungsblock + PNF, nach dem Duschen' },
+    { id:'mob',     p:'body', t:'Mobility-Routine · ~35 Min', s:'Haltungsblock + PNF + Stand-and-Reach-Block' },
     { id:'protein', p:'body', t:'Protein 2,0–2,2 g/kg', s:'auf 4–5 Mahlzeiten verteilt, je ≥ 30 g' },
     { id:'water',   p:'body', t:'Hydration', s: school ? `${HYDRATION.mor} · ${HYDRATION.school}` : `${HYDRATION.mor} · ${HYDRATION.meal}` },
     { id:'casein',  p:'body', t:'30–40 g Casein vor dem Schlafen', s:'T-90 · Magerquark oder Milch' },
@@ -2863,7 +2934,8 @@ function auTasksFor(iso) {
     { id:'release', p:'soul', t:'Nervous System Release', s:'Springen, schwingen, ausschütteln' },
     { id:'outside', p:'soul', t:'Spaziergang oder Fahrrad draußen', s:'Bewegung ohne Leistungsziel' },
     { id:'grat',    p:'soul', t:'Dankbarkeit notieren', s:'Drei konkrete Dinge von heute' },
-    { id:'breath',  p:'soul', t:'5 Min Bauchatmung', s:'T-45 · parasympathisch runterfahren' }
+    { id:'breath',  p:'soul', t:'5 Min Bauchatmung', s:'T-45 · parasympathisch runterfahren' },
+    ...stTasksFor(iso)
   ];
 }
 
@@ -3182,6 +3254,7 @@ function renderAura() {
   renderAuVices();
   renderAuHeat(infos, first);
   renderMe(infos);
+  renderSt();
 }
 
 function renderAuTasks(infos) {
@@ -3503,6 +3576,227 @@ function wireFullscreen() {
   });
 }
 
+
+/* ============================================================
+   Sporttest — Dead Hang + Stand and Reach, Testtermin in ~6 Monaten.
+   Speicher: tests/main im selben Speicher wie Aura
+     {start, date, target:{hang, reach}, log:[{id, d, hang?, reach?}]}
+   Ein Dokument: die Messreihe bleibt klein (1–2 Messungen pro Woche).
+
+   Dead Hang ist Griff-Kraftausdauer. Trainiert wird 3× pro Woche mit
+   Sätzen als Anteil der aktuellen Bestzeit, periodisiert in drei Blöcke +
+   Taper. DI, FR, SO: FR (Lower) und SO (Zone 2) belasten den Griff nicht,
+   DI ist 48 h von beiden entfernt. Jeder 2. Sonntag ist Testtag.
+   Stand and Reach laeuft ueber den taeglichen Mobility-Block (PNF), der
+   ohnehin abends nach dem Duschen stattfindet.
+   ============================================================ */
+const ST_START_DEFAULT = '2026-09-30';
+const ST_DEFAULT = { start: ST_START_DEFAULT, date: '2027-03-30', target: { hang: 120, reach: 15 }, log: [] };
+const ST_DAYS = [1, 4, 6];                                   // DI, FR, SO (0 = Montag)
+const ST = { ...clone(ST_DEFAULT), ready: false, busy: false };
+
+const stFmt = s => s == null ? '–' : s >= 60 ? `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')} min` : `${Math.round(s)} s`;
+const stCm = c => c == null ? '–' : `${c > 0 ? '+' : c < 0 ? '−' : ''}${Math.abs(c).toLocaleString('de-DE', { maximumFractionDigits:1 })} cm`;
+const stR5 = x => Math.max(5, Math.round(x / 5) * 5);
+function stParseHang(raw) {
+  const t = String(raw || '').trim(); if (!t) return null;
+  const m = t.match(/^(\d{1,2}):(\d{1,2})$/);
+  const v = m ? (+m[1]) * 60 + (+m[2]) : Number(t.replace(',', '.'));
+  return Number.isFinite(v) && v > 0 && v < 1800 ? Math.round(v) : NaN;
+}
+function stParseReach(raw) {
+  const t = String(raw || '').trim().replace(/\s|cm/g, '').replace('−', '-').replace(',', '.'); if (!t) return null;
+  const v = Number(t);
+  return Number.isFinite(v) && Math.abs(v) <= 60 ? Math.round(v * 10) / 10 : NaN;
+}
+const stBest = (k, until) => ST.log.filter(e => typeof e[k] === 'number' && (!until || e.d <= until))
+  .reduce((a, e) => a == null || e[k] > a ? e[k] : a, null);
+const stLast = k => { const l = ST.log.filter(e => typeof e[k] === 'number').sort((a, b) => a.d < b.d ? -1 : 1); return l.length ? l[l.length - 1] : null; };
+
+/* Phasen aus Start- und Testdatum: letzte 2 Wochen Taper, der Rest zu
+   gleichen Dritteln -- passt sich an, wenn das Testdatum verschoben wird. */
+function stPhases() {
+  const total = Math.max(3, Math.round(auDiff(ST.start, ST.date) / 7)), taper = 2, core = total - taper;
+  const a = Math.round(core / 3), b = Math.round(core * 2 / 3);
+  const wk = w => auAdd(ST.start, w * 7);
+  return [
+    { id:'basis', n:'Basis', from: ST.start, to: auAdd(wk(a), -1), pct: .55, sets: 5, rest: '90 s',
+      d:'Sehnen und Unterarme an die Hangbelastung gewöhnen. Kein Satz bis zum Loslassen. Gelingen alle Sätze sauber, nächstes Mal +5 s.' },
+    { id:'kap', n:'Kapazität', from: wk(a), to: auAdd(wk(b), -1), pct: .72, sets: 4, rest: '2 min',
+      d:'Längere Sätze, dazu freitags schwere Hänge mit Zusatzgewicht: mehr Maximalkraft im Griff heißt, dass 120 s ein kleinerer Anteil davon werden.' },
+    { id:'spez', n:'Spezifisch', from: wk(b), to: auAdd(wk(core), -1), pct: .88, sets: 3, rest: '3 min',
+      d:'Nah an der Testdauer: wenige, lange Hänge mit voller Pause. Kopf trainieren — die letzten 30 s entscheidet die Toleranz für das Brennen.' },
+    { id:'taper', n:'Taper', from: wk(core), to: ST.date, pct: .6, sets: 2, rest: '3 min',
+      d:'Umfang halbieren, Intensität halten. Letzter Hang 3 Tage vor dem Test, danach nur noch Mobility.' }
+  ];
+}
+const stPhaseAt = iso => stPhases().find(p => iso >= p.from && iso <= p.to) || null;
+const stIsTestDay = iso => auWd(iso) === 6 && Math.round(auDiff(auIso(mondayOf(auDate(ST.start))), auIso(mondayOf(auDate(iso)))) / 7) % 2 === 1;
+
+/* Einheit eines Datums: null an Nicht-Trainingstagen. */
+function stSession(iso) {
+  if (iso < ST.start || iso > ST.date) return null;
+  if (iso === ST.date) return { kind:'exam', t:'Testtag', s:'Aufwärmen, Griff trocken, ruhig atmen — du hast es trainiert.' };
+  if (!ST_DAYS.includes(auWd(iso))) return null;
+  const ph = stPhaseAt(iso), best = stBest('hang', iso);
+  if (!ph) return null;
+  if (auDiff(iso, ST.date) <= 3) return null;               // 3 Tage Pause vor dem Test
+  if (best == null) return { kind:'test', t:'Einstiegstest: Dead Hang + Stand and Reach', s:'Beides einmal maximal messen und im Sporttest-Tab eintragen — daraus rechnet der Plan deine Sätze.' };
+  if (stIsTestDay(iso) && ph.id !== 'taper') return { kind:'test', t:'Testtag: Dead Hang max + Stand and Reach', s:`Nach dem Aufwärmen je 1 Versuch, eintragen im Sporttest-Tab · Bestzeit bisher ${stFmt(best)}` };
+  const sec = stR5(best * ph.pct);
+  if (ph.id === 'kap' && auWd(iso) === 4)
+    return { kind:'heavy', t:`Dead Hang schwer: 4 × 15–20 s mit +5–10 kg`, s:'Gürtel oder Rucksack · 2–3 min Pause · danach 2 × ' + stFmt(sec) + ' ohne Gewicht' };
+  return { kind:'train', t:`Dead Hang: ${ph.sets} × ${stFmt(sec)}`, s:`${ph.n} · ${Math.round(ph.pct * 100)} % der Bestzeit ${stFmt(best)} · Pause ${ph.rest}` };
+}
+function stTasksFor(iso) {
+  const se = stSession(iso);
+  return se ? [{ id:'hang', p:'body', t: se.t, s: se.s }] : [];
+}
+
+async function stLoad() {
+  const snap = await AU.db.doc('tests/main').get();
+  const d = snap.exists ? clone(snap.data()) : {};
+  const date = x => /^\d{4}-\d{2}-\d{2}$/.test(x || '');
+  ST.start = date(d.start) ? d.start : ST_DEFAULT.start;
+  ST.date = date(d.date) ? d.date : ST_DEFAULT.date;
+  ST.target = { hang: Number(d.target?.hang) > 0 ? Number(d.target.hang) : ST_DEFAULT.target.hang,
+                reach: Number.isFinite(Number(d.target?.reach)) && d.target?.reach !== null && d.target?.reach !== undefined ? Number(d.target.reach) : ST_DEFAULT.target.reach };
+  ST.log = (Array.isArray(d.log) ? d.log : []).filter(e => e && typeof e.id === 'string' && date(e.d));
+}
+async function stSave(mutate, msg) {
+  if (!AU.ready || ST.busy) return false;
+  ST.busy = true; renderSt();
+  try {
+    await auSerial(async () => {
+      const ref = AU.db.doc('tests/main'), snap = await ref.get();
+      const d = snap.exists ? clone(snap.data()) : clone(ST_DEFAULT);
+      d.start = d.start || ST_DEFAULT.start; d.date = d.date || ST_DEFAULT.date;
+      d.target = d.target || clone(ST_DEFAULT.target); d.log = Array.isArray(d.log) ? d.log : [];
+      mutate(d);
+      d.log.sort((a, b) => a.d < b.d ? -1 : 1); d.log = d.log.slice(-400);
+      await ref.set(d);
+      await stLoad();
+    });
+    if (msg) toast(msg);
+    return true;
+  } catch (e) { toast('Speichern fehlgeschlagen: ' + auErr(e), true); return false; }
+  finally { ST.busy = false; renderAura(); renderSt(); }
+}
+
+function stCard(k, label, color, best, target, fmt) {
+  const pts = ST.log.filter(e => typeof e[k] === 'number').sort((a, b) => a.d < b.d ? -1 : 1).map(e => ({ v: e[k] }));
+  const last = stLast(k), weeks = Math.max(1, auDiff(AU.today, ST.date) / 7);
+  const pct = best == null ? 0 : k === 'hang' ? Math.min(100, best / target * 100)
+    : Math.max(0, Math.min(100, (best + 20) / (target + 20) * 100));      // Reichweite kann negativ sein: Skala ab −20 cm
+  const gap = best == null ? null : target - best;
+  const hint = best == null ? 'Einstiegstest eintragen'
+    : gap <= 0 ? 'Ziel erreicht — jetzt Puffer aufbauen'
+    : `noch ${fmt(gap).replace(/^\+/, '')} · ${k === 'hang' ? `+${(gap / weeks).toFixed(1).replace('.', ',')} s` : `+${(gap / weeks).toFixed(1).replace('.', ',')} cm`} pro Woche nötig`;
+  return `<article class="hcard" style="--m:${color}" data-key="${k}">
+    <header><span class="hlabel">${label}</span><span class="hmeta">Ziel ${fmt(target)}</span></header>
+    <div class="hvalue">${fmt(best)}</div>
+    <div class="hmeta">${last ? `zuletzt ${fmt(last[k])} am ${last.d.split('-').reverse().join('.')}` : 'noch keine Messung'}</div>
+    <div class="aupt" style="--pc:${color};margin-top:6px"><div class="aupf" style="width:${pct}%"></div></div>
+    <div class="sttarget"><span>${hint}</span><span>${best == null ? '' : Math.round(pct) + ' %'}</span></div>
+    ${spark(pts, color)}
+  </article>`;
+}
+
+function renderSt() {
+  if (!document.getElementById('stbody')) return;
+  const today = AU.today, left = auDiff(today, ST.date), ph = stPhaseAt(today);
+  document.getElementById('ststat').textContent = !AU.ready ? 'wird geladen …' : `Test am ${ST.date.split('-').reverse().join('.')}`;
+  document.getElementById('stdays').textContent = left >= 0 ? String(left) : '–';
+  document.getElementById('stphase').textContent = left < 0 ? 'Test vorbei' : ph ? `Phase: ${ph.n}` : 'Start am ' + ST.start.split('-').reverse().join('.');
+  document.getElementById('stphased').textContent = ph ? ph.d : '';
+
+  auMorph(document.getElementById('stcards'),
+    stCard('hang', 'Dead Hang', '#c94535', stBest('hang'), ST.target.hang, stFmt)
+    + stCard('reach', 'Stand and Reach', '#7a5ab5', stBest('reach'), ST.target.reach, stCm));
+
+  const mon = auIso(mondayOf(auDate(today)));
+  const days = ST_DAYS.map(w => auAdd(mon, w)).concat(ST.date >= mon && ST.date <= auAdd(mon, 6) && !ST_DAYS.includes(auWd(ST.date)) ? [ST.date] : [])
+    .map(d => ({ d, se: stSession(d) })).filter(x => x.se);
+  auMorph(document.getElementById('stweek'), days.length ? `<div class="stweek">${days.map(({ d, se }) =>
+    `<div class="stday${se.kind === 'test' || se.kind === 'exam' ? ' test' : ''}${d === today ? ' today' : ''}" data-key="${d}">
+      <h3>${auLabel(d)}${d === today ? ' · heute' : ''}</h3><b>${ESC(se.t)}</b><p>${ESC(se.s)}</p></div>`).join('')}</div>`
+    : '<div class="empty" data-key="empty">Diese Woche keine Hang-Einheit.</div>');
+
+  auMorph(document.getElementById('stplan'), stPhases().map(p => {
+    const on = today >= p.from && today <= p.to, best = stBest('hang');
+    return `<div class="stph${on ? ' on' : ''}" data-key="${p.id}">
+      <div class="d">${p.from.split('-').reverse().join('.').slice(0, 6)}–${p.to.split('-').reverse().join('.').slice(0, 6)}<br>${Math.max(1, Math.round((auDiff(p.from, p.to) + 1) / 7))} Wochen</div>
+      <div><b>${p.n}${on ? ' · jetzt' : ''}</b> — ${p.sets} × ${Math.round(p.pct * 100)} %${best ? ` (≈ ${stFmt(stR5(best * p.pct))})` : ''}, Pause ${p.rest}<p>${p.d}</p></div></div>`;
+  }).join(''));
+
+  auMorph(document.getElementById('stlog'), ST.log.length ? [...ST.log].reverse().map(e => {
+    const armed = AU.armed.has('stdel:' + e.id);
+    return `<div class="strow" data-key="${e.id}"><span>${e.d.split('-').reverse().join('.')}</span>
+      <span>${typeof e.hang === 'number' ? stFmt(e.hang) : '–'}</span><span>${typeof e.reach === 'number' ? stCm(e.reach) : '–'}</span>
+      <button type="button" class="aubtn warn${armed ? ' armed' : ''}" data-stdel="${e.id}"${ST.busy ? ' disabled' : ''}>${armed ? 'Löschen?' : '✕'}</button></div>`;
+  }).join('') : '<div class="empty" data-key="empty">Noch keine Messung. Starte mit dem Einstiegstest.</div>');
+
+  const f = document.getElementById('stdate'), h = document.getElementById('sttgh'), r = document.getElementById('sttgr');
+  if (document.activeElement !== f) f.value = ST.date;
+  if (document.activeElement !== h) h.value = String(ST.target.hang);
+  if (document.activeElement !== r) r.value = String(ST.target.reach).replace('.', ',');
+}
+
+const ST_TECH = [
+  { t:'Dead Hang — Ausführung', c:'#c94535', li:[
+    'Obergriff, schulterbreit, Daumen um die Stange — mit Daumen hält der Griff messbar länger.',
+    'Arme ganz gestreckt, Schultern leicht aktiv (nicht bis zu den Ohren hängen lassen): schont das Gelenk und hält länger.',
+    'Beine ruhig, Körper still — Pendeln kostet Griffkraft.',
+    'Ruhig und gleichmäßig atmen. In 15-s-Blöcken zählen statt auf die Uhr zu schauen.',
+    'Hände trocken: vorher abwischen; Magnesia nur, wenn beim Test erlaubt — dann auch im Training nutzen.'] },
+  { t:'Stand and Reach — Ausführung', c:'#7a5ab5', li:[
+    'Auf dem Kasten, Füße geschlossen, Knie durchgestreckt — gebeugte Knie machen den Versuch ungültig.',
+    'Langsam abrollen, ausatmen, Hände parallel nach unten schieben. Tiefsten Punkt 2 s halten.',
+    'Nicht federn: der Dehnreflex bremst genau die Tiefe, die zählt.',
+    'Nacken locker lassen, Kinn Richtung Brust — der Kopf zieht die Wirbelsäule mit.'] },
+  { t:'Testtag', c:'#b08a2a', li:[
+    'Vorabend: normale Mobility, früh ins Bett. Kein Hangtraining in den 3 Tagen davor.',
+    '10 Min aufwärmen (Hampelmänner, Armkreisen, leichtes Dehnen der Beinrückseite) — kalt verlierst du bei Stand and Reach mehrere Zentimeter.',
+    'Stand and Reach zuerst, Dead Hang danach: der Hang ermüdet nur die Arme, nicht die Beweglichkeit.',
+    'Beim Hang ab ~90 s wird es hart — das ist das Training aus Phase 3, nicht das Ende.'] },
+  { t:'Belastung', c:'#4f4f4f', li:[
+    'Die Unterarme bekommen schon viel Volumen aus Sharms, Upper A/B und den Unterarm-Curls. Ab Phase 2 entfällt an Hang-Tagen der optionale Unterarm-Satz.',
+    'Ziehen im Ellenbogen oder an der Handgelenk-Innenseite: eine Einheit auslassen, nicht durchziehen. Sehnen erholen sich langsamer als Muskeln.'] }
+];
+
+function wireSt() {
+  document.getElementById('stday').value = TODAY();
+  document.getElementById('sttech').innerHTML = ST_TECH.map(g => `<section class="gsec" style="--gc:${g.c}">
+    <div class="gsect">${g.t}</div><ul class="gl">${g.li.map(x => `<li>${x}</li>`).join('')}</ul></section>`).join('');
+  document.getElementById('stform').addEventListener('submit', e => {
+    e.preventDefault();
+    const f = new FormData(e.target), d = f.get('day'), hang = stParseHang(f.get('hang')), reach = stParseReach(f.get('reach'));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return toast('Datum fehlt', true);
+    if (Number.isNaN(hang)) return toast('Dead Hang nicht lesbar — z. B. 65 oder 1:05', true);
+    if (Number.isNaN(reach)) return toast('Stand and Reach nicht lesbar — z. B. +8,5 oder -3', true);
+    if (hang == null && reach == null) return toast('Mindestens einen Wert eintragen', true);
+    const id = Math.random().toString(36).slice(2, 10), btn = e.target.querySelector('[type=submit]');
+    btn.disabled = true;
+    stSave(x => { x.log.push({ id, d, ...(hang != null ? { hang } : {}), ...(reach != null ? { reach } : {}) }); },
+      [hang != null ? `Dead Hang ${stFmt(hang)}` : '', reach != null ? `Stand and Reach ${stCm(reach)}` : ''].filter(Boolean).join(' · ') + ' gespeichert')
+      .then(ok => { btn.disabled = false; if (ok) { e.target.querySelector('#sthang').value = ''; e.target.querySelector('#streach').value = ''; document.activeElement?.blur?.(); } });
+  });
+  document.getElementById('stcfg').addEventListener('submit', e => {
+    e.preventDefault();
+    const f = new FormData(e.target), date = f.get('date'), h = stParseHang(f.get('hang')), r = stParseReach(f.get('reach'));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '') || date <= TODAY()) return toast('Testdatum muss in der Zukunft liegen', true);
+    if (!h || Number.isNaN(h)) return toast('Ziel Dead Hang in Sekunden angeben', true);
+    if (r == null || Number.isNaN(r)) return toast('Ziel Stand and Reach in cm angeben', true);
+    stSave(x => { x.date = date; x.target = { hang: h, reach: r }; }, 'Ziele übernommen');
+  });
+  document.getElementById('stlog').addEventListener('click', e => {
+    const b = e.target.closest('[data-stdel]');
+    if (!b || b.disabled) return;
+    const id = b.dataset.stdel;
+    auArm('stdel:' + id, () => stSave(x => { x.log = x.log.filter(y => y.id !== id); }, 'Messung gelöscht'));
+  });
+}
+
 /* ---------- Verdrahtung ---------- */
 function wireAura() {
   document.getElementById('auhpil').innerHTML = PILLARS.map(p => `<option value="${p.id}">${p.n}</option>`).join('');
@@ -3607,7 +3901,8 @@ async function initAura() {
     try { await auLoad(); AU.ready = true; } catch {}
     toast('Aura-Speicher nicht erreichbar — Einträge bleiben vorerst auf diesem Gerät.', true);
   }
-  renderAura();
+  try { await auSerial(stLoad); ST.ready = true; } catch (e) { toast('Sporttest-Daten nicht ladbar: ' + auErr(e), true); }
+  renderAura(); renderSt();
 }
 
 /* Plan-Tabs zuerst — sie brauchen keinen Speicher und stehen sofort. */
@@ -3618,6 +3913,7 @@ wireWealth();
 wireAura();
 wireMe();
 wireFullscreen();
+wireSt();
 initStore();
 initAura();
 </script>
