@@ -655,11 +655,11 @@ font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
 <div id="t-mob" class="tc"><div class="ct">
   <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Mobility-Routine</div>
   <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:16px">
-    Täglich, nach warmem Duschen, vor dem Schlafen · ~35 Min · Primär PNF (Contract-Relax), eingeleitet durch den Haltungsblock
+    Täglich, nach warmem Duschen (T-60), vor dem Schlafen · ~25 Min · Primär PNF (Contract-Relax), eingeleitet durch den Haltungsblock
   </div>
 
   <div class="macro" style="grid-template-columns:repeat(3,1fr)">
-    <div class="mac"><div class="macv" style="color:#7a5ab5">35</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
+    <div class="mac"><div class="macv" style="color:#7a5ab5">25</div><div class="macl" style="color:#7a5ab5">Min / Tag</div><div class="macs">täglich</div></div>
     <div class="mac"><div class="macv" style="color:#7a5ab5">8s · 30s</div><div class="macl" style="color:#7a5ab5">An · Halten</div><div class="macs">×3 pro Muskel</div></div>
     <div class="mac"><div class="macv" style="color:#7a5ab5">Abends</div><div class="macl" style="color:#7a5ab5">Timing</div><div class="macs">nach Dusche</div></div>
   </div>
@@ -1428,9 +1428,9 @@ const MOBSEQ=[
 {n:'4-7-8 Atmung',x:'× 4',d:'Neurale Entspannung als Einstieg. 4 Sek einatmen, 7 Sek halten, 8 Sek ausatmen. Senkt den sympathischen Tonus, bevor die eigentliche Dehnarbeit beginnt.',c:'#7a5ab5'},
 {n:'Thorakale Extension',x:'2 Min über der Rolle',d:'Rolle quer unter die Brustwirbelsäule, Hände hinter dem Kopf, kontrolliert nach hinten öffnen und wandern. Gegenmaßnahme zum nach vorn rotierten Schultergürtel und eingesunkenen Brustkorb — vor dem Dehnen, weil eine aufgerichtete BWS alle folgenden Positionen sauberer macht.',c:'#c94535'},
 {n:'Kinn-Retraktion',x:'3 × 10',d:'Kinn gerade nach hinten schieben (\'Doppelkinn machen\'), Blick bleibt waagerecht, kein Nicken. Arbeitet direkt gegen die Kopfvorschubhaltung — bei langem Hals ist deren optischer Effekt überproportional groß.',c:'#3a7bbf'},
-{n:'Hüftflexoren',x:'Kniender Ausfallschritt PNF × 3/Seite + liegender Quad-Stretch 2×45s',d:'Kniender Ausfallschritt mit PNF-Protokoll (8s an, 30s halten, ×3), danach liegender Quad-Stretch als statischer Abschluss.',c:'#c94535'},
+{n:'Hüftflexoren',x:'Kniender Ausfallschritt PNF × 2/Seite + liegender Quad-Stretch 1×45s',d:'Kurzfassung: Kniender Ausfallschritt mit PNF-Protokoll (8s an, 30s halten, ×2), danach liegender Quad-Stretch als statischer Abschluss.',c:'#c94535'},
 {n:'Hamstrings',x:'Liegend mit Band PNF × 3/Seite + Vorwärtsbeuge 2×60s',d:'Liegende Position mit Band für kontrollierten Widerstand im PNF-Zyklus, danach Vorwärtsbeuge zur beidseitigen Integration.',c:'#b8922e'},
-{n:'Adduktoren',x:'Grätsch-Sitz 2×90s + Schmetterling PNF × 3',d:'Grätsch-Sitz als lange statische Haltung, danach Schmetterling-Position im PNF-Zyklus für die mediale Oberschenkelmuskulatur.',c:'#2e9e6a'},
+{n:'Adduktoren',x:'Grätsch-Sitz 1×60s + Schmetterling PNF × 2',d:'Kurzfassung: Grätsch-Sitz als statische Haltung, danach Schmetterling-Position im PNF-Zyklus für die mediale Oberschenkelmuskulatur.',c:'#2e9e6a'},
 {n:'Hüftkapsel',x:'Figure-4 je 90s/Seite',d:'Figure-4-Position für Kapsel- und Außenrotatoren-Mobilität. Lange statische Haltezeit statt PNF, da die Hüftkapsel selbst nicht kontrahierbar ist.',c:'#3a7bbf'},
 {n:'Stand-and-Reach-Block',x:'Stehende Vorbeuge PNF × 3 + Waden 2×45s',d:'Füße geschlossen, Knie gestreckt, aus der Hüfte abkippen. PNF: 8 s die Fersen/Fußsohlen aktiv in den Boden drücken, lösen, tiefer sinken, 30 s halten. Danach Wadendehnung an der Wand — verkürzte Waden kosten beim Test Zentimeter. Nie federn: Wippen löst den Dehnreflex aus und blockiert genau die Tiefe, die gemessen wird.',c:'#c94535'},
 {n:'Spagat-Einstieg',x:'erst ab Monat 3–4, progressiv',d:'Erst hinzufügen, wenn die vorherigen Elemente ausreichend Grundbeweglichkeit geschaffen haben. Zu früher Einstieg erhöht das Verletzungsrisiko ohne Zeitvorteil.',c:'#7a5ab5'}];
@@ -1448,8 +1448,8 @@ b:['<b>Brain Dump:</b> Gedanken auslagern, Kopf leeren.','<b>Kalender-Struktur:<
 b:['<b>Nährstoffversorgung:</b> 30–40g Casein. Sichert die Muskelproteinsynthese über Nacht.','<b>Flüssigkeitsstopp:</b> Keine weitere Hydratation, um nächtliche Weckreize zu eliminieren.']},
 {t:'T-85 Min',ti:'Wärme & Nervensystem',c:'#b8922e',
 b:['<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Kopfhaut ab jetzt lufttrocknen:</b> Minoxidil folgt erst zu Beginn der Badroutine bei T-30 — rund 55 Minuten Abstand statt der vorher knappen 20–30.']},
-{t:'T-45 Min',ti:'Physische Optimierung',c:'#2e9e6a',
-b:['<b>Dehnen + Haltung:</b> Gezielte Mobilisation zur muskulären Entspannung — deine PNF-Routine, eingeleitet durch thorakale Extension und Kinn-Retraktion.','<b>Atemkontrolle:</b> 5 Minuten tiefe Bauchatmung. Schaltet das System aktiv in den parasympathischen Modus.']},
+{t:'T-60 Min',ti:'Dehnen & Dead Hang',c:'#2e9e6a',
+b:['<b>Dehnen + Haltung (~25 Min):</b> deine PNF-Routine, eingeleitet durch 4-7-8-Atmung, thorakale Extension und Kinn-Retraktion. Hüftflexoren und Adduktoren kurz gehalten, Schwerpunkt auf Hamstrings für Stand and Reach.','<b>Dead Hang (DI, FR, SO):</b> Sätze laut Sporttest-Tab, direkt nach dem Dehnen. Der Hang braucht bis zu 10 Minuten — an diesen Tagen bei T-70 beginnen, damit alles bis T-30 fertig ist.','<b>Fertig bis T-30:</b> danach kommt Handy weg und das Bad.']},
 {t:'T-30 Min',ti:'Handy weg',c:'#c94535',
 b:['<b>Flugmodus + Schlafenszeit-Modus:</b> beides aktivieren — keine Benachrichtigung, kein Lichtreiz, kein Grund zum Nachsehen.','<b>Fester Ablageplatz:</b> Handy an seinen festen Platz legen, außer Reichweite vom Bett. Erst morgen wieder aufheben.','Der Wecker klingelt auch im Flugmodus. Einmal testen, damit das kein Grund wird, das Handy doch mitzunehmen.']},
 {t:'T-30 Min',ti:'Bad, Haut & Lüften · 15 Min',c:'#3a7bbf',
@@ -2912,7 +2912,7 @@ function auTasksFor(iso) {
       : { t:`Training: ${name}`, s:`${prog.ti} · ${prog.du}` };
   return [
     { id:'train',   p:'body', ...train },
-    { id:'mob',     p:'body', t:'Mobility-Routine · ~35 Min', s:'Haltungsblock + PNF + Stand-and-Reach-Block' },
+    { id:'mob',     p:'body', t:'Mobility-Routine · ~25 Min', s:'T-60 · Haltungsblock + PNF + Stand-and-Reach-Block' },
     { id:'protein', p:'body', t:'Protein 2,0–2,2 g/kg', s:'auf 4–5 Mahlzeiten verteilt, je ≥ 30 g' },
     { id:'water',   p:'body', t:'Hydration', s: school ? `${HYDRATION.mor} · ${HYDRATION.school}` : `${HYDRATION.mor} · ${HYDRATION.meal}` },
     { id:'casein',  p:'body', t:'30–40 g Casein vor dem Schlafen', s:'T-90 · Magerquark oder Milch' },
@@ -2934,7 +2934,7 @@ function auTasksFor(iso) {
     { id:'release', p:'soul', t:'Nervous System Release', s:'Springen, schwingen, ausschütteln' },
     { id:'outside', p:'soul', t:'Spaziergang oder Fahrrad draußen', s:'Bewegung ohne Leistungsziel' },
     { id:'grat',    p:'soul', t:'Dankbarkeit notieren', s:'Drei konkrete Dinge von heute' },
-    { id:'breath',  p:'soul', t:'5 Min Bauchatmung', s:'T-45 · parasympathisch runterfahren' },
+    { id:'breath',  p:'soul', t:'4-7-8-Atmung', s:'T-60 · Beginn der Dehnroutine, parasympathisch runterfahren' },
     ...stTasksFor(iso)
   ];
 }
