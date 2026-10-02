@@ -90,7 +90,8 @@ const CASES = {
     const { ctx, page, errors } = await open(browser);
     await page.waitForFunction(() => document.querySelectorAll('#hcards .hcard').length === 6, null, { timeout: 10000 });
     const tabs = await page.$$eval('.tabs .tb', bs => bs.map(b => b.textContent.trim()));
-    ok('13 Tabs', tabs.length === 13, JSON.stringify(tabs));
+    ok('12 Tabs', tabs.length === 12, JSON.stringify(tabs));
+    ok('Reihenfolge', tabs.slice(0, 6).join('|') === '✦ Aura|Me|Routine|Trainingstage|Mobility|Sporttest', tabs.join('|'));
     for (let i = 0; i < tabs.length; i++) await page.click(`.tabs .tb >> nth=${i}`);
     await page.click('.tabs .tb >> text=Trainingstage');
     const m = await page.evaluate(() => ({
@@ -299,7 +300,7 @@ const CASES = {
       seed[m].days[d] = { t: { b_bb1: true } }; }
     const { ctx, page, errors } = await open(browser, { seed });
     const tabs = await page.$$eval('.tabs .tb', bs => bs.map(b => b.textContent.trim()));
-    ok('Me neben Aura', tabs[0] === '✦ Aura' && tabs[1] === 'Me' && !tabs.includes('Grooming'), JSON.stringify(tabs));
+    ok('Me neben Aura', tabs[0] === '✦ Aura' && tabs[1] === 'Me' && !tabs.includes('Grooming') && !tabs.includes('Abend') && !tabs.includes('Morgen'), JSON.stringify(tabs));
     ok('Score ohne Hobby-Tage', (await page.textContent('#auring .num')) === '–');
     await page.click('.tabs .tb >> text=Me');
     ok('Looksmaxxing darunter', (await page.$$('#t-me #groomlist .gsec')).length === 7
@@ -403,7 +404,7 @@ const CASES = {
   async sporttest(browser) {
     const { ctx, page, errors } = await open(browser);
     const tabs = await page.$$eval('.tabs .tb', bs => bs.map(b => b.textContent.trim()));
-    ok('Tab nach Me', tabs[2] === 'Sporttest', JSON.stringify(tabs));
+    ok('Sporttest-Tab', tabs[5] === 'Sporttest', JSON.stringify(tabs));
     const T = d => page.evaluate(x => stTasksFor(x).map(t => t.t).join(''), d);
     ok('vor Start keine Aufgabe', (await T('2026-09-29')) === '');
     ok('Mittwoch kein Hang', (await T('2026-10-07')) === '');
@@ -425,6 +426,12 @@ const CASES = {
     ok('Pause vor Test', (await T('2027-03-28')) === '');
     ok('Testtag selbst', (await T('2027-03-30')).includes('Testtag'));
     ok('Plan 4 Phasen', (await page.$$('#stplan .stph')).length === 4);
+    ok('Ziel Reach 25', await page.evaluate(() => ST.target.reach === 25 && ST.target.hang === 120));
+    const pts = await page.evaluate(() => [stPtsHang(120), stPtsHang(119), stPtsHang(112), stPtsHang(8), stPtsHang(7), stPtsHang(60),
+      stPtsReach(25), stPtsReach(30), stPtsReach(24), stPtsReach(23), stPtsReach(15), stPtsReach(2), stPtsReach(1), stPtsReach(0), stPtsReach(-3), stPtsReach(8.5)]);
+    ok('Punkte laut PDF', pts.join() === '15,14,14,1,0,7,15,15,14,14,10,3,3,2,1,6', pts.join());
+    ok('Tabellen', (await page.$$('#stpts .ptab tr')).length === 15 + 15 && (await page.textContent('#stpts')).includes('+25 cm'));
+    ok('Karte Punkte', (await page.textContent('#stcards')).includes('7 / 15 P') && (await page.textContent('#stcards')).includes('4 / 15 P'));
 
     await page.reload();
     await page.waitForFunction(() => !document.getElementById('austat').textContent.includes('geladen') && ST.log.length === 1);
@@ -437,6 +444,17 @@ const CASES = {
     await ctx.close();
   },
 
+  async routine(browser) {
+    const { ctx, page, errors } = await open(browser);
+    await page.click('.tabs .tb >> text=Routine');
+    ok('Panels', (await page.$$('#r-eve #evetl .tlitem')).length === 8 && (await page.$$('#r-mor #morlist .morrow')).length === 12);
+    await page.click('#rsegeve'); ok('Abend sichtbar', await page.$eval('#r-eve', e => !e.hidden) && await page.$eval('#r-mor', e => e.hidden));
+    await page.click('#rsegmor'); ok('Morgen sichtbar', await page.$eval('#r-mor', e => !e.hidden) && await page.$eval('#r-eve', e => e.hidden));
+    ok('aria', (await page.getAttribute('#rsegmor', 'aria-selected')) === 'true' && (await page.getAttribute('#rsegeve', 'aria-selected')) === 'false');
+    ok('keine Fehler', !errors.length, errors.join('\n'));
+    await ctx.close();
+  },
+
   async mobile(browser) {
     const { ctx, page, errors } = await open(browser, { width: 390 });
     await page.fill('#auhname', 'Ein sehr langer Gewohnheitsname ohne Umbruchmöglichkeiten_xxxxxxxxxxxxxxxx');
@@ -445,7 +463,7 @@ const CASES = {
     const w = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
     ok('kein Querscrollen', w.sw <= w.cw, JSON.stringify(w));
     const others = {};
-    for (const t of ['Me','Sporttest','Trainingstage','Health','Finanzen','Vermögen']) {
+    for (const t of ['Me','Routine','Sporttest','Trainingstage','Health','Finanzen','Vermögen']) {
       await page.click(`.tabs .tb >> text=${t}`);
       others[t] = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
     }

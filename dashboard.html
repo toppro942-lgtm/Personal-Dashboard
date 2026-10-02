@@ -394,6 +394,18 @@ font-family:var(--sans);font-size:13px;padding:8px 10px}
 .meadd select{flex:0 0 auto}
 .meadd input:focus-visible,.meadd select:focus-visible{outline:2px solid var(--blu);outline-offset:1px}
 .meempty{font-size:12px;color:var(--dim);padding:10px 2px}
+.rseg{display:flex;gap:4px;background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:4px;margin-bottom:16px;max-width:260px}
+.rseg button{flex:1;background:none;border:none;color:var(--mut);font-family:var(--mono);font-size:10px;letter-spacing:1.4px;
+text-transform:uppercase;padding:9px 12px;border-radius:6px;cursor:pointer}
+.rseg button[aria-selected="true"]{background:var(--s2);color:var(--wh)}
+.rseg button:focus-visible{outline:2px solid var(--blu);outline-offset:1px}
+.ptab{width:100%;font-family:var(--mono);font-size:11px;font-variant-numeric:tabular-nums}
+.ptab td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd)}
+.ptab td:last-child{text-align:right;color:var(--wh)}
+.ptab tr.on td{background:#140c0b;color:var(--wh)}
+.ptwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.ptwrap>div{background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:10px 12px;overflow-x:auto}
+.ptwrap h3{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--mut);font-weight:500;margin-bottom:6px}
 
 /* ===== Sporttest ===== */
 .sthero{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;background:var(--s1);
@@ -429,17 +441,16 @@ font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
   <div class="tabs">
     <button class="tb aura on" onclick="tab('aura',this)">✦ Aura</button>
     <button class="tb" onclick="tab('me',this)">Me</button>
-    <button class="tb" onclick="tab('st',this)">Sporttest</button>
+    <button class="tb" onclick="tab('routine',this)">Routine</button>
     <button class="tb" onclick="tab('plan',this)">Trainingstage</button>
-    <button class="tb" onclick="tab('vol',this)">Volumen</button>
+    <button class="tb" onclick="tab('mob',this)">Mobility</button>
+    <button class="tb" onclick="tab('st',this)">Sporttest</button>
     <button class="tb" onclick="tab('food',this)">Ernährung</button>
     <button class="tb" onclick="tab('sleep',this)">Schlaf</button>
-    <button class="tb" onclick="tab('mob',this)">Mobility</button>
-    <button class="tb" onclick="tab('eve',this)">Abend</button>
-    <button class="tb" onclick="tab('mor',this)">Morgen</button>
     <button class="tb" onclick="tab('health',this)">Health</button>
     <button class="tb" onclick="tab('fin',this)">Finanzen</button>
     <button class="tb" onclick="tab('wealth',this)">Vermögen</button>
+    <button class="tb" onclick="tab('vol',this)">Volumen</button>
   </div>
 </div></div>
 
@@ -522,6 +533,9 @@ font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
   <p class="lead" style="margin-top:8px">Ein Feld reicht. Hang in Sekunden oder als <b>m:ss</b>, Reichweite in cm unter der
   Standfläche positiv, darüber negativ. Immer unter gleichen Bedingungen messen: nach 10 Min Aufwärmen, nicht direkt nach dem Dehnen.</p>
 
+  <div class="sechead"><h2>Bewertung</h2><span class="hmeta">Oberstufe 13. Klasse · Jungen</span></div>
+  <div class="ptwrap" id="stpts"></div>
+
   <div class="sechead"><h2>Plan · 6 Monate</h2></div>
   <div id="stplan"></div>
 
@@ -538,9 +552,8 @@ font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
     <div class="fld"><label for="sttgr">Ziel Stand and Reach (cm)</label><input type="text" id="sttgr" name="reach" inputmode="decimal"></div>
     <button class="btn" type="submit">Übernehmen</button>
   </form>
-  <p class="lead" style="margin-top:8px"><b>Dead Hang 120 s = 15 Punkte</b> laut deiner Lehrerin. Für Stand and Reach lag
-  keine offizielle Tabelle vor — die +15 cm sind ein vorläufiges Spitzenniveau für 18-Jährige. Lass dir die
-  Punktetabelle geben und trag hier den Wert für 15 Punkte ein; Plan und Anzeige rechnen dann damit.</p>
+  <p class="lead" style="margin-top:8px">Voreingestellt sind die Werte für <b>15 Punkte</b> aus der Bewertungstabelle der
+  Oberstufe (13. Klasse, Jungen): Dead Hang ab 2:00 Min., Stand and Reach ab +25 cm.</p>
 </div></div>
 
 <!-- PLAN -->
@@ -700,25 +713,27 @@ font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
   <div id="mobmiles"></div>
 </div></div>
 
-<!-- ABENDROUTINE -->
-<div id="t-eve" class="tc"><div class="ct">
-  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Abendroutine</div>
-  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
-    Countdown zur Schlafenszeit — jeder Schritt bereitet Körper und Nervensystem gezielt auf Regeneration vor.
+<!-- ROUTINE: Abend + Morgen -->
+<div id="t-routine" class="tc"><div class="ct">
+  <div class="rseg" role="tablist" aria-label="Tageszeit">
+    <button type="button" role="tab" id="rsegeve" aria-selected="true" data-r="eve">Abend</button>
+    <button type="button" role="tab" id="rsegmor" aria-selected="false" data-r="mor">Morgen</button>
   </div>
-  <div class="tl" id="evetl"></div>
+  <section id="r-eve" role="tabpanel" aria-labelledby="rsegeve">
+    <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Abendroutine</div>
+    <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
+      Countdown zur Schlafenszeit — jeder Schritt bereitet Körper und Nervensystem gezielt auf Regeneration vor.
+    </div>
+    <div class="tl" id="evetl"></div>
+  </section>
+  <section id="r-mor" role="tabpanel" aria-labelledby="rsegmor" hidden>
+    <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Morgenroutine</div>
+    <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
+      Feste Reihenfolge direkt ab dem Aufwachen — Struktur statt Entscheidungen, um den Tag mit Momentum zu starten.
+    </div>
+    <div id="morlist"></div>
+  </section>
 </div></div>
-
-<!-- MORGENROUTINE -->
-<div id="t-mor" class="tc"><div class="ct">
-  <div style="font-family:var(--srf);font-size:19px;color:var(--wh);margin-bottom:5px">Morgenroutine</div>
-  <div style="font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:18px">
-    Feste Reihenfolge direkt ab dem Aufwachen — Struktur statt Entscheidungen, um den Tag mit Momentum zu starten.
-  </div>
-  <div id="morlist"></div>
-</div></div>
-
-
 
 <!-- ME: Habits, Hobbys, Laster (gleicher Stand wie der Aura-Tab) + Looksmaxxing -->
 <div id="t-me" class="tc"><div class="ct" id="mebody">
@@ -3547,6 +3562,17 @@ function wireMe() {
    abschaltbar), dazu der Knopf oben rechts. Wo die Umgebung kein Vollbild
    anbietet (iPhone-Safari, manche App-Ansichten), bleibt der Knopf weg.
    ============================================================ */
+function wireRoutine() {
+  const show = w => {
+    document.getElementById('r-eve').hidden = w !== 'eve';
+    document.getElementById('r-mor').hidden = w !== 'mor';
+    document.getElementById('rsegeve').setAttribute('aria-selected', String(w === 'eve'));
+    document.getElementById('rsegmor').setAttribute('aria-selected', String(w === 'mor'));
+  };
+  document.querySelectorAll('.rseg [data-r]').forEach(b => b.addEventListener('click', () => show(b.dataset.r)));
+  /* Morgens die Morgenroutine, ab 14 Uhr die Abendroutine. */
+  show(new Date().getHours() < 14 ? 'mor' : 'eve');
+}
 function wireFullscreen() {
   const root = document.documentElement, btn = document.getElementById('fsbtn');
   const req = root.requestFullscreen || root.webkitRequestFullscreen;
@@ -3591,9 +3617,19 @@ function wireFullscreen() {
    ohnehin abends nach dem Duschen stattfindet.
    ============================================================ */
 const ST_START_DEFAULT = '2026-09-30';
-const ST_DEFAULT = { start: ST_START_DEFAULT, date: '2027-03-30', target: { hang: 120, reach: 15 }, log: [] };
+const ST_DEFAULT = { start: ST_START_DEFAULT, date: '2027-03-30', target: { hang: 120, reach: 25 }, log: [] };
 const ST_DAYS = [1, 4, 6];                                   // DI, FR, SO (0 = Montag)
 const ST = { ...clone(ST_DEFAULT), ready: false, busy: false };
+
+
+/* Punktetabellen laut Bewertungstabelle (13. Klasse, Jungen). Die Zeile fuer
+   15 Punkte war im PDF nicht lesbar; sie folgt aus dem Raster: Hang 8 s je
+   Punkt (112–119 s = 14 -> ab 120 s = 15), Reichweite 2 cm je Punkt
+   (+23/+24 = 14 -> ab +25 = 15). Die Zeilen fuer 0/1 Punkt bei negativen
+   Werten sind ebenfalls nicht lesbar: unter 0 cm wird hier mit 1 Punkt
+   gerechnet und als „ungesichert" gekennzeichnet. */
+const stPtsHang = s => s == null ? null : s >= 120 ? 15 : Math.floor(s / 8);
+const stPtsReach = c => { if (c == null) return null; const v = Math.floor(c); return v >= 25 ? 15 : v >= 1 ? 15 - Math.ceil((25 - v) / 2) : v === 0 ? 2 : 1; };
 
 const stFmt = s => s == null ? '–' : s >= 60 ? `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')} min` : `${Math.round(s)} s`;
 const stCm = c => c == null ? '–' : `${c > 0 ? '+' : c < 0 ? '−' : ''}${Math.abs(c).toLocaleString('de-DE', { maximumFractionDigits:1 })} cm`;
@@ -3694,7 +3730,7 @@ function stCard(k, label, color, best, target, fmt) {
     : `noch ${fmt(gap).replace(/^\+/, '')} · ${k === 'hang' ? `+${(gap / weeks).toFixed(1).replace('.', ',')} s` : `+${(gap / weeks).toFixed(1).replace('.', ',')} cm`} pro Woche nötig`;
   return `<article class="hcard" style="--m:${color}" data-key="${k}">
     <header><span class="hlabel">${label}</span><span class="hmeta">Ziel ${fmt(target)}</span></header>
-    <div class="hvalue">${fmt(best)}</div>
+    <div class="hvalue">${fmt(best)}${best == null ? '' : ` <span class="hmeta" style="font-size:11px">${(k === 'hang' ? stPtsHang(best) : stPtsReach(best))} / 15 P${k === 'reach' && best < 0 ? '*' : ''}</span>`}</div>
     <div class="hmeta">${last ? `zuletzt ${fmt(last[k])} am ${last.d.split('-').reverse().join('.')}` : 'noch keine Messung'}</div>
     <div class="aupt" style="--pc:${color};margin-top:6px"><div class="aupf" style="width:${pct}%"></div></div>
     <div class="sttarget"><span>${hint}</span><span>${best == null ? '' : Math.round(pct) + ' %'}</span></div>
@@ -3713,6 +3749,15 @@ function renderSt() {
   auMorph(document.getElementById('stcards'),
     stCard('hang', 'Dead Hang', '#c94535', stBest('hang'), ST.target.hang, stFmt)
     + stCard('reach', 'Stand and Reach', '#7a5ab5', stBest('reach'), ST.target.reach, stCm));
+
+  const bh = stBest('hang'), br = stBest('reach'), ph0 = stPtsHang(bh), pr0 = stPtsReach(br);
+  const mmss = x => `${Math.floor(x / 60)}:${String(x % 60).padStart(2, '0')}`;
+  const hrows = []; for (let p = 15; p >= 1; p--) hrows.push([p, p === 15 ? 'ab 2:00 Min.' : `${mmss(p * 8)} bis ${mmss(p * 8 + 7)} Min.`]);
+  const rrows = []; for (let p = 15; p >= 3; p--) rrows.push([p, p === 15 ? 'ab +25 cm' : `+${25 - 2 * (15 - p)} bis +${26 - 2 * (15 - p)} cm`]);
+  rrows.push([2, '0 cm'], [1, 'unter 0 cm*']);
+  const tbl = (rows, cur) => `<table class="ptab">${rows.map(([p, l]) => `<tr${p === cur ? ' class="on"' : ''}><td>${l}</td><td>${p} P</td></tr>`).join('')}</table>`;
+  auMorph(document.getElementById('stpts'), `<div data-key="h"><h3>Dead Hang${ph0 != null ? ` · du: ${ph0} P` : ''}</h3>${tbl(hrows, ph0)}</div>
+    <div data-key="r"><h3>Stand and Reach${pr0 != null ? ` · du: ${pr0} P` : ''}</h3>${tbl(rrows, pr0)}<p class="hmeta" style="margin-top:6px">* Zeilen für 0/1 Punkt im PDF nicht lesbar</p></div>`);
 
   const mon = auIso(mondayOf(auDate(today)));
   const days = ST_DAYS.map(w => auAdd(mon, w)).concat(ST.date >= mon && ST.date <= auAdd(mon, 6) && !ST_DAYS.includes(auWd(ST.date)) ? [ST.date] : [])
@@ -3750,8 +3795,8 @@ const ST_TECH = [
     'Ruhig und gleichmäßig atmen. In 15-s-Blöcken zählen statt auf die Uhr zu schauen.',
     'Hände trocken: vorher abwischen; Magnesia nur, wenn beim Test erlaubt — dann auch im Training nutzen.'] },
   { t:'Stand and Reach — Ausführung', c:'#7a5ab5', li:[
-    'Auf dem Kasten, Füße geschlossen, Knie durchgestreckt — gebeugte Knie machen den Versuch ungültig.',
-    'Langsam abrollen, ausatmen, Hände parallel nach unten schieben. Tiefsten Punkt 2 s halten.',
+    'Auf der Langbank, Füße parallel und eng zusammen, Knie durchgestreckt — gebeugte Knie oder Fußbewegung machen den Versuch ungültig. Gemessen wird ab Fußsohlenhöhe (0 cm), nach unten positiv.',
+    'Langsam abrollen, ausatmen, Hände parallel nach unten schieben. Endposition ohne Schwung einnehmen und mindestens 5 s halten — so lange muss der Wert stehen.',
     'Nicht federn: der Dehnreflex bremst genau die Tiefe, die zählt.',
     'Nacken locker lassen, Kinn Richtung Brust — der Kopf zieht die Wirbelsäule mit.'] },
   { t:'Testtag', c:'#b08a2a', li:[
@@ -3913,6 +3958,7 @@ wireWealth();
 wireAura();
 wireMe();
 wireFullscreen();
+wireRoutine();
 wireSt();
 initStore();
 initAura();

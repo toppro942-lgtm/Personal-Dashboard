@@ -10,8 +10,9 @@ Ein self-contained HTML-Dashboard (Vanilla JS, kein Framework, kein Build-Step) 
 - **Abend** — Countdown-Timeline T-120 bis T-0
 - **Morgen** — Feste Schrittfolge + Hydration-Tracking
 - **✦ Aura** (Starttab) — Score 0–1000 aus vier Säulen (Körper, Geist, Persönlichkeit, Seele). Tagesaufgaben werden je Datum aus dem Plan abgeleitet (Trainingstag inkl. Wochentyp/Mesozyklus, Schlafzeiten, Morgen-, Abend-, Mobility-, Hautroutine); dazu 22-Tage-Gewohnheiten, 90-Tage-Laster-Zähler, 12-Wochen-Heatmap
+- **Tab-Reihenfolge** nach Nutzung: Aura, Me, Routine (Abend + Morgen), Trainingstage, Mobility, Sporttest, Ernährung, Schlaf, Health, Finanzen, Vermögen, Volumen
 - **Me** (neben Aura) — Habits, Hobbys, Laster als Listen im Stil der Aura-App (Säule, Level, tippen = bearbeiten); gleicher Speicher wie der Aura-Tab. Darunter **Looksmaxxing** (ehemals Grooming)
-- **Sporttest** — Dead Hang (Ziel 120 s = 15 P) + Stand and Reach in 6 Monaten: Countdown, Messreihe, Plan in 4 Phasen (Basis, Kapazität, Spezifisch, Taper), Hang-Einheiten DI/FR/SO als Aura-Aufgabe, Test jeden 2. Sonntag; Speicher `tests/main`
+- **Sporttest** — Dead Hang (ab 2:00 = 15 P) + Stand and Reach (ab +25 cm = 15 P) laut Bewertungstabelle 13. Klasse Jungen, 6 Monate: Countdown, Messreihe, Plan in 4 Phasen (Basis, Kapazität, Spezifisch, Taper), Hang-Einheiten DI/FR/SO als Aura-Aufgabe, Test jeden 2. Sonntag; Speicher `tests/main`
 - **Health · Finanzen · Vermögen** — siehe Live-Artifact
 - **Vollbild** — erster Tipp nach dem Öffnen schaltet ein (Browser erlauben es nicht ohne Nutzeraktion); Knopf oben rechts, abschaltbar
 
