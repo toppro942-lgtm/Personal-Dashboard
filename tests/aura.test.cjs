@@ -113,6 +113,8 @@ const CASES = {
     const eve = await page.$$eval('#evetl .tltime', e => e.map(x => x.textContent.trim()));
     ok('Abend-Zeiten', eve.join('|') === 'T-120 Min|T-90 Min|T-85 Min|T-60 Min|T-30 Min|T-30 Min|T-15 Min|T-0 Min', eve.join('|'));
     const bad = await page.$eval('#evetl', e => e.textContent);
+    const bad0 = bad;
+    ok('T-120 Spaziergang', bad0.includes('Spaziergang') && (await page.textContent('#autasks [data-id="plan"]')).includes('Spaziergang'));
     ok('kein Alttext', !bad.includes('T-25') && !bad.includes('T-75') && !bad.includes('T-45') && !bad.includes('Atemkontrolle'));
     ok('keine Fehler', !errors.length, errors.join('\n'));
     await ctx.close();
