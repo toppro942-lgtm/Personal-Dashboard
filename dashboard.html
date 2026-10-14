@@ -1611,6 +1611,24 @@ function renderDayBar(){
   }).join('');
 }
 
+/* Sehnen-Modul Schulter (Rotatorenmanschette) -- eigenstaendig, haengt als
+   Block ans Ende von Sharms / Upper A / Upper B. Ergibt 3 Einheiten pro
+   Woche (A: MO/MI/SA, B: DI/DO/SA) mit >=48 h Abstand. Zum Entfernen:
+   TENDON_PROGRAMS leeren. Nach dem Gips (TENDON_CAST_UNTIL) entfaellt der
+   Hinweis automatisch. */
+const TENDON_PROGRAMS=['sharms','upperA','upperB'];
+const TENDON_CAST_UNTIL=[2026,10,4]; // Jahr, Monat 0-basiert (=04.11.2026), 6 Wochen ab 23.09.
+const TENDON_SHOULDER=[
+{n:'Außenrotation isometrisch (Kabel/Band)',t:'Infraspinatus · Teres minor · Supraspinatus-Sehne',s:'4 Sets',w:'4 × 30–45 Sek Halten',r:'—',rs:'1:00',g:'G',
+f:'Ellenbogen 90° gebeugt, locker am Körper (Handtuchrolle zwischen Rumpf und Ellenbogen). Hand drückt nach außen gegen fixen Widerstand — keine Bewegung. Intensität ca. RPE 6–7 (~60–70 % der Maximalkraft). Schulterblatt hinten-unten, Trapez aus.',
+y:'Isometrische Haltearbeit lädt die Sehne bei hoher Spannung ohne Gelenkbewegung und wird bei Sehnenreizung meist besser toleriert als dynamische Last. Schmerzregel: max. 3/10 während der Übung, nach 24 h nicht schlechter als vorher. Progression erst, wenn zwei Wochen in Folge unter 3/10 — dann +Intensität, nicht +Dauer.'},
+{n:'Außenrotation langsam (Kabel, einarmig)',t:'Rotatorenmanschette — Außenrotatoren · Sehnenumbau',s:'3 Sets',w:'3 Arbeitssätze (Tempo 3–0–3)',r:'10–12',rs:'1:30',g:'G',
+f:'Gleiche Startposition wie isometrisch. 3 Sek nach außen, 3 Sek kontrolliert zurück, kein Schwung. Gewicht so wählen, dass die letzten 2 Wdh sauber bleiben (RPE 7). Pro Seite.',
+y:'Langsame, schwere Widerstandsarbeit (Heavy Slow Resistance) ist die am besten belegte dynamische Methode zum Sehnenaufbau. Tempo statt Gewicht als Steuergröße: Zeit unter Spannung belastet die Sehne, ohne die Schulter zu überlasten.'}
+];
+const tendonFor=p=>TENDON_PROGRAMS.includes(p)?TENDON_SHOULDER:[];
+const tendonCastActive=()=>new Date()<new Date(...TENDON_CAST_UNTIL);
+
 function renderDay(id){
   const entry=getWeekPlan().find(d=>d.id===id);
   const d=resolveProgram(entry.p),ac=d.ac,label=`${entry.s} · ${entry.name||d.lb}`;
@@ -1633,7 +1651,12 @@ function renderDay(id){
     </div><div class="sl">${d.lg}</div></div>`;
   d.nt.forEach(n=>h+=`<div class="nt"><div class="ni">${n.i}</div><div class="ntx">${n.t}</div></div>`);
   h+=`<div class="esl">Übungen · antippen für Details</div>`;
-  d.ex.forEach((e,i)=>{
+  const tendon=tendonFor(entry.p);
+  [...d.ex,...tendon].forEach((e,i)=>{
+    if(tendon.length&&i===d.ex.length){
+      h+=`<div class="esl">Sehnen-Block Schulter · ca. 10–12 Min</div>`;
+      if(tendonCastActive())h+=`<div class="nt"><div class="ni">⚠️</div><div class="ntx">Gips bis ca. 04.11.2026: Block erst nach ärztlicher Freigabe. Bis dahin höchstens die nicht eingegipste Seite, ohne Griffbelastung der Gipsseite.</div></div>`;
+    }
     const g=TG[e.g],uid=`x${id}${i}`;
     h+=`<div class="ec" id="${uid}" style="--ac:${ac}">
       <div class="eh" onclick="tog('${uid}')">
