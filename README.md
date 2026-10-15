@@ -1,39 +1,43 @@
-# Trainings-Dashboard — Übergabe an Claude Code
+# Sharms Dashboard
 
-## Was das ist
-Ein self-contained HTML-Dashboard (Vanilla JS, kein Framework, kein Build-Step) mit folgenden Tabs:
-- **Trainingstage** — Sharms, HIIT, Upper A, Rest, Lower, Upper B, Zone 2 (alle Übungen mit Sets/Reps/Pausen/Ausführung/Begründung)
-- **Volumen** — Wöchentliches Satzvolumen pro Muskelgruppe mit MAV-Abgleich
-- **Ernährung** — Wochenplan, Makros, Nährstoff-Timing
-- **Schlaf** — Wochenplan mit Schlafenszeiten, wissenschaftliche Basis
-- **Mobility** — PNF-Dehnroutine, Ablauf, Meilensteine
-- **Abend** — Countdown-Timeline T-120 bis T-0
-- **Morgen** — Feste Schrittfolge + Hydration-Tracking
+Persönliches Dashboard für Training, Routinen, Gesundheit und Geld. Eine einzige Datei
+(`dashboard.html`), Vanilla JS, kein Build-Schritt. Veröffentlicht als claude.ai-Artifact;
+lokal im Browser öffnen funktioniert ebenfalls.
 
-## Struktur
-- Single-File HTML: `<style>` im `<head>`, HTML-Grundgerüst im `<body>`, alle Daten + Render-Logik in `<script>` am Ende
-- Kein Backend, keine externen Requests — alle Daten sind hart im JS-Array codiert (z.B. `const S = {...}`, `const VOL = [...]`, `const MEALS = [...]`)
-- Design-System: CSS-Variablen in `:root` (Farben, Fonts). Dark-Mode, DM Sans / DM Mono / Instrument Serif von Google Fonts
-- Tab-Switching und Day-Switching läuft über simple `classList.toggle` — keine Routing-Library
+## Tabs
 
-## Geplante Erweiterung (der Grund für den Wechsel zu Claude Code)
-Zwei neue Integrationen sind gewünscht, die einen echten Backend-Layer brauchen:
+| Tab | Inhalt |
+|---|---|
+| **Heute** | Aura-Score (vier Säulen), Tagesaufgaben in zeitlicher Reihenfolge (Morgen ab Wecker, Tagsüber, Abend als Countdown zur Bettzeit), Gewohnheiten, Hobbys, Laster, 12-Wochen-Verlauf |
+| **Training** | Plan (Tagesansicht, startet auf heute) · Volumen (Sätze je Muskel vs. MAV) · Sporttest (Dead Hang, Stand and Reach) |
+| **Routinen** | Morgen · Abend (T-Minus mit Uhrzeiten für heute) · Mobility · Schlaf |
+| **Health** | Tageswerte, CSV-Import aus Google Takeout, 14-Tage-Verläufe |
+| **Geld** | Monat (Buchungen, Budgets, CSV-Import) · Vermögen (Verlauf, Zerlegung der Veränderung, Aufteilung) |
+| **Wissen** | Ernährung · Looks |
 
-### 1. Google Health / Google Fit Integration
-- Braucht OAuth2-Flow gegen Google (Fit API oder Health Connect API je nach Plattform)
-- Client-Secret darf niemals im Frontend-Code liegen → Backend nötig (z.B. Node/Express oder Python/FastAPI)
-- Sinnvolle erste Datenpunkte: Schritte, Herzfrequenz, Schlafdaten (zum Abgleich mit dem Schlaf-Tab), aktive Kalorien
-- Empfehlung: Start mit Read-Only-Scopes, Token-Refresh serverseitig verwalten
+## Abhaken im Heute-Tab
 
-### 2. Finanzübersicht
-- Je nach Anspruch: entweder echte Banking-API (z.B. über einen Open-Banking-Aggregator) oder simples manuelles Tracking mit eigener kleiner Datenbank (SQLite reicht für den Start)
-- Für den Einstieg vermutlich einfacher: manuelles Eintragen + Kategorisierung, later API-Anbindung nachrüsten
+- Antippen = erledigt. `–` rechts = entfällt heute (zählt weder als erledigt noch als offen).
+- `Alle ✓` hakt einen ganzen Abschnitt ab; der Hinweis unten bietet „Rückgängig“.
+- Fertige Abschnitte klappen zu. Der aktuelle Abschnitt trägt „jetzt“, die nächste offene Aufgabe ist rot markiert.
+- Ein Schlafwert im Health-Tab hakt die Schlaf-Aufgabe automatisch ab.
+- Gewohnheiten bekommen eine Tageszeit (Morgen, Tagsüber, Abend) und erscheinen dort in der Liste.
 
-### Technischer Vorschlag für Claude Code
-- Frontend: Dieses HTML-Dashboard als Basis, ggf. schrittweise zu React/Vite migrieren, wenn die App komplexer wird
-- Backend: kleiner Node.js/Express oder Python/FastAPI Server für OAuth-Handling + API-Proxying
-- DB: SQLite oder Postgres für Verlaufsdaten (Trainingslogs, Health-Daten-Cache, Finanz-Einträge)
-- Env-Variablen für alle Secrets (`.env`, niemals committen)
+## Speicher
 
-## Datei
-`dashboard.html` — der komplette aktuelle Stand, direkt lauffähig durch Öffnen im Browser.
+Artifact-Datenbank (`db`-Capability), synchron auf allen Geräten:
+
+- `aura/config`, `aura/mYYYY-MM` – Gewohnheiten, Hobbys, Laster, Haken je Tag (`true`, `false`, `'x'` = entfällt)
+- `tests/main` – Sporttest
+- `health/<YYYY-MM-DD>`, `finance/<YYYY-MM>`, `settings/main`, `assets/<id>`, `wealth/<YYYY-MM>`
+
+Ist die Datenbank nicht erreichbar (z. B. Datei lokal geöffnet), läuft alles mit einem lokalen
+Speicher im Browser; der Punkt oben rechts zeigt gelb „nur dieses Gerät“.
+
+## Struktur von `dashboard.html`
+
+`<style>` (Tokens in `:root`), Markup der sechs Tabs, dann ein `<script>` in dieser Reihenfolge:
+Plan-Daten (`WEEKPLAN`, `S`, `VOL_*`, `MEALS`, `SLEEP`, `EVE`, `MOR`, `GROOM` …) → Plan-Engine und
+Render-Funktionen → Vermögen → Speicher/Health/Finanzen → Heute (Aura) → Listen → Sporttest →
+Vollbild → Navigation und Start. Inhalte lassen sich in den Datenblöcken ändern, ohne die
+Render-Funktionen anzufassen.
