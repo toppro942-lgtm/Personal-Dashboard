@@ -23,11 +23,26 @@ lokal im Browser öffnen funktioniert ebenfalls.
 - Ein Schlafwert im Health-Tab hakt die Schlaf-Aufgabe automatisch ab.
 - Gewohnheiten bekommen eine Tageszeit (Morgen, Tagsüber, Abend) und erscheinen dort in der Liste.
 
+## Hebel (oben im Heute-Tab)
+
+Die 1–2 Stellschrauben mit der größten Wirkung. Gesucht wird nur entlang bekannter Wirkketten
+(z. B. spät ins Bett → zu wenig Schlaf → schwächere Konzentration → abends wieder spät), die eigenen
+Daten bestimmen die Stärke: Erledigungsquote danach (nächster Morgen, Abend oder Folgetag) mit gegen
+ohne Auslöser, bei wenigen Tagen vorsichtig geschrumpft, multipliziert mit dem Anteil der Tage, an denen
+der Auslöser fehlt. Je Wirkkette höchstens eine Karte. Ohne Datenbeleg (unter 3 Tagen je Gruppe oder kein
+Unterschied) steht „nach Plan“ an der Karte.
+
+## Laster
+
+Rückfall = ein Tipp in der Laster-Liste, gilt für den oben gewählten Tag; ein zweiter Tipp oder
+„Rückgängig“ nimmt ihn zurück. Serie, Rekord und Anzahl werden aus den Tageseinträgen (`v_<id>`)
+berechnet; alte `resets` aus der Config werden mitgelesen.
+
 ## Speicher
 
 Artifact-Datenbank (`db`-Capability), synchron auf allen Geräten:
 
-- `aura/config`, `aura/mYYYY-MM` – Gewohnheiten, Hobbys, Laster, Haken je Tag (`true`, `false`, `'x'` = entfällt)
+- `aura/config`, `aura/mYYYY-MM` – Gewohnheiten, Hobbys, Laster, Haken je Tag (`true`, `false`, `'x'` = entfällt, `v_<id>: true` = Rückfall)
 - `tests/main` – Sporttest
 - `health/<YYYY-MM-DD>`, `finance/<YYYY-MM>`, `settings/main`, `assets/<id>`, `wealth/<YYYY-MM>`
 

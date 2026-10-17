@@ -147,7 +147,7 @@ main.wrap{padding-block:20px 64px}
 .aupt{height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
 .aupf{height:100%;background:var(--pc);border-radius:3px;transition:width .3s ease}
 .aupv{font:12px var(--mono);color:var(--tx);text-align:right;font-variant-numeric:tabular-nums}
-.aumeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px}
+.aumeta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:3px}
 .auchip{font:11px/1 var(--mono);color:var(--mut);background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:5px 8px;white-space:nowrap}
 .auchip.up{color:var(--grn-t);border-color:#1d4a33}.auchip.dn{color:var(--red-t);border-color:#4a2019}
 .auchip.hot{color:#eb9a6c;border-color:#4a2a19}
@@ -207,6 +207,32 @@ main.wrap{padding-block:20px 64px}
 .tgo{color:var(--blu-t);font-family:var(--mono);font-size:10px;letter-spacing:.5px;margin-left:6px;cursor:pointer;
   background:none;border:0;padding:0}
 
+/* Hebel: die 1-2 groessten Stellschrauben, ganz oben */
+.levers{display:grid;gap:10px;margin-bottom:12px}
+.lev{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--red);border-radius:12px;padding:14px 16px;min-width:0}
+.lev.second{border-left-color:#7a3a30}
+.lev.calm{border-left-color:var(--bd2)}
+.levh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.levh .lbl{color:var(--red-t)}
+.lev.calm .levh .lbl{color:var(--mut)}
+.levt{font:400 21px/1.2 var(--srf);color:var(--wh);margin:4px 0 8px;text-wrap:balance}
+.chainx{display:flex;flex-wrap:wrap;align-items:center;gap:4px 5px;font:10.5px/1.35 var(--mono);color:var(--tx)}
+.chainx span{background:var(--s3);border-radius:5px;padding:3px 6px}
+.chainx i{font-style:normal;color:var(--red-t)}
+.levbars{display:grid;grid-template-columns:34px 1fr 42px;gap:5px 10px;align-items:center;margin-top:10px;font:11px var(--mono);color:var(--mut)}
+.levk{font:11px/1.5 var(--mono);color:var(--mut);margin-top:10px}
+.levbars b{color:var(--wh);font-weight:500;text-align:right;font-variant-numeric:tabular-nums}
+.lvt{height:8px;background:var(--s3);border-radius:4px;overflow:hidden}
+.lvt i{display:block;height:100%;background:var(--grn);border-radius:0 4px 4px 0}
+.lvt.off i{background:#5a5a5a}
+.levp{font-size:12.5px;color:var(--mut);line-height:1.7;margin-top:6px;max-width:66ch}
+.levwhy summary{cursor:pointer;font:500 10px/1.4 var(--mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);padding:8px 0 0}
+.levdo{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;
+  padding-top:10px;border-top:1px solid var(--bd)}
+.levdo p{flex:1 1 220px;font-size:13px;color:var(--tx);line-height:1.6}
+@keyframes rowflash{from{background:#2a1a12}to{background:transparent}}
+.trow.flash{animation:rowflash 1.6s ease-out}
+
 /* Listen: Gewohnheiten, Hobbys, Laster */
 .melist{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:0 14px}
 .merow{display:flex;align-items:center;gap:10px;border-top:1px solid var(--bd);min-height:54px}
@@ -225,6 +251,17 @@ main.wrap{padding-block:20px 64px}
 .mechk[aria-checked="true"]{background:var(--pc);border-color:var(--pc);color:#fff}
 .mechk:disabled{opacity:.4;cursor:progress}
 .merow.open .men{color:var(--red-t)}
+.vrow .mename{flex-direction:column;align-items:flex-start;gap:2px}
+.vsub{font:11px var(--mono);color:var(--dim)}
+.vstreak{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;font:11px var(--mono);color:var(--dim)}
+.vstreak b{font:600 18px/1 var(--sans);color:var(--wh);font-variant-numeric:tabular-nums}
+.vstreak.max b{color:var(--grn-t)}
+.vstreak>span:not(.mebar){font-size:10px}
+.vrel{flex-shrink:0;background:none;border:1px solid var(--bd2);border-radius:8px;color:var(--mut);cursor:pointer;
+  font:500 10px/1.2 var(--mono);letter-spacing:.6px;text-transform:uppercase;padding:9px 10px;min-height:38px;max-width:118px}
+.vrel:hover{border-color:var(--red);color:var(--red-t)}
+.vrel.on{background:#2a0f0b;border-color:var(--red);color:#f3a99c}
+.vrel:disabled{opacity:.35;cursor:default}
 .meedit{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;padding:4px 0 14px}
 .meedit .fld{flex:1 1 140px}
 .meinfo{flex-basis:100%;font:11px/1.6 var(--mono);color:var(--mut)}
@@ -515,6 +552,7 @@ details.ex summary::-webkit-details-marker{display:none}
 
 <!-- ======================= HEUTE ======================= -->
 <section id="t-heute" class="tc" role="tabpanel" aria-labelledby="tb-heute">
+  <div class="levers" id="aulev" aria-label="Deine größten Hebel"></div>
   <div class="auhero">
     <svg class="auring" id="auring" viewBox="0 0 184 184" role="img" aria-label="Aura-Score"></svg>
     <div class="aupil"><div class="stack" id="aupil"></div><div class="aumeta" id="aumeta"></div></div>
@@ -556,7 +594,7 @@ details.ex summary::-webkit-details-marker{display:none}
   </section>
 
   <section class="mesec" aria-labelledby="mev-h">
-    <div class="sechead"><h2 id="mev-h">Laster</h2><span class="meta">90 Tage am Stück = gebrochen</span></div>
+    <div class="sechead"><h2 id="mev-h">Laster</h2><span class="meta">Rückfall gilt für den oben gewählten Tag · 90 Tage am Stück = gebrochen</span></div>
     <div class="melist" id="mevices"></div>
     <form class="meadd" id="meaddv">
       <label class="vh" for="meaddvn">Neues Laster</label>
@@ -2875,9 +2913,11 @@ function wireForms() {
    Abend als Countdown zur Bettzeit.
 
    Speicher (Artifact-Datenbank oder lokaler Ersatz):
-     aura/config      {habits:[{id,name,p,slot?,start}], hobbies:[...], vices:[{id,name,start,since,resets:[],best}]}
-     aura/mYYYY-MM    {month, days:{'YYYY-MM-DD':{t:{taskId: true | false | 'x'}}}}
+     aura/config      {habits:[{id,name,p,slot?,start}], hobbies:[...], vices:[{id,name,p?,start}]}
+     aura/mYYYY-MM    {month, days:{'YYYY-MM-DD':{t:{taskId: true | false | 'x', 'v_<laster>': true | false}}}}
    'x' = entfaellt an diesem Tag (zaehlt weder als erledigt noch als offen).
+   v_<id> = true: Rueckfall an diesem Tag. Aeltere Rueckfaelle stehen noch als
+   resets[] in der Config und werden mitgelesen; ein Tageseintrag gewinnt.
    Ein Dokument pro Monat, feldgenau per update() zusammengefuehrt -- ein
    Haken aus einem zweiten offenen Tab ueberschreibt keinen anderen.
    ============================================================ */
@@ -3026,7 +3066,7 @@ function auFirstDay() {
     for (const [d, r] of Object.entries(m.days || {}))
       /* Hobby-Sessions (b_) zaehlen nicht in den Score -- ein Tag nur mit
          Hobby eroeffnet deshalb auch kein Score-Fenster. */
-      if (r && r.t && Object.keys(r.t).some(k => !k.startsWith('b_')) && (!first || d < first)) first = d;
+      if (r && r.t && Object.keys(r.t).some(k => !k.startsWith('b_') && !k.startsWith('v_')) && (!first || d < first)) first = d;
   return first;
 }
 
@@ -3066,6 +3106,30 @@ function auStreak(first, infos) {
   return n;
 }
 
+/* ---------- Laster: Rueckfaelle sind Tageseintraege ----------
+   Vorher stand der Zaehler als since/resets/best in der Config: Doppel-Tipps
+   erzeugten doppelte Rueckfaelle, ein Rueckfall liess sich nicht zuruecknehmen
+   und nicht fuer gestern eintragen. Jetzt: v_<id> im Tagesdokument, alles
+   Weitere (Serie, Rekord, Anzahl) wird daraus berechnet. */
+function viceRelapsed(v, iso) {
+  const raw = auRaw(iso, 'v_' + v.id);
+  if (raw === true || raw === false) return raw;
+  return (v.resets || []).includes(iso);
+}
+function viceInfo(v, asOf = AU.today) {
+  const days = new Set((v.resets || []).filter(d => d <= asOf));
+  for (let d = v.start; d <= asOf; d = auAdd(d, 1)) {
+    const raw = auRaw(d, 'v_' + v.id);
+    if (raw === true) days.add(d); else if (raw === false) days.delete(d);
+  }
+  const rel = [...days].filter(d => d >= v.start).sort();
+  const last = rel.length ? rel[rel.length - 1] : null;
+  const streak = Math.max(0, auDiff(last || v.start, asOf));
+  let best = streak, prev = v.start;
+  for (const d of rel) { best = Math.max(best, auDiff(prev, d)); prev = d; }
+  return { streak, best, count: rel.length, last, relapsedOn: iso => days.has(iso) };
+}
+
 /* ---------- Speicher ---------- */
 /* Fehlende oder fremde Felder nie als Absturz durchreichen: jede Liste ist
    ein Array, jeder Eintrag hat id, Namen und Startdatum. */
@@ -3082,7 +3146,7 @@ function auNormCfg(c) {
 
 function auMonthsNeeded() {
   let from = auAdd(AU.today, -7 * 12 - 7);
-  for (const h of [...AU.cfg.habits, ...AU.cfg.hobbies]) if (h.start < from) from = h.start;
+  for (const h of [...AU.cfg.habits, ...AU.cfg.hobbies, ...AU.cfg.vices]) if (h.start < from) from = h.start;
   const lim = auAdd(AU.today, -730);
   if (from < lim) from = lim;
   const out = [];
@@ -3292,6 +3356,7 @@ function renderAura() {
     if (has) { const nxt = AU_LEVELS.find(l => l[0] > main.score); if (nxt) chips.push(`<span class="auchip">${nxt[0] - main.score} bis ${nxt[1]}</span>`); }
     document.getElementById('aumeta').innerHTML = chips.join('');
 
+    renderLevers(infos, first);
     renderAuTimeline(infos);
     renderAuHeat(infos, first);
     renderMe(infos);
@@ -3461,6 +3526,207 @@ async function initAura() {
 }
 
 /* ============================================================
+   Hebel — die 1–2 Stellschrauben mit der groessten Wirkung.
+
+   Nicht jede Korrelation ist ein Hebel. Gesucht wird nur entlang bekannter
+   Mechanismen (LEVERS: Ausloeser -> Kette -> Folge); die eigenen Daten
+   entscheiden, wie stark der Effekt bei dir ist:
+     Effekt  = Erledigungsquote danach MIT Ausloeser − OHNE Ausloeser
+               (Folgetag oder Rest desselben Tages, je Mechanismus)
+     Gewicht = Effekt, geschrumpft nach Stichprobe (wenig Tage -> vorsichtig)
+     Potenzial = Gewicht × Anteil der Tage, an denen der Ausloeser fehlt
+   Ein Hebel ist also gross, wenn er viel bewirkt UND du ihn oft verpasst.
+   Fehlen Daten, rangiert der Plan (Prioritaet × Verpasst-Quote) und die
+   Karte sagt das offen.
+
+   Beobachtet gilt ein Tag nur, wenn im Abschnitt des Ausloesers ueberhaupt
+   etwas eingetragen ist -- ein Abend ohne einen einzigen Eintrag sagt nichts
+   darueber, ob du puenktlich im Bett warst.
+   ============================================================ */
+
+const LEVERS = [
+  { id:'bed', task:'bed', blk:'eve', prior:1, out:'next', of:'mor', fam:'sleep', loop:true,
+    name:'Pünktlich ins Bett',
+    chain:['spät ins Bett', 'zu wenig Schlaf', 'schwächere Konzentration und Willenskraft', 'abends wieder spät'],
+    todo: iso => { const sp = sleepPlan(auWd(iso)); return `Heute um ${sp.bed} im Bett. Rückwärts gerechnet: Handy um ${minClock(clockMin(sp.bed) - 30)} weg, Bad um ${minClock(clockMin(sp.bed) - 30)}.`; } },
+  { id:'screen', task:'screen', blk:'eve', prior:.9, out:'next', of:'mor', fam:'sleep',
+    name:'Handy um T-30 weg',
+    chain:['Handy bis ins Bett', 'Licht und Reize bremsen Melatonin', 'später eingeschlafen', 'müder Morgen'],
+    todo: iso => `Um ${minClock(clockMin(sleepPlan(auWd(iso)).bed) - 30)} Flugmodus an und Handy an den festen Platz.` },
+  { id:'plan', task:'plan', blk:'eve', prior:.75, out:'next', fam:'plan',
+    name:'Morgen am Vorabend planen',
+    chain:['Tag nicht geplant', 'morgens Entscheidungen statt Handeln', 'Aufgaben rutschen nach hinten'],
+    todo: iso => `Um ${minClock(clockMin(sleepPlan(auWd(iso)).bed) - 120)} raus: 10 Min gehen, morgen in den Kalender.` },
+  { id:'wake', task:'wake', blk:'mor', prior:.7, out:'same', fam:'morning',
+    name:'Direkt aufstehen',
+    chain:['Snooze', 'Hektik', 'Morgenroutine fällt aus', 'Tag ohne Momentum'],
+    todo: iso => `Wecker ${sleepPlan(auWd(iso)).wake} außer Reichweite stellen, beim ersten Klingeln Füße auf den Boden.` },
+  { id:'caff', task:'caff', blk:'day', prior:.6, out:'next', of:'mor', fam:'sleep', loop:true,
+    name:'Kein Koffein nach 14 Uhr',
+    chain:['Koffein am Nachmittag', 'flacher Tiefschlaf', 'müde am nächsten Tag', 'wieder Koffein'],
+    todo: () => 'Nach 14 Uhr nur Wasser oder koffeinfreien Tee bereitstellen.' },
+  { id:'light', task:'light', blk:'mor', prior:.55, out:'same', of:'eve', fam:'sleep',
+    name:'Tageslicht am Morgen',
+    chain:['kein Morgenlicht', 'innere Uhr verschiebt sich nach hinten', 'abends nicht müde', 'zu spät ins Bett'],
+    todo: () => 'Direkt nach dem Aufstehen 5–10 Min ans Fenster oder raus.' },
+  { id:'train', task:'train', blk:'day', prior:.5, out:'next', fam:'train',
+    name:'Training durchziehen',
+    chain:['Training fällt aus', 'weniger Schlafdruck', 'schlechterer Schlaf', 'Folgetag schwächer'],
+    todo: iso => `Heute: ${auProgram(iso).name}. Tasche schon morgens packen.` }
+];
+const LEV_MIN = 3;            // je Gruppe mindestens so viele Tage fuer eine Datenaussage
+const LEV_CAP = 120;          // Tage zurueck
+
+/* Ein Tag ist „erfasst“, wenn es irgendeinen Eintrag ausser Hobby/Laster gibt. */
+const levLogged = iso => { const t = auRec(iso)?.t; return !!t && Object.keys(t).some(k => !k.startsWith('b_') && !k.startsWith('v_')); };
+
+/* Wert des Ausloesers an einem Tag: true / false / null (nicht beobachtet). */
+function levTrigger(lv, iso, infos) {
+  if (lv.vice) {
+    if (iso < lv.vice.start || !levLogged(iso)) return null;
+    return !viceRelapsed(lv.vice, iso);
+  }
+  const tasks = auDayTasks(iso, infos), t = tasks.find(x => x.id === lv.task);
+  if (!t) return null;
+  const st = auDone(iso, t);
+  if (st.skip) return null;
+  if (st.done) return true;
+  /* Nur „nicht gemacht“, wenn im selben Abschnitt etwas eingetragen ist. */
+  const seen = tasks.some(x => x.blk === t.blk && auRaw(iso, x.id) !== undefined);
+  return seen ? false : null;
+}
+
+/* Folge: Erledigungsquote am Folgetag bzw. im Rest desselben Tages -- wo der
+   Mechanismus einen Abschnitt nennt (lv.of), nur dieser: Schlaf wirkt auf den
+   naechsten Morgen, Morgenlicht auf den Abend. Ein Abschnitt ganz ohne
+   Eintrag zaehlt nicht (nicht erfasst ist nicht „nicht gemacht“). */
+function levOutcome(lv, iso, infos) {
+  const day = lv.out === 'next' ? auAdd(iso, 1) : iso;
+  if (day > AU.today || (day === AU.today && lv.out === 'next') || !levLogged(day)) return null;
+  const tasks = auDayTasks(day, infos);
+  let pool = lv.of ? tasks.filter(t => t.blk === lv.of) : tasks;
+  if (lv.out === 'same' && !lv.of) pool = tasks.slice(tasks.findIndex(x => x.id === lv.task) + 1);
+  pool = pool.filter(t => t.id !== lv.task);
+  if (lv.of && !pool.some(t => auRaw(day, t.id) !== undefined)) return null;
+  let d = 0, n = 0;
+  for (const t of pool) { const st = auDone(day, t); if (st.skip) continue; n++; if (st.done) d++; }
+  return n ? { rate: d / n, n } : null;
+}
+
+function levEvaluate(lv, infos, first) {
+  const g1 = [], g0 = [], loop = { a:0, an:0, b:0, bn:0 };
+  let outN = 0, outC = 0;
+  let tot = 0, done = 0;
+  const from = auAdd(AU.today, -LEV_CAP) > first ? auAdd(AU.today, -LEV_CAP) : first;
+  /* Heute ist nicht abgeschlossen -- zaehlt nicht. */
+  for (let d = from; d < AU.today; d = auAdd(d, 1)) {
+    const v = levTrigger(lv, d, infos);
+    if (v == null) continue;
+    tot++; if (v) done++;
+    const o = levOutcome(lv, d, infos);
+    if (o) { (v ? g1 : g0).push(o.rate); outN += o.n; outC++; }
+    if (lv.loop) {
+      const v2 = levTrigger(lv, auAdd(d, 1), infos);
+      if (v2 != null && auAdd(d, 1) < AU.today) { if (v) { loop.an++; if (v2) loop.a++; } else { loop.bn++; if (v2) loop.b++; } }
+    }
+  }
+  const mean = a => a.reduce((s, x) => s + x, 0) / (a.length || 1);
+  const n1 = g1.length, n0 = g0.length, m1 = mean(g1), m0 = mean(g0);
+  const miss = tot ? (tot - done) / tot : 0;
+  const data = n1 >= LEV_MIN && n0 >= LEV_MIN;
+  const nEff = data ? n1 * n0 / (n1 + n0) : 0;
+  const eff = data ? (m1 - m0) * nEff / (nEff + 2) : 0;            // Schrumpfung bei kleiner Stichprobe
+  const conf = !data ? 0 : Math.min(n1, n0) >= 8 ? 3 : Math.min(n1, n0) >= 5 ? 2 : 1;
+  /* Rangfolge: belegter Effekt schlaegt Plan-Annahme. Ohne Datenbeleg nur
+     Prioritaet × Verpasst-Quote, deutlich niedriger gewichtet. */
+  const score = data && eff > .04 ? eff * miss * (.6 + .4 * lv.prior) : tot >= 5 ? .02 * lv.prior * miss : 0;
+  return { lv, n1, n0, m1, m0, eff, miss, tot, done, data: data && eff > .04, conf, score, loop, poolN: outC ? outN / outC : 0 };
+}
+
+function auLevers(infos, first) {
+  if (!first) return [];
+  const list = LEVERS.concat(AU.cfg.vices.map(v => ({
+    id:'v_' + v.id, vice:v, prior:.6, out:'next',
+    name:`Kein Rückfall: ${v.name}`,
+    chain:[`Rückfall: ${v.name}`, 'Kontrolle geht verloren', 'Folgetag schwächer'],
+    todo: () => `Auslöser für „${v.name}“ heute vorher entschärfen, nicht erst im Moment.`
+  })));
+  /* Hoechstens eine Karte je Wirkkette: „Handy weg“ und „pünktlich ins Bett“
+     sind derselbe Kreislauf und wuerden sonst beide Plaetze belegen. */
+  const seen = new Set();
+  return list.map(lv => levEvaluate(lv, infos, first))
+    .filter(r => r.score > 0 && r.miss >= .15)
+    .sort((a, b) => b.score - a.score)
+    .filter(r => { const f = r.lv.fam || r.lv.id; if (seen.has(f)) return false; seen.add(f); return true; })
+    .slice(0, 2);
+}
+
+const LEV_CONF = ['nach Plan', 'erster Hinweis', 'mittel belegt', 'gut belegt'];
+const levPct = x => Math.round(x * 100) + ' %';
+
+function renderLevers(infos, first) {
+  const box = document.getElementById('aulev');
+  if (!AU.ready) { auMorph(box, ''); return; }
+  const top = auLevers(infos, first);
+  if (!top.length) {
+    auMorph(box, `<div class="lev calm" data-key="none"><div class="levh"><span class="lbl">Deine Hebel</span></div>
+      <p class="lead">Noch kein klarer Hebel: entweder zu wenig erfasste Tage oder du ziehst die großen Punkte schon durch.
+      Die Auswertung braucht je Ausprägung mindestens ${LEV_MIN} Tage.</p></div>`);
+    return;
+  }
+  auMorph(box, top.map((r, i) => {
+    const lv = r.lv, blkName = lv.vice ? 'Laster' : SLOTS.find(s => s.id === lv.blk).n;
+    const when = lv.out === 'next' ? (lv.blk === 'eve' ? 'Nach Abenden' : 'Nach Tagen') : 'An Tagen';
+    const ofName = lv.of ? { mor:'der Morgenroutine', eve:'der Abendroutine', day:'des Tages' }[lv.of] : 'deiner Aufgaben';
+    const after = lv.out === 'next' ? (lv.of === 'mor' ? 'am nächsten Morgen' : 'am Folgetag') : (lv.of ? 'am selben Tag' : 'danach am selben Tag');
+    const perWeek = Math.max(1, Math.round(r.eff * r.miss * r.poolN * 7));
+    const chain = lv.chain.map(c => `<span>${ESC(c)}</span>`).join('<i>→</i>') + (lv.loop ? '<i>↺</i>' : '');
+    /* Kurzfassung sichtbar, Begruendung aufklappbar: die Tagesliste darunter
+       soll ohne langes Scrollen erreichbar bleiben. */
+    const stat = r.data
+      ? `<div class="levbars" role="img" aria-label="${when} mit ${ESC(lv.name)}: ${levPct(r.m1)} ${ofName} ${after}, ohne: ${levPct(r.m0)}">
+          <span>mit</span><div class="lvt"><i style="width:${Math.round(r.m1 * 100)}%"></i></div><b>${levPct(r.m1)}</b>
+          <span>ohne</span><div class="lvt off"><i style="width:${Math.round(r.m0 * 100)}%"></i></div><b>${levPct(r.m0)}</b>
+        </div>`
+      : `<p class="levk">Ausgelassen an ${r.tot - r.done} von ${r.tot} erfassten Tagen</p>`;
+    const why = r.data
+      ? `${when} mit „${ESC(lv.name)}“ schaffst du ${after} ${levPct(r.m1)} ${ofName}, ohne ${levPct(r.m0)}
+        (${r.n1} gegen ${r.n0} Tage). Gemacht an ${r.done} von ${r.tot} erfassten Tagen; jeden Tag wären das grob
+        <b>+${perWeek} erledigte Aufgaben pro Woche</b>.${lv.loop && r.loop.an >= 2 && r.loop.bn >= 2
+          ? ` Der Kreis hält sich selbst: danach klappt es am nächsten Tag in ${levPct(r.loop.a / r.loop.an)} der Fälle, sonst in ${levPct(r.loop.b / r.loop.bn)}.` : ''}`
+      : (r.n1 >= LEV_MIN && r.n0 >= LEV_MIN
+        ? `In deinen Daten noch kein messbarer Unterschied (${r.n1} gegen ${r.n0} Tage). Oben steht der Punkt, weil der Plan ihn hoch gewichtet
+           und du ihn an ${r.tot - r.done} von ${r.tot} Tagen auslässt.`
+        : `Für einen Effekt-Nachweis fehlen noch Vergleichstage (je ${LEV_MIN} mit und ohne, bisher ${r.n1} und ${r.n0}).
+           Bis dahin rangiert der Plan: hohe Priorität, an ${r.tot - r.done} von ${r.tot} Tagen ausgelassen.`);
+    const go = lv.task && auDayTasks(AU.today, infos).some(t => t.id === lv.task)
+      ? `<button type="button" class="aubtn" data-lev="${lv.task}">Zur Aufgabe</button>` : '';
+    return `<article class="lev${i ? ' second' : ''}" data-key="${lv.id}">
+      <div class="levh"><span class="lbl">Hebel ${i + 1} · ${blkName}</span><span class="auchip${r.data && r.conf >= 2 ? ' up' : ''}">${LEV_CONF[r.data ? r.conf : 0]}</span></div>
+      <h3 class="levt">${ESC(lv.name)}</h3>
+      ${i ? '' : `<div class="chainx" aria-label="Wirkkette">${chain}</div>`}
+      ${stat}
+      <div class="levdo"><p><b>Heute:</b> ${ESC(lv.todo(AU.today))}</p>${go}</div>
+      <details class="levwhy"><summary>Warum dieser Hebel</summary>${i ? `<div class="chainx" style="margin-top:8px">${chain}</div>` : ''}<p class="levp">${why}</p></details>
+    </article>`;
+  }).join(''));
+}
+
+/* „Zur Aufgabe“: heutigen Tag zeigen, Abschnitt aufklappen, Zeile markieren. */
+function wireLevers() {
+  document.getElementById('aulev').addEventListener('click', e => {
+    const b = e.target.closest('[data-lev]'); if (!b) return;
+    const id = b.dataset.lev, t = auDayTasks(AU.today, auInfos()).find(x => x.id === id);
+    if (!t) return;
+    AU.view = AU.today; AU.fold.set(AU.today + '|' + t.blk, false); renderAura();
+    const row = document.querySelector(`#autl [data-key="${AU.today}|${id}"]`);
+    if (!row) return;
+    row.scrollIntoView({ behavior:'smooth', block:'center' });
+    row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash');
+  });
+}
+
+/* ============================================================
    Listen im Heute-Tab: Gewohnheiten, Hobbys, Laster. Speicher ist
    aura/config, gezeichnet aus dem AU-Zustand. Gewohnheiten erscheinen
    zusaetzlich in der Tagesliste (in ihrem Tagesabschnitt). Hobby-Sessions
@@ -3486,13 +3752,16 @@ function meHobbyCount(b) {
   return n;
 }
 
-async function auRelapse(id) {
-  return auCfgAction(c => {
-    const v = c.vices.find(x => x.id === id), t = TODAY();
-    if (!v || v.since === t) return;                        // heute schon auf null
-    v.best = Math.max(v.best || 0, Math.max(0, auDiff(v.since, t)));
-    v.resets = [...(v.resets || []), t].slice(-60); v.since = t;
-  }, 'Zähler zurückgesetzt — Rekord bleibt');
+/* Rueckfall fuer den Tag, der oben in der Tagesliste offen ist: ein Tipp,
+   kein Bestaetigen, dafuer Rueckgaengig im Hinweis. Ein zweiter Tipp am
+   selben Tag nimmt ihn zurueck -- doppelte Rueckfaelle gibt es nicht mehr. */
+async function viceToggle(id, iso) {
+  const v = AU.cfg.vices.find(x => x.id === id);
+  if (!v || iso < v.start) return;
+  const was = viceRelapsed(v, iso), lbl = iso === AU.today ? 'heute' : auLabel(iso);
+  const ok = await auSet(iso, [{ id:'v_' + id, val: !was }]);
+  if (ok) toast(was ? `Rückfall ${lbl} entfernt` : `Rückfall ${lbl} eingetragen — Serie startet neu`, false,
+    { label:'Rückgängig', run: () => auSet(iso, [{ id:'v_' + id, val: was }]) });
 }
 async function auRemove(list, id) {
   const msg = { habits:'Gewohnheit gelöscht', hobbies:'Hobby gelöscht', vices:'Zähler gelöscht' }[list];
@@ -3514,7 +3783,7 @@ function meRow(kind, item, right, check, pct) {
 
 function meEditor(kind, item) {
   const key = kind + ':' + item.id, lock = !AU.ready || AU.cfgBusy ? ' disabled' : '';
-  const armDel = AU.armed.has('mdel:' + key), armRel = AU.armed.has('vrel:' + item.id);
+  const armDel = AU.armed.has('mdel:' + key);
   let info = '', extra = '';
   if (kind === 'h') {
     const inf = auHabitInfo(item), lv = meLevel(inf.count, ME_HABIT_LV), nx = ME_HABIT_LV[lv];
@@ -3523,10 +3792,8 @@ function meEditor(kind, item) {
     const n = meHobbyCount(item), lv = meLevel(n, ME_HOBBY_LV), nx = ME_HOBBY_LV[lv];
     info = `${n} ${n === 1 ? 'Session' : 'Sessions'} · ${nx != null ? `${nx - n} bis lvl ${lv + 1}` : 'Maximallevel'} · seit ${item.start.split('-').reverse().join('.')}`;
   } else {
-    const days = Math.max(0, auDiff(item.since, AU.today)), rel = new Set(item.resets || []).size, since0 = item.since === AU.today;
-    info = `${days} ${days === 1 ? 'Tag' : 'Tage'} frei · Rekord ${Math.max(item.best || 0, days)} · ${rel} ${rel === 1 ? 'Rückfall' : 'Rückfälle'} · seit ${item.start.split('-').reverse().join('.')}`;
-    extra = `<button type="button" class="aubtn${armRel ? ' armed' : ''}" data-key="r" data-mrel="${item.id}"${since0 ? ' disabled' : lock}>${
-      since0 ? ((item.resets || []).includes(AU.today) ? 'Heute zurückgesetzt' : 'Läuft ab heute') : armRel ? 'Zähler zurücksetzen?' : 'Rückfall'}</button>`;
+    const vi = viceInfo(item);
+    info = `${vi.streak} ${vi.streak === 1 ? 'Tag' : 'Tage'} frei · Rekord ${vi.best} · ${vi.count} ${vi.count === 1 ? 'Rückfall' : 'Rückfälle'} · seit ${item.start.split('-').reverse().join('.')}`;
   }
   const opts = (kind === 'v' ? '<option value="">ohne Säule</option>' : '')
     + PILLARS.map(p => `<option value="${p.id}"${item.p === p.id ? ' selected' : ''}>${p.n}</option>`).join('');
@@ -3566,9 +3833,20 @@ function renderMe(infos) {
     return meRow('b', b, `<span class="melvl">lvl ${lv}</span>`, chk('b_' + b.id, b.p, auRaw(today, 'b_' + b.id) === true, `${b.name} heute gemacht`));
   }).join('') : '<div class="meempty" data-key="empty">Noch kein Hobby — Vorschläge aus deinem Plan stehen unten.</div>');
 
+  /* Laster: Serie gross, ein Knopf fuer den Rueckfall am angezeigten Tag. */
+  const vday = AU.view, vlbl = vday === today ? 'heute' : auLabel(vday);
   auMorph(document.getElementById('mevices'), AU.cfg.vices.length ? AU.cfg.vices.map(v => {
-    const days = Math.max(0, auDiff(v.since, today));
-    return meRow('v', v, `<span class="melvl${days >= AU_VICE_DAYS ? ' max' : ''}">${Math.min(days, AU_VICE_DAYS)}/${AU_VICE_DAYS} Tage</span>`, '', days / AU_VICE_DAYS * 100);
+    const vi = viceInfo(v), on = vday >= v.start && viceRelapsed(v, vday), p = mePil(v.p);
+    const key = 'v:' + v.id, open = AU.edit === key, done = vi.streak >= AU_VICE_DAYS;
+    return `<div class="merow vrow${open ? ' open' : ''}" data-key="${key}" style="--pc:${p ? p.c : 'var(--pbody)'}">
+        <button type="button" class="mename" data-edit="${key}" aria-expanded="${open}">
+          <span class="men">${ESC(v.name)}</span>
+          <span class="vsub">${done ? 'gebrochen · ' : ''}Rekord ${vi.best} · ${vi.count} ${vi.count === 1 ? 'Rückfall' : 'Rückfälle'}</span></button>
+        <span class="vstreak${done ? ' max' : ''}"><b>${vi.streak}</b><span>${vi.streak === 1 ? 'Tag' : 'Tage'} frei</span>
+          <span class="mebar" aria-hidden="true"><i style="width:${Math.min(100, vi.streak / AU_VICE_DAYS * 100)}%"></i></span></span>
+        <button type="button" class="vrel${on ? ' on' : ''}" data-key="r${vday}" data-vrel="${v.id}" data-day="${vday}" aria-pressed="${on}"${dis}${vday < v.start ? ' disabled' : ''}>
+          ${on ? `✕ Rückfall ${vlbl}` : `Rückfall ${vlbl}`}</button>
+      </div>${open ? meEditor('v', v) : ''}`;
   }).join('') : '<div class="meempty" data-key="empty">Kein Zähler aktiv.</div>');
 
   const sug = (box, list, pool) => auMorph(document.getElementById(box), pool
@@ -3604,7 +3882,7 @@ function wireMe() {
   });
   add('meaddh', 'habits',  (id, name, p, t, slot) => ({ id, name, p: p || 'body', slot, start: t }), n => `„${n}“ gestartet`);
   add('meaddb', 'hobbies', (id, name, p, t) => ({ id, name, p: p || 'body', start: t }), n => `„${n}“ hinzugefügt`);
-  add('meaddv', 'vices',   (id, name, p, t) => ({ id, name, ...(p ? { p } : {}), start: t, since: t, resets: [], best: 0 }), n => `Zähler für „${n}“ läuft`);
+  add('meaddv', 'vices',   (id, name, p, t) => ({ id, name, ...(p ? { p } : {}), start: t }), n => `Zähler für „${n}“ läuft`);
 
   document.getElementById('t-heute').addEventListener('click', e => {
     const b = e.target.closest('button');
@@ -3632,8 +3910,8 @@ function wireMe() {
         if (p) it.p = p; else if (k === 'v') delete it.p;
         if (k === 'h' && SLOT_ORDER[sv] != null) it.slot = sv;
       }, 'Gespeichert').then(ok => { if (ok) { AU.edit = null; renderAura(); } });
-    } else if (d.mrel) {
-      auArm('vrel:' + d.mrel, () => auRelapse(d.mrel));
+    } else if (d.vrel) {
+      viceToggle(d.vrel, d.day);
     } else if (d.mdel) {
       const [k, id] = d.mdel.split(':');
       auArm('mdel:' + d.mdel, () => auRemove({ h:'habits', b:'hobbies', v:'vices' }[k], id));
@@ -3998,7 +4276,7 @@ function renderDated() {
    Plan-Inhalte stehen sofort; Heute zeichnet einen Ladezustand und fuellt
    sich, sobald der Speicher antwortet. */
 renderDated(); renderMob(); renderGroom();
-wireNav(); wirePlan(); wireForms(); wireWealth(); wireAura(); wireMe(); wireSt(); wireFullscreen();
+wireNav(); wirePlan(); wireForms(); wireWealth(); wireAura(); wireLevers(); wireMe(); wireSt(); wireFullscreen();
 renderAura(); renderHealth(); renderFinance(); renderWealth();
 openStore().then(() => { initStore(); initAura(); });
 </script>
