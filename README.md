@@ -25,7 +25,7 @@ lokal im Browser öffnen funktioniert ebenfalls.
 
 ## Hebel (oben im Heute-Tab)
 
-Die 1–2 Stellschrauben mit der größten Wirkung. Gesucht wird nur entlang bekannter Wirkketten
+Die 1–2 Stellschrauben mit der größten Wirkung, eingeklappt je eine Zeile; Antippen zeigt Wirkkette, Vergleich, Schritt für heute und Begründung. Gesucht wird nur entlang bekannter Wirkketten
 (z. B. spät ins Bett → zu wenig Schlaf → schwächere Konzentration → abends wieder spät), die eigenen
 Daten bestimmen die Stärke: Erledigungsquote danach (nächster Morgen, Abend oder Folgetag) mit gegen
 ohne Auslöser, bei wenigen Tagen vorsichtig geschrumpft, multipliziert mit dem Anteil der Tage, an denen
@@ -37,6 +37,12 @@ Unterschied) steht „nach Plan“ an der Karte.
 Rückfall = ein Tipp in der Laster-Liste, gilt für den oben gewählten Tag; ein zweiter Tipp oder
 „Rückgängig“ nimmt ihn zurück. Serie, Rekord und Anzahl werden aus den Tageseinträgen (`v_<id>`)
 berechnet; alte `resets` aus der Config werden mitgelesen.
+
+## Vollbild
+
+Öffnet bei jedem Aufruf automatisch im Vollbild: Versuch beim Laden, sonst bei der ersten Berührung
+(Browser verlangen dafür eine Nutzeraktion). „Beenden“ oben rechts gilt nur für den aktuellen Aufruf.
+Wo die Umgebung kein Vollbild anbietet (iPhone-Safari, manche App-Ansichten), fehlt der Knopf.
 
 ## Speicher
 

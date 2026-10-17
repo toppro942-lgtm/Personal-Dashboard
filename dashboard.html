@@ -207,15 +207,24 @@ main.wrap{padding-block:20px 64px}
 .tgo{color:var(--blu-t);font-family:var(--mono);font-size:10px;letter-spacing:.5px;margin-left:6px;cursor:pointer;
   background:none;border:0;padding:0}
 
-/* Hebel: die 1-2 groessten Stellschrauben, ganz oben */
-.levers{display:grid;gap:10px;margin-bottom:12px}
-.lev{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--red);border-radius:12px;padding:14px 16px;min-width:0}
+/* Hebel: eingeklappt je eine Zeile, aufgeklappt mit Kette, Vergleich, Schritt */
+.levers{display:grid;gap:6px;margin-bottom:12px}
+.lev{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--red);border-radius:10px;min-width:0}
 .lev.second{border-left-color:#7a3a30}
 .lev.calm{border-left-color:var(--bd2)}
-.levh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-.levh .lbl{color:var(--red-t)}
-.lev.calm .levh .lbl{color:var(--mut)}
-.levt{font:400 21px/1.2 var(--srf);color:var(--wh);margin:4px 0 8px;text-wrap:balance}
+.levs{list-style:none;display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;min-width:0}
+.levs::-webkit-details-marker{display:none}
+.levn{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:#2a1410;color:var(--red-t);
+  font:500 11px/22px var(--mono);text-align:center}
+.lev.calm .levn{background:var(--s3);color:var(--mut)}
+.levsx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.levsx b{font-size:14px;font-weight:600;color:var(--wh);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.levsx span{font:11px/1.35 var(--mono);color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.levs .auchip{flex-shrink:0;font-size:10px;padding:4px 6px}
+.levs .chev{color:var(--dim);font-size:10px;transition:transform .2s;flex-shrink:0}
+.lev[open] .levs .chev{transform:rotate(180deg)}
+@media (max-width:420px){.levs .auchip{display:none}}
+.levbody{border-top:1px solid var(--bd);padding:10px 12px 12px}
 .chainx{display:flex;flex-wrap:wrap;align-items:center;gap:4px 5px;font:10.5px/1.35 var(--mono);color:var(--tx)}
 .chainx span{background:var(--s3);border-radius:5px;padding:3px 6px}
 .chainx i{font-style:normal;color:var(--red-t)}
@@ -225,8 +234,7 @@ main.wrap{padding-block:20px 64px}
 .lvt{height:8px;background:var(--s3);border-radius:4px;overflow:hidden}
 .lvt i{display:block;height:100%;background:var(--grn);border-radius:0 4px 4px 0}
 .lvt.off i{background:#5a5a5a}
-.levp{font-size:12.5px;color:var(--mut);line-height:1.7;margin-top:6px;max-width:66ch}
-.levwhy summary{cursor:pointer;font:500 10px/1.4 var(--mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);padding:8px 0 0}
+.levp{font-size:12.5px;color:var(--mut);line-height:1.7;margin-top:10px;max-width:66ch}
 .levdo{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;
   padding-top:10px;border-top:1px solid var(--bd)}
 .levdo p{flex:1 1 220px;font-size:13px;color:var(--tx);line-height:1.6}
@@ -2953,7 +2961,8 @@ const AU = { db:null, ready:false, busy:0, cfgBusy:false, today:TODAY(), view:TO
                 Ergebnis des ersten Schreibvorgangs ueberschrieben wird. */
              pend:new Map(), seq:0,
              armed:new Map(),     /* zweistufige Bestaetigung: key -> Timer */
-             fold:new Map(),      /* 'iso|blk' -> eingeklappt ja/nein (manuell) */
+             fold:new Map(),
+             levOpen:new Set(),  /* aufgeklappte Hebel-Karten */      /* 'iso|blk' -> eingeklappt ja/nein (manuell) */
              tc:null };           /* Aufgaben-Cache je Datum, nur waehrend eines Renders */
 
 /* Schreibvorgaenge strikt nacheinander: schnelle Doppel-Tipps duerfen sich
@@ -3669,13 +3678,15 @@ function renderLevers(infos, first) {
   if (!AU.ready) { auMorph(box, ''); return; }
   const top = auLevers(infos, first);
   if (!top.length) {
-    auMorph(box, `<div class="lev calm" data-key="none"><div class="levh"><span class="lbl">Deine Hebel</span></div>
-      <p class="lead">Noch kein klarer Hebel: entweder zu wenig erfasste Tage oder du ziehst die großen Punkte schon durch.
-      Die Auswertung braucht je Ausprägung mindestens ${LEV_MIN} Tage.</p></div>`);
+    auMorph(box, `<details class="lev calm" data-key="none"${AU.levOpen.has('none') ? ' open' : ''}>
+      <summary class="levs"><span class="levn">–</span><span class="levsx"><b>Noch kein klarer Hebel</b>
+        <span>zu wenig Daten oder alles Wichtige läuft</span></span><span class="chev">▼</span></summary>
+      <div class="levbody"><p class="levp">Entweder sind zu wenige Tage erfasst, oder du ziehst die großen Punkte schon durch.
+      Die Auswertung braucht je Ausprägung mindestens ${LEV_MIN} Tage.</p></div></details>`);
     return;
   }
   auMorph(box, top.map((r, i) => {
-    const lv = r.lv, blkName = lv.vice ? 'Laster' : SLOTS.find(s => s.id === lv.blk).n;
+    const lv = r.lv;
     const when = lv.out === 'next' ? (lv.blk === 'eve' ? 'Nach Abenden' : 'Nach Tagen') : 'An Tagen';
     const ofName = lv.of ? { mor:'der Morgenroutine', eve:'der Abendroutine', day:'des Tages' }[lv.of] : 'deiner Aufgaben';
     const after = lv.out === 'next' ? (lv.of === 'mor' ? 'am nächsten Morgen' : 'am Folgetag') : (lv.of ? 'am selben Tag' : 'danach am selben Tag');
@@ -3701,19 +3712,34 @@ function renderLevers(infos, first) {
            Bis dahin rangiert der Plan: hohe Priorität, an ${r.tot - r.done} von ${r.tot} Tagen ausgelassen.`);
     const go = lv.task && auDayTasks(AU.today, infos).some(t => t.id === lv.task)
       ? `<button type="button" class="aubtn" data-lev="${lv.task}">Zur Aufgabe</button>` : '';
-    return `<article class="lev${i ? ' second' : ''}" data-key="${lv.id}">
-      <div class="levh"><span class="lbl">Hebel ${i + 1} · ${blkName}</span><span class="auchip${r.data && r.conf >= 2 ? ' up' : ''}">${LEV_CONF[r.data ? r.conf : 0]}</span></div>
-      <h3 class="levt">${ESC(lv.name)}</h3>
-      ${i ? '' : `<div class="chainx" aria-label="Wirkkette">${chain}</div>`}
-      ${stat}
-      <div class="levdo"><p><b>Heute:</b> ${ESC(lv.todo(AU.today))}</p>${go}</div>
-      <details class="levwhy"><summary>Warum dieser Hebel</summary>${i ? `<div class="chainx" style="margin-top:8px">${chain}</div>` : ''}<p class="levp">${why}</p></details>
-    </article>`;
+    /* Eingeklappt: eine Zeile mit Name und Kernzahl. Aufgeklappt: Kette,
+       Vergleich, Schritt fuer heute, Begruendung. */
+    const ofShort = lv.of ? { mor:'Morgenroutine', eve:'Abendroutine', day:'Tag' }[lv.of] : lv.out === 'next' ? 'Folgetag' : 'Resttag';
+    const short = r.data ? `${ofShort} ${levPct(r.m1)} statt ${levPct(r.m0)}` : `an ${r.tot - r.done} von ${r.tot} Tagen ausgelassen`;
+    return `<details class="lev${i ? ' second' : ''}" data-key="${lv.id}"${AU.levOpen.has(lv.id) ? ' open' : ''}>
+      <summary class="levs" aria-label="Hebel ${i + 1}: ${ESC(lv.name)}">
+        <span class="levn">${i + 1}</span>
+        <span class="levsx"><b>${ESC(lv.name)}</b><span>${short}</span></span>
+        <span class="auchip${r.data && r.conf >= 2 ? ' up' : ''}">${LEV_CONF[r.data ? r.conf : 0]}</span>
+        <span class="chev">▼</span>
+      </summary>
+      <div class="levbody">
+        <div class="chainx" aria-label="Wirkkette">${chain}</div>
+        ${stat}
+        <div class="levdo"><p><b>Heute:</b> ${ESC(lv.todo(AU.today))}</p>${go}</div>
+        <p class="levp">${why}</p>
+      </div>
+    </details>`;
   }).join(''));
 }
 
 /* „Zur Aufgabe“: heutigen Tag zeigen, Abschnitt aufklappen, Zeile markieren. */
 function wireLevers() {
+  /* Aufklapp-Zustand merken, sonst klappt jedes Neuzeichnen (jeder Haken) die Karte zu. */
+  document.getElementById('aulev').addEventListener('toggle', e => {
+    const d = e.target; if (!d.matches || !d.matches('details.lev')) return;
+    if (d.open) AU.levOpen.add(d.dataset.key); else AU.levOpen.delete(d.dataset.key);
+  }, true);
   document.getElementById('aulev').addEventListener('click', e => {
     const b = e.target.closest('[data-lev]'); if (!b) return;
     const id = b.dataset.lev, t = auDayTasks(AU.today, auInfos()).find(x => x.id === id);
@@ -4164,39 +4190,41 @@ function wireSt() {
 }
 
 /* ============================================================
-   Vollbild. Browser erlauben requestFullscreen nur als Folge einer
-   Nutzeraktion -- beim reinen Oeffnen der Seite geht es nicht. Deshalb:
-   der erste Tipp nach dem Oeffnen schaltet ein (einmal pro Seitenaufruf,
-   abschaltbar), dazu der Knopf oben rechts. Wo die Umgebung kein Vollbild
-   anbietet (iPhone-Safari, manche App-Ansichten), bleibt der Knopf weg.
+   Vollbild: bei jedem Oeffnen automatisch. Browser lassen requestFullscreen
+   nur nach einer Nutzeraktion zu; deshalb ein Versuch direkt beim Laden
+   (klappt, wo die Umgebung es erlaubt) und sonst bei jeder Beruehrung, bis
+   die Seite einmal im Vollbild war. Frueher reichte ein einziges
+   „Beenden“, um das automatische Vollbild dauerhaft abzuschalten, und es
+   gab nur einen Versuch pro Aufruf. Jetzt gilt „Beenden“ nur fuer diesen
+   Aufruf. Wo die Umgebung kein Vollbild anbietet (iPhone-Safari, manche
+   App-Ansichten), bleibt der Knopf weg.
    ============================================================ */
 function wireFullscreen() {
   const root = document.documentElement, btn = document.getElementById('fsbtn');
   const req = root.requestFullscreen || root.webkitRequestFullscreen;
   const enabled = (document.fullscreenEnabled || document.webkitFullscreenEnabled) && req;
   if (!enabled) return;
+  try { localStorage.removeItem('dash-autofs'); } catch {}       // alter Dauer-Aus-Schalter
   const isFs = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
-  const pref = () => { try { return localStorage.getItem('dash-autofs') !== '0'; } catch { return true; } };
-  const setPref = on => { try { localStorage.setItem('dash-autofs', on ? '1' : '0'); } catch {} };
   const enter = () => { try { const r = req.call(root, { navigationUI:'hide' }); if (r && r.catch) r.catch(() => {}); } catch {} };
   const exit = () => { try { const r = (document.exitFullscreen || document.webkitExitFullscreen).call(document); if (r && r.catch) r.catch(() => {}); } catch {} };
   const sync = () => { btn.setAttribute('aria-pressed', String(isFs())); document.getElementById('fslbl').textContent = isFs() ? 'Beenden' : 'Vollbild'; };
+  let auto = true;                                                 // bis „Beenden“ in diesem Aufruf
 
   btn.hidden = false; sync();
   btn.addEventListener('click', e => {
     e.stopPropagation();
-    if (isFs()) { setPref(false); exit(); } else { setPref(true); enter(); }
+    if (isFs()) { auto = false; exit(); } else { auto = true; enter(); }
   });
   document.addEventListener('fullscreenchange', sync);
   document.addEventListener('webkitfullscreenchange', sync);
-  /* Nach dem Klick-Handler des Ziels (Bubble-Phase am window): der Tipp
-     wirkt erst, dann wechselt die Ansicht -- kein verschobener Tipp. */
-  let tried = false;
-  addEventListener('click', () => {
-    if (tried) return;
-    tried = true;
-    if (pref() && !isFs()) enter();
-  });
+
+  /* pointerup/keydown/click zaehlen als Nutzeraktion (Touch: pointerup, Maus:
+     click). Bubble-Phase am window: der Tipp wirkt erst auf sein Ziel. */
+  const tryAuto = () => { if (auto && !isFs()) enter(); };
+  addEventListener('pointerup', tryAuto); addEventListener('click', tryAuto);
+  addEventListener('keydown', e => { if (e.key !== 'Escape') tryAuto(); });   // Esc verlaesst Vollbild bewusst
+  tryAuto();
 }
 
 /* ============================================================
