@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Sharms Dashboard</title>
+<title>Dashboard</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
@@ -133,23 +133,31 @@ main.wrap{padding-block:20px 64px}
   font:500 10px/1 var(--mono);letter-spacing:1px;text-transform:uppercase;padding:8px 10px;white-space:nowrap}
 
 /* ---------- Heute ---------- */
-.auhero{display:grid;grid-template-columns:168px 1fr;gap:20px;align-items:center;background:var(--s1);
-  border:1px solid var(--bd);border-radius:12px;padding:16px 18px}
-@media (max-width:540px){.auhero{grid-template-columns:1fr;justify-items:center;gap:12px;padding:14px 16px}.auring{width:136px;height:136px}}
-.auring{width:168px;height:168px;display:block;max-width:100%}
-.auring .num{fill:var(--wh);font-family:var(--sans);font-weight:600;font-size:40px}
-.auring .lbl2{fill:var(--dim);font-family:var(--mono);font-size:9px;letter-spacing:2px}
-.auring .lvl{font-family:var(--mono);font-size:9px;letter-spacing:1px;fill:var(--red-t)}
-.aupil{display:flex;flex-direction:column;gap:11px;width:100%;min-width:0}
-.aupr{display:grid;grid-template-columns:112px 1fr 30px;gap:10px;align-items:center}
-.aupn{font-size:13px;color:var(--wh);display:flex;align-items:center;gap:8px;white-space:nowrap}
-.aupn i{width:9px;height:9px;border-radius:3px;flex-shrink:0;background:var(--pc)}
+.auhero{display:grid;grid-template-columns:118px 1fr;gap:6px 16px;align-items:center;background:var(--s1);
+  border:1px solid var(--bd);border-radius:12px;padding:12px 16px}
+.aufig{width:118px;height:153px;display:block;max-width:100%}
+.aupil{display:flex;flex-direction:column;gap:8px;width:100%;min-width:0}
+.auscore{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.auscore b{font:600 28px/1 var(--sans);color:var(--wh)}
+.auscore span{font:500 10px/1.3 var(--mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--red-t)}
+.aupils{display:flex;flex-direction:column;gap:7px}
+.aupr{display:grid;grid-template-columns:104px 1fr 26px;gap:8px;align-items:center}
+.aupn{font-size:12.5px;color:var(--wh);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.aupn i{width:8px;height:8px;border-radius:2px;flex-shrink:0;background:var(--pc)}
+.aumeta{grid-column:1 / -1}
+@media (max-width:540px){
+  .auhero{grid-template-columns:84px 1fr;gap:6px 12px;padding:10px 12px}
+  .aufig{width:84px;height:110px}
+  .aupr{grid-template-columns:98px 1fr 22px;gap:6px}
+  .aupn{font-size:12px;gap:6px}
+}
 .aupt{height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
 .aupf{height:100%;background:var(--pc);border-radius:3px;transition:width .3s ease}
 .aupv{font:12px var(--mono);color:var(--tx);text-align:right;font-variant-numeric:tabular-nums}
-.aumeta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:3px}
+.aumeta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
 .auchip{font:11px/1 var(--mono);color:var(--mut);background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:5px 8px;white-space:nowrap}
-.auchip.up{color:var(--grn-t);border-color:#1d4a33}.auchip.dn{color:var(--red-t);border-color:#4a2019}
+.auchip.up{color:var(--grn-t);border-color:#1d4a33}/* nicht .dn: so heisst schon der Tagesname in der Trainingsleiste */
+.auchip.down{color:var(--red-t);border-color:#4a2019}
 .auchip.hot{color:#eb9a6c;border-color:#4a2a19}
 
 .dayhead{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--tabh,40px));z-index:20;background:var(--bg);
@@ -197,7 +205,6 @@ main.wrap{padding-block:20px 64px}
 .tt{display:block;font-size:14px;line-height:1.4;color:var(--wh)}
 .ts{display:block;font-size:12px;color:var(--mut);line-height:1.5;margin-top:2px}
 .ts em{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.6px;color:var(--pt,var(--mut))}
-.ts .auto{color:var(--grn-t);font-family:var(--mono);font-size:10px}
 .task[aria-checked="true"] .tt{color:var(--mut);text-decoration:line-through;text-decoration-color:#555}
 .trow.skip .task{opacity:.45}
 .trow.skip .tt{text-decoration:line-through;text-decoration-color:#555}
@@ -537,7 +544,7 @@ details.ex summary::-webkit-details-marker{display:none}
 <header class="hdr"><div class="wrap">
   <div>
     <div class="eyebrow" id="hdate">&nbsp;</div>
-    <h1>Sharms Dashboard</h1>
+    <h1>Dashboard</h1>
   </div>
   <div class="hside">
     <span class="sync" id="sync" title="Speicherort"><i></i><span id="synclbl">lädt …</span></span>
@@ -562,8 +569,12 @@ details.ex summary::-webkit-details-marker{display:none}
 <section id="t-heute" class="tc" role="tabpanel" aria-labelledby="tb-heute">
   <div class="levers" id="aulev" aria-label="Deine größten Hebel"></div>
   <div class="auhero">
-    <svg class="auring" id="auring" viewBox="0 0 184 184" role="img" aria-label="Aura-Score"></svg>
-    <div class="aupil"><div class="stack" id="aupil"></div><div class="aumeta" id="aumeta"></div></div>
+    <svg class="aufig" id="aufig" viewBox="0 0 100 130" role="img" aria-label="Aura-Figur"></svg>
+    <div class="aupil">
+      <div class="auscore"><b id="auscore">–</b><span id="aulvl">noch keine Daten</span></div>
+      <div class="aupils" id="aupil"></div>
+    </div>
+    <div class="aumeta" id="aumeta"></div>
   </div>
 
   <div class="dayhead" id="dayhead">
@@ -821,8 +832,7 @@ details.ex summary::-webkit-details-marker{display:none}
       <div class="fld" style="flex:1 1 80px"><label for="h6">HRV</label><input type="text" id="h6" name="hrv_ms" inputmode="numeric" placeholder="68"></div>
       <button class="btn go" type="submit">Speichern</button>
     </form>
-    <p class="lead">Leere Felder werden übersprungen. Schlaf als <b>8:15</b>, <b>8,25</b> (Stunden) oder Minuten. Ein Schlafwert
-    hakt im Heute-Tab die Schlaf-Aufgabe automatisch ab.</p>
+    <p class="lead">Leere Felder werden übersprungen. Schlaf als <b>8:15</b>, <b>8,25</b> (Stunden) oder Minuten.</p>
 
     <div class="sechead"><h2>Aus Google Health übernehmen</h2></div>
     <form class="frm" id="himport">
@@ -2997,8 +3007,9 @@ function auTasksFor(iso) {
       : { t:`Training: ${name}`, s:`${prog.ti} · ${prog.du}`, go:true };
   const hang = stTasksFor(iso).map(t => ({ ...t, ...(t.exam ? D(600, 'Test') : A(55)) }));
   return [
-    { id:'sleep',   p:'body', t:`Schlaf ≥ ${sp.nightBefore}`, s:`Nacht auf heute · Wecker ${sp.wake}`, sleepMin:auMin(sp.nightBefore), ...M(-1), lbl:'Nacht' },
-    { id:'wake',    p:'pers', t:'Direkt aufstehen + Bett machen', s:'Kein Snooze · erster Sieg des Tages', ...M(0) },
+    /* Die Schlafdauer ist keine eigene Aufgabe: sie folgt allein aus der
+       Bettzeit am Vorabend (Aufgabe „bed“). Gezaehlt wird das Aufstehen. */
+    { id:'wake',    p:'pers', t:`Um ${sp.wake} aufstehen`, s:'Direkt raus, kein Snooze · Bett machen', ...M(0) },
     { id:'light',   p:'soul', t:'Wasser + Tageslicht', s:'Sonne oder helles Fenster', ...M(10) },
     { id:'release', p:'soul', t:'Nervous System Release', s:'Springen, schwingen, ausschütteln', ...M(15) },
     { id:'skinam',  p:'pers', t:'Haut morgens', s:'Gel-Cleanser + LSF 50', ...M(30) },
@@ -3056,17 +3067,11 @@ function auDayTasks(iso, infos) {
   return sorted;
 }
 
-/* Erledigt? Ein ausdruecklicher Eintrag gewinnt immer. Nur der Schlaf-Haken
-   darf sich ohne Eintrag aus einem Health-Schlafwert ableiten. */
+/* Erledigt? true = erledigt, 'x' = entfaellt, sonst offen. */
 function auDone(iso, task) {
   const raw = auRaw(iso, task.id);
-  if (raw === 'x') return { done:false, skip:true, auto:false };
-  if (raw === true || raw === false) return { done: raw, auto:false };
-  if (task.sleepMin) {
-    const h = HEALTH.find(x => x.day === iso);
-    if (h && typeof h.sleep_minutes === 'number') return { done: h.sleep_minutes >= task.sleepMin, auto:true, min:h.sleep_minutes };
-  }
-  return { done:false, auto:false };
+  if (raw === 'x') return { done:false, skip:true };
+  return { done: raw === true };
 }
 
 function auFirstDay() {
@@ -3314,24 +3319,57 @@ function auInfos() {
   return m;
 }
 
-function auArc(cx, cy, r, a0, a1) {
-  const p = a => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)];
-  const [x0, y0] = p(a0), [x1, y1] = p(a1);
-  return `M${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)},${y1.toFixed(2)}`;
-}
-
-function auRing(score, pil) {
-  const cx = 92, cy = 92, r = 76, gap = 5;
-  const segs = PILLARS.map((p, i) => {
-    const a0 = -90 + i * 90 + gap, span = 90 - 2 * gap, v = pil ? Math.max(0, Math.min(100, pil[p.id])) : 0;
-    const fill = v > 0.5 ? `<path d="${auArc(cx, cy, r, a0, a0 + span * v / 100)}" stroke="${p.hex}" stroke-width="12" fill="none" stroke-linecap="round"/>` : '';
-    return `<path d="${auArc(cx, cy, r, a0, a0 + span)}" stroke="#1e1e1e" stroke-width="12" fill="none" stroke-linecap="round"/>${fill}`;
-  }).join('');
-  const lv = score == null ? null : auLevel(score);
-  return `${segs}
-    <text x="${cx}" y="${cy - 22}" class="lbl2" text-anchor="middle">AURA</text>
-    <text x="${cx}" y="${cy + 14}" class="num" text-anchor="middle">${score == null ? '–' : score}</text>
-    <text x="${cx}" y="${cy + 34}" class="lvl" text-anchor="middle">${lv ? lv[1].toUpperCase() : 'NOCH KEINE DATEN'}</text>`;
+/* Aura-Figur statt Ring. Jede Saeule veraendert genau ein Merkmal, damit
+   man den Stand ohne Legende liest (Werte 0–100 aus derselben Zaehlung):
+     Koerper        -> Schulterbreite, Arm-/Beindicke, Bizeps, Rumpf-Fuellung
+     Geist          -> Kopfgroesse und sichtbares Gehirn
+     Persoenlichkeit-> Haltung (gebeugt -> aufrecht) und Mund (ernst -> Laecheln)
+     Seele          -> Leuchten um die Figur
+   Ohne Daten steht die Figur duenn und blass da. */
+function auFigure(pil) {
+  const k = id => pil ? Math.max(0, Math.min(1, pil[id] / 100)) : 0;
+  const b = k('body'), m = k('mind'), p = k('pers'), s = k('soul');
+  const f = n => n.toFixed(1), LIMB = '#d9d9d9';
+  const lean = (1 - p) * 7;                                   // gebeugt nach vorn
+  const hr = 8.5 + 6.5 * m, neckY = 37, cx = 50 + lean, cy = neckY - hr;
+  const sx = 50 + lean * .7, sY = 45, sw = 8 + 9 * b;        // Schultern
+  const hipY = 86, waist = 5 + 3 * b;
+  const wa = 2.4 + 5.2 * b, wl = 2.8 + 4.2 * b;              // Arm-, Beindicke
+  const glowR = 30 + 18 * s, glowO = .04 + .5 * s;
+  const bend = (p - .4) * hr * .8;                            // < 0 ernst, > 0 Laecheln
+  const arm = d => {
+    const x0 = sx + d * sw, ex = sx + d * (sw + 5 + 2 * b), hx = sx + d * (sw + 3);
+    const bx = (x0 + ex) / 2, by = (sY + 1 + 63) / 2;
+    return `<path class="arm" d="M${f(x0)},${sY + 1} L${f(ex)},63 L${f(hx)},79" fill="none" stroke="${LIMB}" stroke-width="${f(wa)}" stroke-linecap="round" stroke-linejoin="round"/>`
+      + (b > .35 ? `<ellipse cx="${f(bx + d * wa * .25)}" cy="${f(by)}" rx="${f(wa * .55 + 2.2 * b)}" ry="${f(wa * .9 + 1.5 * b)}" fill="${LIMB}"/>` : '');
+  };
+  const leg = d => `<path d="M${f(50 + d * 4)},${hipY} L${f(50 + d * 7)},105 L${f(50 + d * 9)},123" fill="none" stroke="${LIMB}" stroke-width="${f(wl)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const brainY = cy - hr * .28, brx = hr * .74, bry = hr * .5;
+  return `<defs><radialGradient id="auglow"><stop offset="0" stop-color="#9d7fe0" stop-opacity="${f(glowO)}"/>
+      <stop offset="1" stop-color="#7a5ab5" stop-opacity="0"/></radialGradient></defs>
+    <g opacity="${pil ? 1 : .45}">
+    <circle class="glow" cx="50" cy="66" r="${f(glowR)}" fill="url(#auglow)" data-o="${f(glowO)}"/>
+    <ellipse cx="50" cy="125" rx="20" ry="2.5" fill="#1c1c1c"/>
+    ${leg(-1)}${leg(1)}
+    <path class="torso" d="M${f(sx - sw)},${sY} L${f(sx + sw)},${sY} L${f(50 + waist)},${hipY} L${f(50 - waist)},${hipY} Z"
+      fill="#c94535" fill-opacity="${f(.12 + .55 * b)}" stroke="${LIMB}" stroke-width="1.6" stroke-linejoin="round"/>
+    ${arm(-1)}${arm(1)}
+    <path d="M${f(sx)},${sY} Q${f(sx + lean * .4)},${f((sY + neckY) / 2)} ${f(cx)},${neckY - .5}" stroke="${LIMB}" stroke-width="2.2" fill="none"/>
+    <circle class="head" cx="${f(cx)}" cy="${f(cy)}" r="${f(hr)}" fill="#141414" stroke="${LIMB}" stroke-width="1.8"/>
+    <clipPath id="auskull"><circle cx="${f(cx)}" cy="${f(cy)}" r="${f(hr - .9)}"/></clipPath>
+    <g class="brain" clip-path="url(#auskull)" fill="#3a7bbf" fill-opacity="${f(.25 + .65 * m)}" stroke="#a9cbef" stroke-opacity="${f(.35 + .55 * m)}" stroke-width=".7" stroke-linecap="round">
+      <path d="M${f(cx - hr)},${f(cy - hr * .02)} Q${f(cx - hr)},${f(cy - hr * 1.05)} ${f(cx)},${f(cy - hr * 1.05)} Q${f(cx + hr)},${f(cy - hr * 1.05)} ${f(cx + hr)},${f(cy - hr * .02)} Q${f(cx)},${f(cy + hr * .1)} ${f(cx - hr)},${f(cy - hr * .02)} Z"/>
+      <path fill="none" d="M${f(cx)},${f(cy - hr)} V${f(cy + hr * .02)}
+        M${f(cx - hr * .7)},${f(cy - hr * .3)} q${f(hr * .2)},${f(-hr * .3)} ${f(hr * .4)},${f(-hr * .05)}
+        M${f(cx - hr * .55)},${f(cy - hr * .7)} q${f(hr * .2)},${f(hr * .15)} ${f(hr * .35)},0
+        M${f(cx + hr * .25)},${f(cy - hr * .35)} q${f(hr * .2)},${f(-hr * .3)} ${f(hr * .4)},${f(hr * .05)}
+        M${f(cx + hr * .2)},${f(cy - hr * .75)} q${f(hr * .2)},${f(hr * .15)} ${f(hr * .35)},${f(hr * .05)}"/>
+    </g>
+    <circle cx="${f(cx - hr * .33)}" cy="${f(cy + hr * .18)}" r="1.1" fill="${LIMB}"/>
+    <circle cx="${f(cx + hr * .33)}" cy="${f(cy + hr * .18)}" r="1.1" fill="${LIMB}"/>
+    <path class="mouth" data-bend="${f(bend)}" d="M${f(cx - hr * .3)},${f(cy + hr * .52)} Q${f(cx)},${f(cy + hr * .52 + bend)} ${f(cx + hr * .3)},${f(cy + hr * .52)}"
+      fill="none" stroke="#d6b65e" stroke-width="1.5" stroke-linecap="round"/>
+    </g>`;
 }
 
 function renderAura() {
@@ -3345,11 +3383,15 @@ function renderAura() {
     const st = auDayStats(today, infos), streak = auStreak(first, infos);
     const has = !!(first || st.d), main = past || proj;
 
-    /* Ohne abgeschlossenen Tag gibt es keinen stabilen Score; dann zeigt der
-       Ring den Stand von heute. */
-    const ring = document.getElementById('auring');
-    ring.innerHTML = auRing(has ? main.score : null, has ? main.pil : null);
-    ring.setAttribute('aria-label', has ? `Aura-Score ${main.score} von 1000, Stufe ${auLevel(main.score)[1]}` : 'Aura-Score: noch keine Daten');
+    /* Ohne abgeschlossenen Tag gibt es keinen stabilen Score; dann zeigen
+       Figur und Zahl den Stand von heute. */
+    const fig = document.getElementById('aufig');
+    fig.innerHTML = auFigure(has ? main.pil : null);
+    fig.setAttribute('aria-label', has
+      ? `Aura-Figur: ${PILLARS.map(p => `${p.n} ${Math.round(main.pil[p.id])}`).join(', ')}`
+      : 'Aura-Figur: noch keine Daten');
+    document.getElementById('auscore').textContent = has ? main.score : '–';
+    document.getElementById('aulvl').textContent = has ? auLevel(main.score)[1] : 'noch keine Daten';
 
     auMorph(document.getElementById('aupil'), PILLARS.map(p => {
       const v = has ? Math.round(main.pil[p.id]) : 0;
@@ -3359,7 +3401,7 @@ function renderAura() {
 
     const delta = past && proj ? proj.score - past.score : null;
     const chips = [`<span class="auchip">heute ${st.d}/${st.n}</span>`];
-    if (delta != null) chips.push(`<span class="auchip ${delta > 0 ? 'up' : delta < 0 ? 'dn' : ''}">mit heute ${delta > 0 ? '+' : delta < 0 ? '−' : '±'}${Math.abs(delta)}</span>`);
+    if (delta != null) chips.push(`<span class="auchip ${delta > 0 ? 'up' : delta < 0 ? 'down' : ''}">mit heute ${delta > 0 ? '+' : delta < 0 ? '−' : '±'}${Math.abs(delta)}</span>`);
     else if (!past) chips.push(`<span class="auchip">Score ab morgen stabil</span>`);
     chips.push(`<span class="auchip ${streak >= 3 ? 'hot' : ''}">Serie ${streak} ${streak === 1 ? 'Tag' : 'Tage'} ≥ 70 %</span>`);
     if (has) { const nxt = AU_LEVELS.find(l => l[0] > main.score); if (nxt) chips.push(`<span class="auchip">${nxt[0] - main.score} bis ${nxt[1]}</span>`); }
@@ -3417,11 +3459,10 @@ function renderAuTimeline(infos) {
       </div>
       <div class="tlist">${rows.map(({ t, st }) => {
         const p = pillarOf(t.p), lbl = t.lbl === undefined ? minClock(t.min) : t.lbl;
-        const auto = st.auto ? ` <span class="auto">· Health ${fmtMetric('sleep_minutes', st.min)}</span>` : '';
         return `<div class="trow${next === t ? ' next' : ''}${st.skip ? ' skip' : ''}" style="--pc:${p.c}" data-key="${iso}|${ESC(t.id)}">
           <button type="button" class="task" role="checkbox" aria-checked="${st.done}" aria-label="${ESC(t.t)} · ${p.n}" data-id="${ESC(t.id)}" data-day="${iso}"${dis}>
             <span class="ttime">${lbl}</span><span class="tbox" aria-hidden="true">✓</span>
-            <span class="ttx"><span class="tt">${ESC(t.t)}</span><span class="ts">${ESC(t.s)}${st.skip ? ' <em>· entfällt</em>' : ''}${auto}</span></span>
+            <span class="ttx"><span class="tt">${ESC(t.t)}</span><span class="ts">${ESC(t.s)}${st.skip ? ' <em>· entfällt</em>' : ''}</span></span>
           </button>
           ${t.go ? `<button type="button" class="tskip" data-go="${iso}" aria-label="Trainingsplan öffnen">Plan</button>` : ''}
           <button type="button" class="tskip" data-skip="${ESC(t.id)}" data-day="${iso}"${dis}
@@ -3567,7 +3608,7 @@ const LEVERS = [
     chain:['Tag nicht geplant', 'morgens Entscheidungen statt Handeln', 'Aufgaben rutschen nach hinten'],
     todo: iso => `Um ${minClock(clockMin(sleepPlan(auWd(iso)).bed) - 120)} raus: 10 Min gehen, morgen in den Kalender.` },
   { id:'wake', task:'wake', blk:'mor', prior:.7, out:'same', fam:'morning',
-    name:'Direkt aufstehen',
+    name:'Pünktlich aufstehen',
     chain:['Snooze', 'Hektik', 'Morgenroutine fällt aus', 'Tag ohne Momentum'],
     todo: iso => `Wecker ${sleepPlan(auWd(iso)).wake} außer Reichweite stellen, beim ersten Klingeln Füße auf den Boden.` },
   { id:'caff', task:'caff', blk:'day', prior:.6, out:'next', of:'mor', fam:'sleep', loop:true,

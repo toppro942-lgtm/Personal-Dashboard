@@ -1,4 +1,4 @@
-# Sharms Dashboard
+# Dashboard
 
 Persönliches Dashboard für Training, Routinen, Gesundheit und Geld. Eine einzige Datei
 (`dashboard.html`), Vanilla JS, kein Build-Schritt. Veröffentlicht als claude.ai-Artifact;
@@ -8,7 +8,7 @@ lokal im Browser öffnen funktioniert ebenfalls.
 
 | Tab | Inhalt |
 |---|---|
-| **Heute** | Aura-Score (vier Säulen), Tagesaufgaben in zeitlicher Reihenfolge (Morgen ab Wecker, Tagsüber, Abend als Countdown zur Bettzeit), Gewohnheiten, Hobbys, Laster, 12-Wochen-Verlauf |
+| **Heute** | Aura-Figur und Score (vier Säulen), Tagesaufgaben in zeitlicher Reihenfolge (Morgen ab Wecker, Tagsüber, Abend als Countdown zur Bettzeit), Gewohnheiten, Hobbys, Laster, 12-Wochen-Verlauf |
 | **Training** | Plan (Tagesansicht, startet auf heute) · Volumen (Sätze je Muskel vs. MAV) · Sporttest (Dead Hang, Stand and Reach) |
 | **Routinen** | Morgen · Abend (T-Minus mit Uhrzeiten für heute) · Mobility · Schlaf |
 | **Health** | Tageswerte, CSV-Import aus Google Takeout, 14-Tage-Verläufe |
@@ -20,8 +20,14 @@ lokal im Browser öffnen funktioniert ebenfalls.
 - Antippen = erledigt. `–` rechts = entfällt heute (zählt weder als erledigt noch als offen).
 - `Alle ✓` hakt einen ganzen Abschnitt ab; der Hinweis unten bietet „Rückgängig“.
 - Fertige Abschnitte klappen zu. Der aktuelle Abschnitt trägt „jetzt“, die nächste offene Aufgabe ist rot markiert.
-- Ein Schlafwert im Health-Tab hakt die Schlaf-Aufgabe automatisch ab.
+- Erste Aufgabe ist „Um <Weckzeit> aufstehen“. Die Schlafdauer ist keine eigene Aufgabe, sie folgt aus der Bettzeit am Vorabend.
 - Gewohnheiten bekommen eine Tageszeit (Morgen, Tagsüber, Abend) und erscheinen dort in der Liste.
+
+## Aura-Figur
+
+Ersetzt den Ring. Jede Säule verändert ein Merkmal: Körper = Schultern, Arme, Beine, Rumpf;
+Geist = Kopfgröße und Gehirn; Persönlichkeit = Haltung und Mund; Seele = Leuchten. Zählweise wie zuvor
+(je Säule Anteil erledigter Aufgaben der letzten 14 Tage, Mittel × 10 = Score 0–1000).
 
 ## Hebel (oben im Heute-Tab)
 
