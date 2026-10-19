@@ -784,6 +784,9 @@ details.ex summary::-webkit-details-marker{display:none}
       <div class="card"><div class="lbl" style="margin-bottom:9px">Methode: PNF (Contract-Relax)</div>
         <div class="chain"><span>Anspannen 8 s</span><i>→</i><span>Loslassen</span><i>→</i><span>Tiefer sinken</span><i>→</i><span>30 s halten</span><i>→</i><span>× 3</span></div></div>
     </div>
+    <div class="callout pur" style="margin-top:12px"><div class="lbl">Beintag-Regel</div><b>Am Beintag</b> direkt nach dem Training
+      intensiv Beine dehnen (PNF), abends nur Haltungsblock und Oberkörper. <b>Am Tag danach</b> (Muskelkater) Beine nur leicht:
+      statisch 20–30 s, kein PNF, schmerzfrei. Die Heute-Liste stellt das automatisch um.</div>
     <div class="sechead"><h2>Ablauf</h2></div>
     <ol class="steps" id="mobseq"></ol>
     <div class="callout red" style="margin-top:12px"><div class="lbl">Limit</div><b>Spannung ist okay, Schmerz heißt Stopp.</b>
@@ -1214,7 +1217,11 @@ y:'Zusammen mit Negativ Crunch und Side Bend deckt der Lower-Tag alle Rumpfebene
 
 {n:'Unterarm-Curls hinter dem Rücken — Optional',t:'Unterarm-Flexoren',s:'2 Sets',w:'2 Arbeitssätze · Rest-Pause',r:'4–16',rs:'0:15',g:'O',
 f:'Optional. Rest-Pause-Protokoll. Am Lower-Tag ist der Oberkörper frisch — hier kannst du Unterarme ohne Interferenz trainieren.',
-y:'Dritter Unterarm-Tag. Der Lower-Tag ist strategisch günstig dafür, weil keine Griffkraft für andere Übungen benötigt wird.'}]},
+y:'Dritter Unterarm-Tag. Der Lower-Tag ist strategisch günstig dafür, weil keine Griffkraft für andere Übungen benötigt wird.'},
+
+{n:'Intensives Beindehnen (PNF)',t:'Hamstrings · Hüftbeuger · Adduktoren · Waden',s:'10–15 Min',w:'direkt nach dem Training',r:'3 × 30 s',rs:'',g:'G',
+f:'Noch warm, direkt im Anschluss: liegender Hamstring-Stretch mit Band, kniender Ausfallschritt, Schmetterling, Wade an der Wand. PNF: 8 s anspannen, lösen, tiefer sinken, 30 s halten, × 3. Spannung ja, Schmerz nein.',
+y:'Heute ist das Gewebe warm und noch ohne Muskelkater — der beste Zeitpunkt für die intensive Beindehnung der Woche. Am Folgetag (Muskelkater) werden die Beine nur leicht gedehnt, weil intensives Dehnen auf mikrogeschädigtem Gewebe die Reparatur stört.'}]},
 
 /* Upper B -- 3x pro Woche, nur in der Badminton-Woche (DI, DO, SA).
    Hoehere Frequenz, dafuer meist nur 1-2 Arbeitssaetze je Uebung und
@@ -1475,7 +1482,7 @@ b:['<b>Nährstoffversorgung:</b> 30–40g Casein. Sichert die Muskelproteinsynth
 {t:'T-85 Min',ti:'Wärme & Nervensystem',c:'#b8922e',
 b:['<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Kopfhaut ab jetzt lufttrocknen:</b> Minoxidil folgt erst zu Beginn der Badroutine bei T-30 — rund 55 Minuten Abstand statt der vorher knappen 20–30.']},
 {t:'T-60 Min',ti:'Dehnen & Dead Hang',c:'#2e9e6a',
-b:['<b>Dehnen + Haltung (~25 Min):</b> deine PNF-Routine, eingeleitet durch 4-7-8-Atmung, thorakale Extension und Kinn-Retraktion. Hüftflexoren und Adduktoren kurz gehalten, Schwerpunkt auf Hamstrings für Stand and Reach.','<b>Dead Hang (DI, FR, SO):</b> Sätze laut Training › Sporttest, direkt nach dem Dehnen. Der Hang braucht bis zu 10 Minuten — an diesen Tagen bei T-70 beginnen, damit alles bis T-30 fertig ist.','<b>Fertig bis T-30:</b> danach kommt Handy weg und das Bad.']},
+b:['<b>Dehnen + Haltung (~25 Min):</b> deine PNF-Routine, eingeleitet durch 4-7-8-Atmung, thorakale Extension und Kinn-Retraktion. Hüftflexoren und Adduktoren kurz gehalten, Schwerpunkt auf Hamstrings für Stand and Reach.','<b>Beintag (FR):</b> Beine sind direkt nach dem Training intensiv gedehnt — abends nur Haltungsblock und Oberkörper. <b>Tag danach (SA):</b> Muskelkater, Beine nur leicht und statisch 20–30 s, kein PNF.','<b>Dead Hang (DI, FR, SO):</b> Sätze laut Training › Sporttest, direkt nach dem Dehnen. Der Hang braucht bis zu 10 Minuten — an diesen Tagen bei T-70 beginnen, damit alles bis T-30 fertig ist.','<b>Fertig bis T-30:</b> danach kommt Handy weg und das Bad.']},
 {t:'T-30 Min',ti:'Handy weg',c:'#c94535',
 b:['<b>Flugmodus + Schlafenszeit-Modus:</b> beides aktivieren — keine Benachrichtigung, kein Lichtreiz, kein Grund zum Nachsehen.','<b>Fester Ablageplatz:</b> Handy an seinen festen Platz legen, außer Reichweite vom Bett. Erst morgen wieder aufheben.','Der Wecker klingelt auch im Flugmodus. Einmal testen, damit das kein Grund wird, das Handy doch mitzunehmen.']},
 {t:'T-30 Min',ti:'Bad, Haut & Lüften · 15 Min',c:'#3a7bbf',
@@ -3006,6 +3013,12 @@ function auTasksFor(iso) {
       ? { t:name, s:'Ersetzt die Studio-HIIT-Einheit vollständig' }
       : { t:`Training: ${name}`, s:`${prog.ti} · ${prog.du}`, go:true };
   const hang = stTasksFor(iso).map(t => ({ ...t, ...(t.exam ? D(600, 'Test') : A(55)) }));
+  /* Beintag: intensiv dehnen direkt nach dem Training. Folgetag: Muskelkater,
+     Beine nur leicht -- intensives Dehnen auf geschaedigtem Gewebe bremst die Reparatur. */
+  const leg = entry.p === 'lower', sore = auProgram(auAdd(iso, -1)).entry.p === 'lower';
+  const mob = leg ? { t:'Mobility-Routine · Oberkörper', s:'Haltungsblock + Oberkörper · Beine schon nach dem Training gedehnt' }
+    : sore ? { t:'Mobility-Routine · Beine nur leicht', s:'Muskelkater: Beine statisch 20–30 s, kein PNF, schmerzfrei · Haltungsblock normal' }
+    : { t:'Mobility-Routine · ~25 Min', s:'Haltungsblock + PNF + Stand-and-Reach-Block' };
   return [
     /* Die Schlafdauer ist keine eigene Aufgabe: sie folgt allein aus der
        Bettzeit am Vorabend (Aufgabe „bed“). Gezaehlt wird das Aufstehen. */
@@ -3020,12 +3033,13 @@ function auTasksFor(iso) {
     { id:'water',   p:'body', t:'Hydration', s: school ? `${HYDRATION.mor} · ${HYDRATION.school}` : `${HYDRATION.mor} · ${HYDRATION.meal}`, ...D(720, 'bis 12') },
     { id:'caff',    p:'mind', t:'Kein Koffein nach 14 Uhr', s:'Halbwertszeit 5–7 h', ...D(840, 'ab 14') },
     { id:'train',   p:'body', ...train, ...D(900, '') },
+    ...(leg ? [{ id:'legstr', p:'body', t:'Intensives Beindehnen direkt nach dem Training', s:'Hamstrings, Hüftbeuger, Adduktoren, Waden · PNF 8 s an, 30 s halten × 3', ...D(901, '') }] : []),
     { id:'protein', p:'body', t:'Protein 2,0–2,2 g/kg', s:'auf 4–5 Mahlzeiten verteilt, je ≥ 30 g', ...D(1080, '') },
 
     { id:'plan',    p:'mind', t:'Spaziergang + nächsten Tag planen', s:'Brain Dump im Gehen, danach in den Kalender', ...A(120) },
     { id:'casein',  p:'body', t:'30–40 g Casein', s:'Magerquark oder Milch · danach Flüssigkeitsstopp', ...A(90) },
     { id:'breath',  p:'soul', t:'4-7-8-Atmung', s:'Einstieg in die Dehnroutine', ...A(60) },
-    { id:'mob',     p:'body', t:'Mobility-Routine · ~25 Min', s:'Haltungsblock + PNF + Stand-and-Reach-Block', ...A(60) },
+    { id:'mob',     p:'body', ...mob, ...A(60) },
     ...hang,
     { id:'screen',  p:'mind', t:'Handy weg: Flugmodus + Schlafenszeit-Modus', s:'Fester Platz außer Reichweite vom Bett', ...A(30) },
     { id:'skinpm',  p:'pers', t:'Bad und Haut abends · 15 Min', s:'Minoxidil zuerst · Cleanser · EpiDuo auf trockene Haut', ...A(30) },
