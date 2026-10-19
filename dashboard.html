@@ -709,7 +709,7 @@ details.ex summary::-webkit-details-marker{display:none}
     </div>
     <div class="hgrid" id="stcards" style="margin-top:10px"></div>
 
-    <div class="sechead"><h2>Diese Woche</h2><span class="meta">DI · FR · SO, Test jeden 2. Sonntag</span></div>
+    <div class="sechead"><h2>Diese Woche</h2><span class="meta">DI · FR · SO, Test jeden 2. Donnerstag</span></div>
     <div id="stweek"></div>
 
     <div class="sechead"><h2>Messung eintragen</h2></div>
@@ -4014,7 +4014,10 @@ function wireMe() {
    Dead Hang ist Griff-Kraftausdauer. Trainiert wird 3× pro Woche mit
    Sätzen als Anteil der aktuellen Bestzeit, periodisiert in drei Blöcke +
    Taper. DI, FR, SO: FR (Lower) und SO (Zone 2) belasten den Griff nicht,
-   DI ist 48 h von beiden entfernt. Jeder 2. Sonntag ist Testtag.
+   DI ist 48 h von beiden entfernt. Testtag ist der DO der Nicht-Badminton-
+   Woche: Ruhetag, Beine 6 Tage nach Lower, Oberkoerper erst 24 h nach Upper A
+   (Muskelkater-Spitze liegt bei 48 h). Er ersetzt in dieser Woche den FR-Hang,
+   damit die Woche bei drei Hang-Belastungen bleibt.
    Stand and Reach laeuft ueber den taeglichen Mobility-Block (PNF), der
    ohnehin abends nach dem Duschen stattfindet.
    ============================================================ */
@@ -4069,18 +4072,21 @@ function stPhases() {
   ];
 }
 const stPhaseAt = iso => stPhases().find(p => iso >= p.from && iso <= p.to) || null;
-const stIsTestDay = iso => auWd(iso) === 6 && Math.round(auDiff(auIso(mondayOf(auDate(ST.start))), auIso(mondayOf(auDate(iso)))) / 7) % 2 === 1;
+const stIsTestDay = iso => auWd(iso) === 3 && weekKey(auDate(iso)) === 'a';
 
 /* Einheit eines Datums: null an Nicht-Trainingstagen. */
 function stSession(iso) {
   if (iso < ST.start || iso > ST.date) return null;
   if (iso === ST.date) return { kind:'exam', t:'Testtag', s:'Aufwärmen, Griff trocken, ruhig atmen — du hast es trainiert.' };
-  if (!ST_DAYS.includes(auWd(iso))) return null;
   const ph = stPhaseAt(iso), best = stBest('hang', iso);
   if (!ph) return null;
   if (auDiff(iso, ST.date) <= 3) return null;               // 3 Tage Pause vor dem Test
+  const test = best != null && ph.id !== 'taper' && stIsTestDay(iso);
+  if (!ST_DAYS.includes(auWd(iso)) && !test) return null;
+  const prev = auAdd(iso, -1);                              // FR nach dem Testtag entfaellt
+  if (best != null && stIsTestDay(prev) && stPhaseAt(prev)?.id !== 'taper') return null;
   if (best == null) return { kind:'test', t:'Einstiegstest: Dead Hang + Stand and Reach', s:'Beides einmal maximal messen und unter Training › Sporttest eintragen — daraus rechnet der Plan deine Sätze.' };
-  if (stIsTestDay(iso) && ph.id !== 'taper') return { kind:'test', t:'Testtag: Dead Hang max + Stand and Reach', s:`Nach dem Aufwärmen je 1 Versuch, eintragen unter Training › Sporttest · Bestzeit bisher ${stFmt(best)}` };
+  if (test) return { kind:'test', t:'Testtag: Dead Hang max + Stand and Reach', s:`Nach dem Aufwärmen je 1 Versuch, eintragen unter Training › Sporttest · Bestzeit bisher ${stFmt(best)}` };
   const sec = stR5(best * ph.pct);
   if (ph.id === 'kap' && auWd(iso) === 4)
     return { kind:'heavy', t:`Dead Hang schwer: 4 × 15–20 s mit +5–10 kg`, s:'Gürtel oder Rucksack · 2–3 min Pause · danach 2 × ' + stFmt(sec) + ' ohne Gewicht' };
@@ -4162,7 +4168,7 @@ function renderSt() {
     <div data-key="r"><h3>Stand and Reach${pr0 != null ? ` · du: ${pr0} P` : ''}</h3>${tbl(rrows, pr0)}<p class="hmeta" style="margin-top:6px">* Zeilen für 0/1 Punkt im PDF nicht lesbar</p></div>`);
 
   const mon = auIso(mondayOf(auDate(today)));
-  const days = ST_DAYS.map(w => auAdd(mon, w)).concat(ST.date >= mon && ST.date <= auAdd(mon, 6) && !ST_DAYS.includes(auWd(ST.date)) ? [ST.date] : [])
+  const days = [...new Set([...ST_DAYS, 3])].sort().map(w => auAdd(mon, w)).concat(ST.date >= mon && ST.date <= auAdd(mon, 6) && ![...ST_DAYS, 3].includes(auWd(ST.date)) ? [ST.date] : [])
     .map(d => ({ d, se: stSession(d) })).filter(x => x.se);
   auMorph(document.getElementById('stweek'), days.length ? `<div class="stweek">${days.map(({ d, se }) =>
     `<div class="stday${se.kind === 'test' || se.kind === 'exam' ? ' test' : ''}${d === today ? ' today' : ''}" data-key="${d}">

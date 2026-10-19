@@ -21,6 +21,7 @@ lokal im Browser öffnen funktioniert ebenfalls.
 - `Alle ✓` hakt einen ganzen Abschnitt ab; der Hinweis unten bietet „Rückgängig“.
 - Fertige Abschnitte klappen zu. Der aktuelle Abschnitt trägt „jetzt“, die nächste offene Aufgabe ist rot markiert.
 - Erste Aufgabe ist „Um <Weckzeit> aufstehen“. Die Schlafdauer ist keine eigene Aufgabe, sie folgt aus der Bettzeit am Vorabend.
+- Sporttest-Testtag: jeder 2. Donnerstag (Ruhetag der Nicht-Badminton-Woche, wenig Muskelkater); der Freitags-Hang danach entfällt.
 - Beintag (Lower): direkt nach `Training` folgt „Intensives Beindehnen“, abends Mobility nur Oberkörper. Tag danach: Mobility mit Beinen nur leicht (Muskelkater, kein PNF).
 - Gewohnheiten bekommen eine Tageszeit (Morgen, Tagsüber, Abend) und erscheinen dort in der Liste.
 
