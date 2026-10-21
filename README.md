@@ -37,3 +37,6 @@ Zwei neue Integrationen sind gewünscht, die einen echten Backend-Layer brauchen
 
 ## Datei
 `dashboard.html` — der komplette aktuelle Stand, direkt lauffähig durch Öffnen im Browser.
+
+## Unterrichts-Copilot
+`copilot/` — Echtzeit-Assistent für den Unterricht (Live-Transkript, Fragenerkennung, Antworten via Claude). Details: [`copilot/README.md`](copilot/README.md).
