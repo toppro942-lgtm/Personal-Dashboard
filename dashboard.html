@@ -204,6 +204,13 @@ main.wrap{padding-block:20px 64px}
 .ttx{min-width:0}
 .tt{display:block;font-size:14px;line-height:1.4;color:var(--wh)}
 .ts{display:block;font-size:12px;color:var(--mut);line-height:1.5;margin-top:2px}
+.tauto{display:block;font:500 10px/1.5 var(--mono);letter-spacing:.4px;color:var(--grn-t);margin-top:2px}.tauto.bad{color:var(--red-t)}
+.phbad{color:var(--red-t)}
+.phdots{display:flex;gap:4px;margin-top:10px}.phdots i{flex:1;height:8px;border-radius:2px;background:var(--s2)}
+.phdots i.ok{background:var(--grn)}.phdots i.no{background:var(--red)}
+.phguide{margin-top:10px}.phguide summary{cursor:pointer;color:var(--tx);font-size:13px}
+.phguide ol{font-size:13px;color:var(--mut);line-height:1.75;padding-left:20px;max-width:66ch}.phguide b{color:var(--tx)}
+.phguide code{font:12px var(--mono);color:var(--tx);background:var(--s2);padding:1px 4px;border-radius:4px;word-break:break-all}
 .ts em{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.6px;color:var(--pt,var(--mut))}
 .task[aria-checked="true"] .tt{color:var(--mut);text-decoration:line-through;text-decoration-color:#555}
 .trow.skip .task{opacity:.45}
@@ -539,6 +546,38 @@ details.ex summary::-webkit-details-marker{display:none}
 .gwarn{margin-top:12px;background:#1a0e0c;border-left:2px solid var(--red);border-radius:0 6px 6px 0;padding:9px 12px;font-size:12.5px;color:#e5a69c;line-height:1.7}
 .gnote{margin-top:9px;background:#17140b;border-left:2px solid var(--yel);border-radius:0 6px 6px 0;padding:9px 12px;font-size:12.5px;color:#d9bd7c;line-height:1.7}
 .refs{margin-top:28px;font:10.5px/1.7 var(--mono);color:var(--dim)}
+/* ---------- Training › Hevy ---------- */
+.hv-k{fill:var(--blu)}.hv-s{fill:var(--grn)}
+.hv-line{stroke:var(--blu-t);fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.hv-area{fill:var(--blu);fill-opacity:.12}
+.hv-pt{fill:var(--blu-t)}.hv-end{fill:var(--wh);stroke:var(--s1);stroke-width:2}
+.hvpick{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.hvpick select{flex:1;min-width:0;background:var(--s1);border:1px solid var(--bd);border-radius:8px;color:var(--tx);
+  font:13px var(--mono);padding:9px 10px;min-height:40px}
+.hvst{font:10px/1 var(--mono);letter-spacing:.8px;text-transform:uppercase;padding:5px 7px;border-radius:5px;white-space:nowrap;
+  background:var(--s3);color:var(--mut)}
+.hvst.best{color:var(--grn-t);background:color-mix(in srgb,var(--grn) 18%,var(--s2))}
+.hvst.up{color:var(--blu-t);background:color-mix(in srgb,var(--blu) 18%,var(--s2))}
+.hvst.flat{color:var(--yel-t);background:color-mix(in srgb,var(--yel) 18%,var(--s2))}
+.hvst.down{color:var(--red-t);background:color-mix(in srgb,var(--red) 18%,var(--s2))}
+.hvdelta.pos{color:var(--grn-t)}.hvdelta.neg{color:var(--red-t)}
+.hvlist{display:flex;flex-direction:column;background:var(--s1);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.hvs{border-top:1px solid var(--bd)}.hvs:first-child{border-top:0}
+.hvs summary{list-style:none;display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:baseline;padding:11px 14px;cursor:pointer}
+.hvs summary::-webkit-details-marker{display:none}
+.hvs summary:hover{background:var(--s2)}
+.hvd{font:11px var(--mono);color:var(--dim);font-variant-numeric:tabular-nums}
+.hvt{font-size:14px;color:var(--wh);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvm{font:11px var(--mono);color:var(--mut);white-space:nowrap;font-variant-numeric:tabular-nums}
+.hvs[open] summary{background:var(--s2)}
+.hvbody{padding:4px 14px 12px 78px;display:flex;flex-direction:column;gap:7px}
+.hvex{display:grid;grid-template-columns:minmax(0,1fr);gap:2px}
+.hvex b{font-weight:500;font-size:13px;color:var(--tx)}
+.hvsets{font:11.5px/1.6 var(--mono);color:var(--tx);font-variant-numeric:tabular-nums}
+.hvsets .w{color:var(--dim)}.hvsets .x{color:var(--mut)}
+.hvnote{font-size:12px;color:var(--mut);font-style:italic}
+@media (max-width:520px){.hvbody{padding-left:14px}.hvs summary{grid-template-columns:46px 1fr auto}}
+.hvmore{margin-top:10px}
 </style>
 
 <header class="hdr"><div class="wrap">
@@ -645,6 +684,7 @@ details.ex summary::-webkit-details-marker{display:none}
     <button type="button" role="tab" data-sub="plan">Plan</button>
     <button type="button" role="tab" data-sub="vol">Volumen</button>
     <button type="button" role="tab" data-sub="st">Sporttest</button>
+    <button type="button" role="tab" data-sub="hevy">Hevy</button>
   </div></div>
 
   <div data-pane="plan">
@@ -743,6 +783,48 @@ details.ex summary::-webkit-details-marker{display:none}
     </form>
     <p class="lead">Voreingestellt sind die Werte für <b>15 Punkte</b> der Oberstufen-Tabelle (13. Klasse, Jungen):
     Dead Hang ab 2:00 Min., Stand and Reach ab +25 cm.</p>
+  </div>
+
+  <!-- Hevy: Ist-Daten aus dem CSV-Export (hevy.csv neben der Seite) -->
+  <div data-pane="hevy" id="hvbody" hidden>
+    <h2 class="ptitle">Hevy-Verlauf</h2>
+    <p class="meta" id="hvstand">Export wird geladen …</p>
+    <div class="kpirow" id="hvkpi" style="margin-top:14px"></div>
+
+    <div class="sechead"><h2>Frequenz</h2><span class="meta">Einheiten je Kalenderwoche</span></div>
+    <div class="chart" id="hvfreq"></div>
+    <div class="legend">
+      <span><i style="background:var(--blu)"></i>Kraft</span>
+      <span><i style="background:var(--grn)"></i>Sport, Cardio, Mobility</span>
+    </div>
+
+    <div class="sechead"><h2>Progression</h2><span class="meta">geschätztes 1RM (Epley), bester Arbeitssatz je Einheit</span></div>
+    <div class="hvpick"><label class="lbl" for="hvex">Übung</label><select id="hvex"></select></div>
+    <div class="chart" id="hvprog"></div>
+    <div class="tbl" style="margin-top:12px"><table>
+      <thead><tr><th>Übung</th><th class="pc">Einh.</th><th>Start</th><th>Best</th><th>Zuletzt</th><th class="pc">Δ</th><th>Status</th></tr></thead>
+      <tbody id="hvcore"></tbody>
+    </table></div>
+    <p class="lead" style="margin-top:8px"><b>Bestwert:</b> letzte Einheit ist die beste. <b>Fortschritt:</b> Bestwert in den
+    letzten drei Einheiten. <b>Plateau:</b> kein neuer Bestwert seit drei Einheiten. <b>Rückgang:</b> letzte Einheit mehr als
+    8 % unter dem Bestwert. Maschinengewichte sind nur innerhalb desselben Geräts vergleichbar.</p>
+
+    <div class="sechead"><h2>Ist-Volumen</h2><span class="meta">direkte Arbeitssätze je Trainingswoche</span></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Muskel</th><th>Letzte 8</th><th>Gesamt</th></tr></thead>
+      <tbody id="hvvol"></tbody>
+    </table></div>
+    <p class="lead" style="margin-top:8px">Trainingswoche = Kalenderwoche mit mindestens einer Krafteinheit. Gezählt wird nur der
+    Primärmuskel, ohne Warm-Up- und Dropsätze; der Soll-Wert unter Volumen rechnet Synergisten halb mit und liegt deshalb höher.</p>
+
+    <div class="sechead"><h2>Einheiten</h2><span class="meta" id="hvcount"></span></div>
+    <div class="hvlist" id="hvlog"></div>
+    <button type="button" class="btn hvmore" id="hvall" hidden>Alle anzeigen</button>
+
+    <div class="callout blu" style="margin-top:20px"><div class="lbl">Aktualisieren</div>
+      In Hevy unter Einstellungen den Workout-Export als CSV erzeugen und Claude schicken. Die Datei ersetzt den Stand komplett;
+      nichts davon wird manuell gepflegt.</div>
+    <p class="refs" id="hvfix"></p>
   </div>
 </section>
 
@@ -845,6 +927,38 @@ details.ex summary::-webkit-details-marker{display:none}
     <p class="lead">Eine Webseite kann Health Connect nicht direkt auslesen. Der Weg ist ein Export:
     <b>takeout.google.com</b> → nur „Fit“ auswählen → im Archiv die Datei <i>Daily activity metrics.csv</i>. Erkannt werden
     Schritte, Kalorien, Puls, Gewicht, HRV und Schlaf; übernommen werden die letzten 90 Tage.</p>
+
+    <div class="sechead"><h2>Handy-Nutzung</h2></div>
+    <div class="hgrid" id="phcards"></div>
+    <form class="frm" id="phform" style="margin-top:12px">
+      <div class="fld"><label for="phsheet">Google-Tabelle des Handy-Logs (Link)</label><input type="url" id="phsheet" placeholder="https://docs.google.com/spreadsheets/d/…"></div>
+      <button class="btn go" type="submit">Verbinden</button>
+    </form>
+    <p class="lead" id="phstat"></p>
+    <p class="lead">Ohne eigenen Haken hakt das Log „Handy weg“ morgens nach dem Wecker selbst ab: Flugmodus spätestens zur Bettzeit an,
+    zwischen T-30 und 5 Min vor dem Wecker nicht entsperrt (Wecker ausschalten zählt nicht). Ein Tipp auf den Haken überstimmt das Log.</p>
+    <details class="phguide">
+      <summary>Einrichtung (einmalig, ca. 15 Min)</summary>
+      <ol>
+        <li><b>Formular:</b> forms.google.com → leeres Formular „Handy-Log“ → eine Frage, Typ <b>Absatz</b>, Titel <code>log</code>.
+          Unter Einstellungen › Antworten: E-Mail-Adressen <b>nicht</b> erfassen, „Auf 1 Antwort beschränken“ <b>aus</b>.</li>
+        <li><b>Tabelle:</b> Reiter „Antworten“ → „Mit Google Tabellen verknüpfen“ → neue Tabelle. Deren Link oben einfügen → Verbinden → Zugriff erlauben.</li>
+        <li><b>Adresse:</b> Formular › ⋮ › „Vorausgefüllten Link abrufen“ → <code>x</code> eintragen → Link kopieren. Er enthält
+          <code>/forms/d/e/<b>FORMULAR-ID</b>/viewform?…&amp;entry.<b>NUMMER</b>=x</code>. Beides notieren.</li>
+        <li><b>MacroDroid</b> (Play Store) → Variablen → globale Variable <code>queue</code>, Typ Text. Android: Akku-Optimierung für MacroDroid aus.</li>
+        <li><b>Makro „Senden“:</b> Auslöser „Regelmäßiges Intervall“ 15 Min. Aktionen: <i>Wenn</i> <code>queue</code> enthält <code>.</code> →
+          <i>HTTP-Anfrage</i> POST an <code>https://docs.google.com/forms/d/e/FORMULAR-ID/formResponse</code>, Inhaltstyp
+          <code>application/x-www-form-urlencoded</code>, Inhalt <code>entry.NUMMER=</code> + Variable <code>queue</code> (über „…“ einfügen),
+          Antwortcode in lokaler Variable <code>code</code> speichern, auf Abschluss warten → <i>Wenn</i> <code>code</code> = 200 →
+          <code>queue</code> auf leeren Text setzen.</li>
+        <li><b>Vier Log-Makros</b>, Aktionen jeweils: <code>queue</code> setzen auf Variable <code>queue</code> + <code>.</code> + Buchstabe + Magic Text
+          „Systemzeit“ (Sekunden oder Millisekunden seit 1970), danach „Makro ausführen: Senden“. Auslöser und Buchstabe:
+          <b>Gerät entsperrt</b> → <code>U</code> · <b>Bildschirm aus</b> → <code>S</code> · <b>Flugmodus aktiviert</b> → <code>F</code> ·
+          <b>Flugmodus deaktiviert</b> → <code>N</code>.</li>
+        <li><b>Test:</b> Handy sperren und entsperren, „Senden“ ausführen. In der Tabelle steht eine Zeile wie <code>.S1793652000.U1793652009</code>,
+          oben erscheinen die Ereignisse. Offline (Flugmodus) sammelt die Warteschlange und sendet später nach.</li>
+      </ol>
+    </details>
   </div>
 </section>
 
@@ -1480,13 +1594,13 @@ b:['<b>Spaziergang:</b> Raus, locker gehen, Handy nur für Notizen. Bewegung und
 {t:'T-90 Min',ti:'Anaboler Input',c:'#c94535',
 b:['<b>Nährstoffversorgung:</b> 30–40g Casein. Sichert die Muskelproteinsynthese über Nacht.','<b>Flüssigkeitsstopp:</b> Keine weitere Hydratation, um nächtliche Weckreize zu eliminieren.']},
 {t:'T-85 Min',ti:'Wärme & Nervensystem',c:'#b8922e',
-b:['<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Kopfhaut ab jetzt lufttrocknen:</b> Minoxidil folgt erst zu Beginn der Badroutine bei T-30 — rund 55 Minuten Abstand statt der vorher knappen 20–30.']},
+b:['<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Kopfhaut ab jetzt lufttrocknen:</b> Minoxidil wurde bereits um 17:00 aufgetragen (eigener Fixpunkt im Tagesplan, rund 4 h Einwirkzeit vor der Dusche).']},
 {t:'T-60 Min',ti:'Dehnen & Dead Hang',c:'#2e9e6a',
 b:['<b>Dehnen + Haltung (~25 Min):</b> deine PNF-Routine, eingeleitet durch 4-7-8-Atmung, thorakale Extension und Kinn-Retraktion. Hüftflexoren und Adduktoren kurz gehalten, Schwerpunkt auf Hamstrings für Stand and Reach.','<b>Beintag (FR):</b> Beine sind direkt nach dem Training intensiv gedehnt — abends nur Haltungsblock und Oberkörper. <b>Tag danach (SA):</b> Muskelkater, Beine nur leicht und statisch 20–30 s, kein PNF.','<b>Dead Hang (DI, FR, SO):</b> Sätze laut Training › Sporttest, direkt nach dem Dehnen. Der Hang braucht bis zu 10 Minuten — an diesen Tagen bei T-70 beginnen, damit alles bis T-30 fertig ist.','<b>Fertig bis T-30:</b> danach kommt Handy weg und das Bad.']},
 {t:'T-30 Min',ti:'Handy weg',c:'#c94535',
 b:['<b>Flugmodus + Schlafenszeit-Modus:</b> beides aktivieren — keine Benachrichtigung, kein Lichtreiz, kein Grund zum Nachsehen.','<b>Fester Ablageplatz:</b> Handy an seinen festen Platz legen, außer Reichweite vom Bett. Erst morgen wieder aufheben.','Der Wecker klingelt auch im Flugmodus. Einmal testen, damit das kein Grund wird, das Handy doch mitzunehmen.']},
 {t:'T-30 Min',ti:'Bad, Haut & Lüften · 15 Min',c:'#3a7bbf',
-b:['<b>Fenster auf:</b> Stoßlüften startet, bevor du ins Bad gehst — der Raum kühlt, während du ohnehin beschäftigt bist. Beim Rauskommen schließen, Ziel 16–18 °C.','<b>Minoxidil zuerst:</b> gleich zu Beginn der Badroutine. Die Kopfhaut ist seit der Dusche rund 55 Minuten trocken — genau der Abstand, den das Präparat braucht.','<b>Zahnhygiene:</b> inkl. Zahnseide für systemische Entzündungsminimierung, Toilettengang.','<b>Haut — Cleanser:</b> Gel-Cleanser, danach vollständig trocken tupfen.','<b>Haut — EpiDuo:</b> erbsengroß aufs ganze Gesicht, ausdrücklich erst auf trockene Haut. Feucht aufgetragen steigt die Reizung deutlich.','<b>Bei Trockenheit:</b> Feuchtigkeitscreme mit Ceramiden + Niacinamid dünn davor und danach (Sandwich-Methode).']},
+b:['<b>Fenster auf:</b> Stoßlüften startet, bevor du ins Bad gehst — der Raum kühlt, während du ohnehin beschäftigt bist. Beim Rauskommen schließen, Ziel 16–18 °C.','<b>Zahnhygiene:</b> inkl. Zahnseide für systemische Entzündungsminimierung, Toilettengang.','<b>Haut — Cleanser:</b> Gel-Cleanser, danach vollständig trocken tupfen.','<b>Haut — EpiDuo:</b> erbsengroß aufs ganze Gesicht, ausdrücklich erst auf trockene Haut. Feucht aufgetragen steigt die Reizung deutlich.','<b>Bei Trockenheit:</b> Feuchtigkeitscreme mit Ceramiden + Niacinamid dünn davor und danach (Sandwich-Methode).']},
 {t:'T-15 Min',ti:'Lesen & bettfertig · 15 Min fest',c:'#7a5ab5',
 b:['<b>Bettfertig:</b> Wecker prüfen, Wasser und Kleidung für morgen bereitlegen, Licht dämpfen.','<b>Journaling:</b> Tag abschließen, offene Gedanken auslagern.','<b>Lesen:</b> Papier statt Bildschirm, warmes gedämpftes Licht.','<b>Die 15 Minuten sind fest:</b> Das Bad dauert 15 Minuten und beginnt deshalb bei T-30. Läuft es länger, verschiebt sich das Bad nach vorn, nicht das Lesen nach hinten.','Kein Planen mehr — das lief bereits bei T-120. Hier geht es ausschließlich ums Runterfahren.']},
 {t:'T-0 Min',ti:'Regeneration',c:'#2e9e6a',
@@ -3034,6 +3148,7 @@ function auTasksFor(iso) {
     { id:'caff',    p:'mind', t:'Kein Koffein nach 14 Uhr', s:'Halbwertszeit 5–7 h', ...D(840, 'ab 14') },
     { id:'train',   p:'body', ...train, ...D(900, '') },
     ...(leg ? [{ id:'legstr', p:'body', t:'Intensives Beindehnen direkt nach dem Training', s:'Hamstrings, Hüftbeuger, Adduktoren, Waden · PNF 8 s an, 30 s halten × 3', ...D(901, '') }] : []),
+    { id:'minox',   p:'pers', t:'Minoxidil auftragen', s:'Fester Zeitpunkt 17:00 · trockene Kopfhaut · vor dem Abendessen', ...D(1020, '17:00') },
     { id:'protein', p:'body', t:'Protein 2,0–2,2 g/kg', s:'auf 4–5 Mahlzeiten verteilt, je ≥ 30 g', ...D(1080, '') },
 
     { id:'plan',    p:'mind', t:'Spaziergang + nächsten Tag planen', s:'Brain Dump im Gehen, danach in den Kalender', ...A(120) },
@@ -3042,7 +3157,7 @@ function auTasksFor(iso) {
     { id:'mob',     p:'body', ...mob, ...A(60) },
     ...hang,
     { id:'screen',  p:'mind', t:'Handy weg: Flugmodus + Schlafenszeit-Modus', s:'Fester Platz außer Reichweite vom Bett', ...A(30) },
-    { id:'skinpm',  p:'pers', t:'Bad und Haut abends · 15 Min', s:'Minoxidil zuerst · Cleanser · EpiDuo auf trockene Haut', ...A(30) },
+    { id:'skinpm',  p:'pers', t:'Bad und Haut abends · 15 Min', s:'Cleanser · EpiDuo auf trockene Haut', ...A(30) },
     { id:'grat',    p:'soul', t:'Dankbarkeit notieren', s:'Drei konkrete Dinge von heute', ...A(15) },
     { id:'read',    p:'mind', t:'Lesen auf Papier', s:'15 Min fest, warmes gedämpftes Licht', ...A(15) },
     { id:'bed',     p:'pers', t:`Um ${sp.bed} Uhr im Bett`, s:'Zimmer 16–18 °C, dunkel, Mundschutz', ...A(0) }
@@ -3085,6 +3200,9 @@ function auDayTasks(iso, infos) {
 function auDone(iso, task) {
   const raw = auRaw(iso, task.id);
   if (raw === 'x') return { done:false, skip:true };
+  /* Handy weg: ohne eigenen Haken entscheidet das Handy-Log (phone.js).
+     Ein Tipp schreibt einen echten Wert und ueberstimmt es. */
+  if (raw === undefined && task.id === 'screen') { const v = phNight(iso); if (v) return { done:v.ok, auto:true, note:v.note }; }
   return { done: raw === true };
 }
 
@@ -3476,7 +3594,7 @@ function renderAuTimeline(infos) {
         return `<div class="trow${next === t ? ' next' : ''}${st.skip ? ' skip' : ''}" style="--pc:${p.c}" data-key="${iso}|${ESC(t.id)}">
           <button type="button" class="task" role="checkbox" aria-checked="${st.done}" aria-label="${ESC(t.t)} · ${p.n}" data-id="${ESC(t.id)}" data-day="${iso}"${dis}>
             <span class="ttime">${lbl}</span><span class="tbox" aria-hidden="true">✓</span>
-            <span class="ttx"><span class="tt">${ESC(t.t)}</span><span class="ts">${ESC(t.s)}${st.skip ? ' <em>· entfällt</em>' : ''}</span></span>
+            <span class="ttx"><span class="tt">${ESC(t.t)}</span><span class="ts">${ESC(t.s)}${st.skip ? ' <em>· entfällt</em>' : ''}</span>${st.auto ? `<span class="tauto${st.done ? '' : ' bad'}">${ESC(st.note)}</span>` : ''}</span>
           </button>
           ${t.go ? `<button type="button" class="tskip" data-go="${iso}" aria-label="Trainingsplan öffnen">Plan</button>` : ''}
           <button type="button" class="tskip" data-skip="${ESC(t.id)}" data-day="${iso}"${dis}
@@ -4251,6 +4369,183 @@ function wireSt() {
 }
 
 /* ============================================================
+   Handy-Nutzung. MacroDroid haengt bei Entsperren (U), Bildschirm aus (S),
+   Flugmodus an (F) und aus (N) ein Token „<Code><Unixzeit>“ an eine
+   Warteschlange und schickt sie an ein Google-Formular; dessen Tabelle
+   liest die Seite ueber den Google-Sheets-Connector. Gesucht wird per
+   Muster im ganzen Ergebnis -- Spaltenlage, Zeitstempel-Format und
+   Antwortform des Connectors spielen keine Rolle, doppelt gesendete
+   Tokens zaehlen einmal.
+   ============================================================ */
+const PH_SERVER = 'Google Sheets', PH_TOOL = 'get_values';
+const PH_TOKEN = /([USFN])(\d{10})(\d{3})?(?!\d)/g;
+const PH_GRACE = 2;          // Min: so lange darf eine Sitzung ueber T-30 hinauslaufen
+const PH_CAP = 240;          // Min: fehlt „Bildschirm aus“, zaehlt eine Sitzung hoechstens so lang
+const PH_DENY = ['needs_reauth', 'server_not_connected', 'selection_required', 'blocked_by_policy', 'approval_required', 'not_in_manifest', 'consent_required'];
+const PH = { sheet:null, ev:[], sess:[], at:null, state:'off', err:null, mcp:null, unwatch:null, memo:new Map() };
+
+const phAt = (iso, min) => { const d = auDate(iso); d.setMinutes(min); return d.getTime(); };
+const phHm = t => { const d = new Date(t); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+const phSheetId = s => (String(s).match(/\/spreadsheets\/d\/([\w-]{20,})/) || String(s).trim().match(/^([\w-]{20,})$/) || [])[1] || null;
+
+function phParse(payload) {
+  const text = typeof payload === 'string' ? payload : JSON.stringify(payload ?? '');
+  const seen = new Set(), ev = [];
+  for (const m of text.matchAll(PH_TOKEN)) {
+    const t = +m[2] * 1000;
+    if (seen.has(m[1] + m[2]) || t < 1.7e12 || t > 4.1e12) continue;
+    seen.add(m[1] + m[2]); ev.push({ k:m[1], t });
+  }
+  return ev.sort((a, b) => a.t - b.t);
+}
+
+/* Nutzungssitzungen: Entsperren bis Bildschirm aus. */
+function phSessions(ev) {
+  const out = []; let open = null;
+  for (const e of ev) {
+    if (e.k === 'U' && open == null) open = e.t;
+    else if (e.k === 'S' && open != null) { out.push([open, Math.min(e.t, open + PH_CAP * 6e4)]); open = null; }
+  }
+  if (open != null) out.push([open, Math.min(Date.now(), open + PH_CAP * 6e4)]);
+  return out;
+}
+const phUse = (a, b) => PH.sess.reduce((s, [x, y]) => s + Math.max(0, Math.min(y, b) - Math.max(x, a)), 0) / 6e4;
+
+/* Nacht nach dem Abend von iso: T-30 bis 5 Min vor dem Wecker. Urteil erst,
+   wenn die Nacht vorbei ist und das Handy davor und danach gemeldet hat --
+   sonst fehlt der Beweis, und der Haken bleibt manuell. */
+function phNight(iso) {
+  if (!PH.ev.length) return null;
+  if (PH.memo.has(iso)) return PH.memo.get(iso);
+  const nx = auAdd(iso, 1), bed = clockMin(sleepPlan(auWd(iso)).bed);
+  const cut = phAt(iso, (bed < 720 ? bed + 1440 : bed) - 30), wake = phAt(nx, clockMin(sleepPlan(auWd(nx)).wake)), end = wake - 5 * 6e4;
+  if (Date.now() < wake) return null;
+  let r = null;
+  if (PH.ev.some(e => e.t <= cut && e.t > cut - 8 * 36e5) && PH.ev.some(e => e.t >= end && e.t < end + 12 * 36e5)) {
+    const hit = PH.sess.filter(([a, b]) => b > cut + PH_GRACE * 6e4 && a < end);
+    const fl = PH.ev.filter(e => (e.k === 'F' || e.k === 'N') && e.t <= cut + 30 * 6e4).pop();
+    const flOk = fl?.k === 'F' && !PH.ev.some(e => e.k === 'N' && e.t > fl.t && e.t < end);
+    const bad = [];
+    if (hit.length) bad.push(`${phHm(Math.max(hit[0][0], cut))} entsperrt · ${Math.max(1, Math.round(phUse(cut, end)))} Min genutzt`);
+    if (!flOk) bad.push(fl?.k === 'F' ? 'Flugmodus nachts aus' : 'Flugmodus nicht an');
+    r = bad.length ? { ok:false, note:'Handy-Log: ' + bad.join(' · ') }
+      : { ok:true, note:`Handy-Log: Flugmodus ${phHm(fl.t)}, keine Nutzung bis ${phHm(wake)}` };
+  }
+  PH.memo.set(iso, r);
+  return r;
+}
+
+/* Bildschirmzeit eines Kalendertags; null, wenn an dem Tag nichts gemeldet wurde. */
+function phDay(iso) {
+  const a = phAt(iso, 0), b = phAt(auAdd(iso, 1), 0);
+  return PH.ev.some(e => e.t >= a && e.t < b) ? Math.round(phUse(a, b)) : null;
+}
+
+/* ---------- Connector ---------- */
+const phInput = () => ({ spreadsheetId: PH.sheet, range: 'A1:C20000' });
+
+function phTake(result) {
+  PH.ev = phParse(result?.payload ?? result?.content);
+  PH.sess = phSessions(PH.ev); PH.memo.clear();
+  PH.at = result?.cache?.storedAt || Date.now(); PH.state = 'ok'; PH.err = null;
+  phRefresh();
+}
+function phFail(e) {
+  PH.err = e || { code:'upstream_error' };
+  if (PH_DENY.includes(PH.err.code) || ['not_granted', 'capability_disabled', 'capability_removed', 'tool_error'].includes(PH.err.code)) {
+    PH.ev = []; PH.sess = []; PH.memo.clear(); PH.state = 'err';
+  } else if (PH.state !== 'ok') PH.state = 'err';   // voruebergehend: letzter Stand bleibt sichtbar
+  phRefresh();
+}
+function phRefresh() {
+  renderPhone();
+  try { renderAura(); } catch (e) { console.error('Aura:', e); }
+}
+
+function phWatch() {
+  if (PH.unwatch) { PH.unwatch(); PH.unwatch = null; }
+  if (!PH.sheet || !PH.mcp) { PH.state = PH.sheet ? 'nomcp' : 'off'; return phRefresh(); }
+  PH.state = 'load'; renderPhone();
+  PH.unwatch = PH.mcp.watchTool(PH_SERVER, PH_TOOL, phInput(),
+    ev => ev.type === 'data' ? phTake(ev.result) : phFail(ev.error),
+    { cache:{ staleTime: 5 * 6e4, gcTime: 7 * 864e5 }, refetchInterval: 15 * 6e4 });
+}
+
+/* Einmaliger Aufruf auf Klick: nur er darf nach der Google-Freigabe fragen. */
+async function phAllow() {
+  if (!PH.mcp || !PH.sheet) return;
+  PH.state = 'load'; renderPhone();
+  try { phTake(await PH.mcp.callTool(PH_SERVER, PH_TOOL, phInput(), { cache:{ refresh:true, staleTime: 5 * 6e4, gcTime: 7 * 864e5 } })); phWatch(); }
+  catch (e) { phFail(e); }
+}
+
+async function phInit() {
+  try { const s = await DB.doc('settings/phone').get(); PH.sheet = s.exists ? clone(s.data()).sheet || null : null; } catch {}
+  try { PH.mcp = (typeof claude !== 'undefined' && claude.use) ? await claude.use('mcp') : null; } catch { PH.mcp = null; }
+  document.getElementById('phsheet').value = PH.sheet ? `https://docs.google.com/spreadsheets/d/${PH.sheet}` : '';
+  phWatch();
+}
+
+/* ---------- Health-Tab ---------- */
+function phStatus() {
+  const c = PH.err?.code;
+  if (PH.state === 'off') return { t:'Noch keine Tabelle verbunden. Einrichtung unten.' };
+  if (PH.state === 'nomcp') return { t:'In dieser Ansicht gibt es keinen Connector-Zugriff. Das Dashboard in claude.ai öffnen.', bad:true };
+  if (PH.state === 'load') return { t:'Lade Tabelle …' };
+  if (PH.state === 'err') return {
+    approval_required:{ t:'Google Sheets ist für diese Seite noch nicht freigegeben.', ask:true },
+    not_in_manifest:{ t:'Google Sheets ist für diese Seite nicht freigegeben.', ask:true },
+    consent_required:{ t:'Google Sheets ist für diese Seite nicht freigegeben.', ask:true },
+    needs_reauth:{ t:'Google Sheets in claude.ai › Einstellungen › Connectors neu verbinden.' },
+    server_not_connected:{ t:'Google Sheets in claude.ai › Einstellungen › Connectors hinzufügen.' },
+    selection_required:{ t:'Mehrere Google-Sheets-Connectors: in der Abfrage von claude.ai einen wählen.' },
+    tool_error:{ t:'Tabelle nicht lesbar — Link prüfen. ' + (PH.err.message || '').slice(0, 140) },
+    server_unavailable:{ t:'Google gerade nicht erreichbar. Nächster Versuch in 15 Min.', ask:true }
+  }[c] || { t:`Abruf fehlgeschlagen (${c || 'unbekannt'}).`, ask: !!PH.err?.retryable };
+  const last = PH.ev.at(-1), age = last ? (Date.now() - last.t) / 36e5 : null, stand = `Stand ${phHm(PH.at)}`;
+  if (!last) return { t:`Tabelle verbunden, aber noch keine Handy-Ereignisse · ${stand}. MacroDroid prüfen.`, bad:true };
+  return { t:`${PH.ev.length} Ereignisse · letztes ${phHm(last.t)}${age > 24 ? ` (vor ${Math.round(age / 24)} T.)` : ''} · ${stand}`
+    + (age > 24 ? ' · MacroDroid meldet nichts mehr: Akku-Optimierung und Makros prüfen.' : ''), bad: age > 24 };
+}
+
+function renderPhone() {
+  const box = document.getElementById('phcards'), st = document.getElementById('phstat');
+  if (!box || !st) return;
+  const s = phStatus();
+  st.innerHTML = `<span${s.bad ? ' class="phbad"' : ''}>${ESC(s.t)}</span>${s.ask ? ' <button type="button" class="btn" id="phallow">Zugriff erlauben</button>' : ''}`;
+  const today = AU.today, days = Array.from({ length: 14 }, (_, i) => auAdd(today, i - 13));
+  const pts = days.map(d => ({ day:d, v:phDay(d) })).filter(p => p.v != null);
+  const nights = days.slice(0, -1).map(phNight).filter(Boolean), kept = nights.filter(n => n.ok).length;
+  const avg = pts.length ? pts.reduce((a, p) => a + p.v, 0) / pts.length : null;
+  const hm = m => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, '0')} min`;
+  box.innerHTML = `<article class="hcard" style="--m:#7a5ab5">
+      <header><span class="hlabel">Bildschirmzeit</span><span class="hmeta">${avg != null ? 'Ø ' + hm(avg) : 'noch keine Daten'}</span></header>
+      <div class="hvalue">${pts.length ? hm(pts.at(-1).v) : '–'}</div>
+      <div class="hmeta">${pts.length ? dmy(pts.at(-1).day) + (pts.at(-1).day === today ? ' · bis jetzt' : '') : 'aus dem Handy-Log'}</div>
+      ${spark(pts, '#7a5ab5')}
+    </article>
+    <article class="hcard" style="--m:#c94535">
+      <header><span class="hlabel">Handy um T-30 weg</span><span class="hmeta">${nights.length ? 'letzte 14 Nächte' : 'noch keine Nacht ausgewertet'}</span></header>
+      <div class="hvalue">${nights.length ? `${kept} / ${nights.length}` : '–'}</div>
+      <div class="hmeta">${nights.length ? (nights.at(-1).ok ? 'Letzte Nacht eingehalten' : ESC(nights.at(-1).note.replace('Handy-Log: ', 'Letzte Nacht: '))) : 'Urteil jeweils nach dem Wecker'}</div>
+      <div class="phdots">${days.slice(0, -1).map(d => { const n = phNight(d); return `<i class="${n ? (n.ok ? 'ok' : 'no') : ''}" title="${dmy(d)}${n ? ' · ' + ESC(n.note) : ' · keine Daten'}"></i>`; }).join('')}</div>
+    </article>`;
+}
+
+function wirePhone() {
+  document.getElementById('phform').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const id = phSheetId(document.getElementById('phsheet').value);
+    if (!id) return toast('Kein gültiger Tabellen-Link (docs.google.com/spreadsheets/d/…).', true);
+    try { await DB.doc('settings/phone').set({ sheet:id }); } catch (e) { return toast('Speichern fehlgeschlagen: ' + (e.message || e), true); }
+    PH.sheet = id; PH.ev = []; PH.sess = []; PH.memo.clear();
+    if (!PH.mcp) { phWatch(); return toast('Gespeichert. Abruf nur in claude.ai möglich.', true); }
+    phAllow();
+  });
+  document.getElementById('phstat').addEventListener('click', e => { if (e.target.closest('#phallow')) phAllow(); });
+}
+
+/* ============================================================
    Vollbild: bei jedem Oeffnen automatisch. Browser lassen requestFullscreen
    nur nach einer Nutzeraktion zu; deshalb ein Versuch direkt beim Laden
    (klappt, wo die Umgebung es erlaubt) und sonst bei jeder Beruehrung, bis
@@ -4307,6 +4602,7 @@ function showTab(id) {
     b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1;
   }
   if (id === 'geld') redrawCharts();       // Diagramme brauchen eine sichtbare Breite
+  if (id === 'training' && typeof drawHevy === 'function') drawHevy();
 }
 
 function showSub(tab, sub) {
@@ -4319,6 +4615,7 @@ function showSub(tab, sub) {
   panel.querySelectorAll('[data-pane]').forEach(p => { p.hidden = p.dataset.pane !== sub; });
   if (tab !== 'routine') pref.set('sub-' + tab, sub);
   if (tab === 'geld' && sub === 'wealth') redrawCharts();
+  if (tab === 'training' && sub === 'hevy' && typeof drawHevy === 'function') drawHevy();
 }
 
 function wireNav() {
@@ -4365,8 +4662,323 @@ function renderDated() {
    Plan-Inhalte stehen sofort; Heute zeichnet einen Ladezustand und fuellt
    sich, sobald der Speicher antwortet. */
 renderDated(); renderMob(); renderGroom();
-wireNav(); wirePlan(); wireForms(); wireWealth(); wireAura(); wireLevers(); wireMe(); wireSt(); wireFullscreen();
+wireNav(); wirePlan(); wireForms(); wireWealth(); wireAura(); wireLevers(); wireMe(); wireSt(); wirePhone(); wireFullscreen();
 renderAura(); renderHealth(); renderFinance(); renderWealth();
-openStore().then(() => { initStore(); initAura(); });
+openStore().then(() => { initStore(); initAura(); phInit(); });
+</script>
+<script>
+/* ================= Training › Hevy =================
+   Quelle: hevy.csv (Hevy-Export, unverändert neben der Seite).
+   Module: hvParse (CSV) → hvBuild (Sitzungen) → hvStats → Render.
+   Ein neuer Export ersetzt nur hevy.csv; der Code bleibt gleich. */
+
+/* ---------- Konfiguration ---------- */
+const HV_MUSCLE = {
+  'Brust': ['Chest Fly (Machine)', 'Incline Bench Press (Smith Machine)', 'Chest Press (Machine)', 'Incline Chest Press (Machine)',
+    'Iso-Lateral Chest Press (Machine)', 'Bench Press (Barbell)', 'Chest Dip (Weighted)', 'Push Up'],
+  'Rücken': ['Lat Pulldown (Cable)', 'Lat Pulldown - Close Grip (Cable)', 'Single Arm Lat Pulldown', 'T Bar Row',
+    'Iso-Lateral High Row (Machine)', 'Iso-Lateral Low Row', 'Iso-Lateral Row (Machine)', 'Seated Row (Machine)',
+    'Pull Up (Weighted)', 'Wide Pull Up', 'Pullover (Dumbbell)'],
+  'Seitl. Schulter': ['Lateral Raise (Machine)', 'Lateral Raise (Dumbbell)'],
+  'Hint. Schulter': ['Rear Delt Reverse Fly (Machine)', 'Reverse Fly Single Arm (Cable)'],
+  'Vord. Schulter': ['Shoulder Press (Machine Plates)', 'Front Raise (Cable)', 'Pike Pushup'],
+  'Bizeps': ['Preacher Curl (Machine)', 'Preacher Curl (Dumbbell)', 'Bicep Curl (Machine)', 'Bicep Curl (Cable)',
+    'Hammer Curl (Cable)', 'Cross Body Hammer Curl'],
+  'Trizeps': ['Single Arm Triceps Pushdown (Cable)', 'Triceps Pushdown', 'Triceps Rope Pushdown', 'Overhead Triceps Extension (Cable)',
+    'Triceps Extension (Cable)', 'Single Arm Tricep Extension (Dumbbell)', 'Seated Dip Machine', 'Triceps Dip',
+    'Triceps Dip (Weighted)', 'Bench Dip', 'Diamond Push Up'],
+  'Unterarme': ['Reverse Curl (Cable)', 'Behind the Back Wrist Curl (Barbell)', 'Seated Wrist Extension (Barbell)', 'Dead Hang'],
+  'Quadrizeps': ['Leg Press (Machine)', 'Leg Extension (Machine)', 'Squat (Bodyweight)'],
+  'Hamstrings': ['Lying Leg Curl (Machine)', 'Seated Leg Curl (Machine)'],
+  'Adduktoren': ['Hip Adduction (Machine)'],
+  'Waden': ['Calf Press (Machine)'],
+  'Bauch': ['Crunch (Machine)', 'Crunch', 'Decline Crunch (Weighted)', 'Leg Raise Parallel Bars', 'Hanging Leg Raise',
+    'Side Bend', 'Plank', 'Side Plank'],
+  'Unterer Rücken': ['Back Extension (Machine)', 'Back Extension (Weighted Hyperextension)', 'Superman', 'Glute Bridge']
+};
+const HV_SPORT = new Set(['Volleyball', 'badminton', 'Running', 'Treadmill', 'Jump Rope', 'Stair Machine (Steps)']);
+const HV_WORK = new Set(['normal', 'failure']);        // Dropsätze zählen nicht als eigener Satz
+const HV_MAXREP = 12;                                    // Epley oberhalb davon zu ungenau
+/* Datenfehler im Export: Gewicht beim Klimmzug ist Zusatzlast; > 30 kg sind Latzug-Werte im falschen Feld. */
+const HV_FIX = { 'Pull Up (Weighted)': w => w > 30 ? null : w };
+
+const HV_MUS = Object.fromEntries(Object.entries(HV_MUSCLE).flatMap(([m, xs]) => xs.map(x => [x, m])));
+const HV = { sessions: [], stats: null, all: false, ex: null, err: null };
+
+/* ---------- Parser (RFC 4180, Zeilenumbrüche in Anführungszeichen) ---------- */
+function hvParse(text) {
+  const rows = []; let row = [], f = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; }
+      else f += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(f); f = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(f); f = ''; if (row.length > 1 || row[0]) rows.push(row); row = [];
+    } else f += c;
+  }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  const head = rows.shift() || [];
+  return rows.map(r => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ''])));
+}
+
+const HV_MON = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };
+function hvDate(s) {                                     // "18 Oct 2026, 14:49" → lokale Zeit
+  const m = /^(\d{1,2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})$/.exec(s.trim());
+  return m ? new Date(+m[3], HV_MON[m[2]], +m[1], +m[4], +m[5]) : null;
+}
+const hvNum = s => s === '' ? null : +s;
+
+/* ---------- Sitzungen ---------- */
+function hvBuild(rows) {
+  const by = new Map(); let fixed = 0;
+  for (const r of rows) {
+    const start = hvDate(r.start_time); if (!start) continue;
+    const key = r.start_time + '|' + r.title;
+    let s = by.get(key);
+    if (!s) {
+      const end = hvDate(r.end_time), min = end ? (end - start) / 60000 : null;
+      s = { title: r.title.trim(), start, min: min != null && min >= 5 ? Math.round(min) : null, ex: [], _ex: new Map() };
+      by.set(key, s);
+    }
+    let e = s._ex.get(r.exercise_title);
+    if (!e) { e = { n: r.exercise_title, note: r.exercise_notes.replace(/\\n/g, '\n').trim(), sets: [] }; s._ex.set(e.n, e); s.ex.push(e); }
+    let w = hvNum(r.weight_kg);
+    if (HV_FIX[e.n] && w != null) { const w2 = HV_FIX[e.n](w); if (w2 !== w) fixed++; w = w2; }
+    e.sets.push({ t: r.set_type, w, r: hvNum(r.reps), sec: hvNum(r.duration_seconds), km: hvNum(r.distance_km) });
+  }
+  const out = [...by.values()].map(s => {
+    delete s._ex;
+    const strength = s.ex.filter(e => !HV_SPORT.has(e.n) && HV_MUS[e.n]);
+    s.kind = strength.length ? 'k' : 's';
+    s.work = strength.reduce((n, e) => n + e.sets.filter(x => HV_WORK.has(x.t)).length, 0);
+    return s;
+  }).sort((a, b) => a.start - b.start);
+  return { sessions: out, fixed };
+}
+
+/* ---------- Kennzahlen ---------- */
+const hvE1 = (w, r) => w * (1 + r / 30);
+function hvWeek(d) {                                     // Montag 00:00 der Kalenderwoche
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x;
+}
+function hvKw(d) {                                       // ISO-Kalenderwoche
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+  return Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7);
+}
+
+function hvStats(sessions) {
+  /* Progression: bester e1RM je Übung und Einheit */
+  const prog = new Map();
+  for (const s of sessions) for (const e of s.ex) {
+    let best = null;
+    for (const x of e.sets) {
+      if (!HV_WORK.has(x.t) || !x.w || !x.r || x.r > HV_MAXREP) continue;
+      const v = hvE1(x.w, x.r); if (!best || v > best.v) best = { v, w: x.w, r: x.r };
+    }
+    if (!best) continue;
+    if (!prog.has(e.n)) prog.set(e.n, []);
+    prog.get(e.n).push({ d: s.start, ...best });
+  }
+  const status = pts => {
+    const vals = pts.map(p => p.v), best = Math.max(...vals), last = vals[vals.length - 1];
+    if (pts.length < 3) return { k: '', l: 'zu wenig' };
+    if (last >= Math.max(...vals.slice(0, -1))) return { k: 'best', l: 'Bestwert' };
+    if (vals.lastIndexOf(best) >= vals.length - 3) return { k: 'up', l: 'Fortschritt' };
+    if (last < best * .92) return { k: 'down', l: 'Rückgang' };
+    return { k: 'flat', l: 'Plateau' };
+  };
+  const ex = [...prog.entries()].map(([n, pts]) => ({
+    n, pts, first: pts[0].v, best: Math.max(...pts.map(p => p.v)), last: pts[pts.length - 1].v, st: status(pts)
+  })).sort((a, b) => b.pts.length - a.pts.length || a.n.localeCompare(b.n));
+
+  /* Wochen: Frequenz und Volumen */
+  const weeks = new Map();
+  for (const s of sessions) {
+    const k = +hvWeek(s.start);
+    if (!weeks.has(k)) weeks.set(k, { k: 0, s: 0, vol: {} });
+    const w = weeks.get(k); w[s.kind]++;
+    for (const e of s.ex) {
+      const m = HV_MUS[e.n]; if (!m) continue;
+      w.vol[m] = (w.vol[m] || 0) + e.sets.filter(x => HV_WORK.has(x.t)).length;
+    }
+  }
+  const first = hvWeek(sessions[0].start), now = hvWeek(new Date()), series = [];
+  for (let d = new Date(first); d <= now; d.setDate(d.getDate() + 7)) {
+    const w = weeks.get(+d) || { k: 0, s: 0, vol: {} }; series.push({ d: new Date(d), ...w });
+  }
+  const train = series.filter(w => w.k > 0), recent = train.slice(-8);
+  const avg = (ws, m) => ws.length ? ws.reduce((n, w) => n + (w.vol[m] || 0), 0) / ws.length : 0;
+  const vol = Object.keys(HV_MUSCLE).map(m => ({ m, r: avg(recent, m), a: avg(train, m) }));
+  return { ex, series, vol, nTrain: train.length };
+}
+
+/* ---------- Formatierung ---------- */
+const hvKg = v => v.toLocaleString('de-DE', { maximumFractionDigits: 1 });
+const hvD = (d, o) => d.toLocaleDateString('de-DE', o || { day: '2-digit', month: '2-digit' });
+const hvEsc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const hvDur = sec => sec >= 3600 ? `${Math.floor(sec / 3600)}:${String(Math.round(sec % 3600 / 60)).padStart(2, '0')} h`
+  : `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+function hvSet(x) {
+  const cls = x.t === 'warmup' ? 'w' : '', pre = x.t === 'warmup' ? 'W ' : x.t === 'dropset' ? 'D ' : '';
+  let v;
+  if (x.r != null) v = `${x.w != null ? hvKg(x.w) : 'KG'}<span class="x"> × </span>${x.r}`;
+  else if (x.sec != null) v = (x.km ? `${hvKg(x.km)} km · ` : '') + hvDur(x.sec);
+  else v = '–';
+  return `<span class="${cls}">${pre}${v}</span>`;
+}
+
+/* ---------- Render: Kopf, KPI ---------- */
+function hvRenderHead() {
+  const S = HV.sessions, st = HV.stats, last = S[S.length - 1];
+  const k = S.filter(s => s.kind === 'k');
+  const since = new Date(); since.setDate(since.getDate() - 28);
+  const k28 = k.filter(s => s.start >= since).length;
+  const k8 = k.slice(-8), avgSets = k8.length ? k8.reduce((n, s) => n + s.work, 0) / k8.length : 0;
+  const days = Math.floor((new Date() - last.start) / 864e5);
+  document.getElementById('hvstand').textContent =
+    `Stand ${hvD(last.start, { day: 'numeric', month: 'long', year: 'numeric' })} · ${S.length} Einheiten seit ${hvD(S[0].start, { month: 'long', year: 'numeric' })}`;
+  document.getElementById('hvkpi').innerHTML = [
+    [k.length, 'Krafteinheiten gesamt', ''],
+    [k28, 'Kraft · letzte 28 Tage', k28 >= 6 ? 'pos' : k28 >= 3 ? 'neu' : 'neg'],
+    [avgSets.toLocaleString('de-DE', { maximumFractionDigits: 1 }), 'Ø Arbeitssätze · letzte 8', ''],
+    [days === 0 ? 'heute' : days === 1 ? 'gestern' : `vor ${days} T.`, 'letzte Einheit', days > 7 ? 'neg' : '']
+  ].map(([v, l, c]) => `<div class="kpi ${c}"><div class="kpiv">${v}</div><div class="kpil">${l}</div></div>`).join('');
+}
+
+/* ---------- Render: Frequenz (gestapelte Balken je Woche) ---------- */
+function hvDrawFreq() {
+  const box = document.getElementById('hvfreq'), ser = HV.stats.series;
+  const w = innerW(box), h = 170, P = { l: 26, r: 6, t: 10, b: 24 };
+  const max = Math.max(3, ...ser.map(x => x.k + x.s));
+  const bw = (w - P.l - P.r) / ser.length, Y = v => P.t + (1 - v / max) * (h - P.t - P.b);
+  const grid = [0, Math.round(max / 2), max].map(t => `<line x1="${P.l}" y1="${Y(t)}" x2="${w - P.r}" y2="${Y(t)}" class="cgrid"/>
+    <text x="${P.l - 6}" y="${Y(t) + 3.5}" class="ctick" text-anchor="end">${t}</text>`).join('');
+  const gap = Math.min(3, bw * .25);
+  const bars = ser.map((x, i) => {
+    const x0 = (P.l + i * bw + gap / 2).toFixed(1), bwi = Math.max(1, bw - gap).toFixed(1);
+    return (x.k ? `<rect class="hv-k" x="${x0}" y="${Y(x.k)}" width="${bwi}" height="${Y(0) - Y(x.k)}" rx="1.5"/>` : '')
+      + (x.s ? `<rect class="hv-s" x="${x0}" y="${Y(x.k + x.s)}" width="${bwi}" height="${Y(x.k) - Y(x.k + x.s)}" rx="1.5"/>` : '');
+  }).join('');
+  let pm = -1;
+  const xl = ser.map((x, i) => { const m = x.d.getMonth(); if (m === pm) return ''; pm = m;
+    return `<text x="${(P.l + i * bw).toFixed(1)}" y="${h - 7}" class="ctick">${x.d.toLocaleDateString('de-DE', { month: 'short' })}</text>`; }).join('');
+  box.innerHTML = `<svg width="${w}" height="${h}" role="img" aria-label="Einheiten je Woche, ${ser.length} Wochen">
+    ${grid}${bars}${xl}<rect x="${P.l}" y="${P.t}" width="${w - P.l - P.r}" height="${h - P.t - P.b}" fill="transparent"/></svg>`;
+  const svg = box.querySelector('svg');
+  svg.addEventListener('pointermove', ev => {
+    const i = Math.max(0, Math.min(ser.length - 1, Math.floor((ev.clientX - svg.getBoundingClientRect().left - P.l) / bw)));
+    const x = ser[i];
+    showTip(`<b>KW ${hvKw(x.d)} · ab ${hvD(x.d)}</b><span class="tipv">${x.k} Kraft · ${x.s} Sport</span>`, ev);
+  });
+  svg.addEventListener('pointerleave', hideTip);
+}
+
+/* ---------- Render: Progression einer Übung ---------- */
+function hvDrawProg() {
+  const box = document.getElementById('hvprog'), e = HV.stats.ex.find(x => x.n === HV.ex);
+  if (!e || e.pts.length < 2) { box.innerHTML = '<div class="empty">Für diese Übung gibt es weniger als zwei gewichtete Einheiten.</div>'; return; }
+  const pts = e.pts, w = innerW(box), h = 200, P = { l: 40, r: 14, t: 18, b: 24 };
+  const vals = pts.map(p => p.v), ticks = niceTicks(Math.min(...vals) * .95, Math.max(...vals));
+  const y0 = ticks[0], y1 = ticks[ticks.length - 1];
+  const t0 = +pts[0].d, tS = Math.max(1, +pts[pts.length - 1].d - t0);
+  const X = p => P.l + (+p.d - t0) / tS * (w - P.l - P.r), Y = v => P.t + (1 - (v - y0) / (y1 - y0 || 1)) * (h - P.t - P.b);
+  const grid = ticks.map(t => `<line x1="${P.l}" y1="${Y(t).toFixed(1)}" x2="${w - P.r}" y2="${Y(t).toFixed(1)}" class="cgrid"/>
+    <text x="${P.l - 6}" y="${(Y(t) + 3.5).toFixed(1)}" class="ctick" text-anchor="end">${t}</text>`).join('');
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${X(p).toFixed(1)},${Y(p.v).toFixed(1)}`).join(' ');
+  const area = `${line} L${X(pts[pts.length - 1]).toFixed(1)},${Y(y0)} L${X(pts[0]).toFixed(1)},${Y(y0)} Z`;
+  const dots = pts.slice(0, -1).map(p => `<circle class="hv-pt" cx="${X(p).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="2.5"/>`).join('');
+  const L = pts[pts.length - 1];
+  const xl = [], seen = new Set();
+  for (const p of pts) { const k = p.d.getFullYear() * 12 + p.d.getMonth(); if (seen.has(k)) continue; seen.add(k);
+    const d1 = new Date(p.d.getFullYear(), p.d.getMonth(), 1); if (+d1 < t0) continue;
+    xl.push(`<text x="${X({ d: d1 }).toFixed(1)}" y="${h - 7}" class="ctick" text-anchor="middle">${d1.toLocaleDateString('de-DE', { month: 'short' })}</text>`); }
+  box.innerHTML = `<svg width="${w}" height="${h}" role="img" aria-label="${hvEsc(e.n)}: geschätztes 1RM über ${pts.length} Einheiten, zuletzt ${hvKg(L.v)} kg">
+    ${grid}${xl.join('')}<path d="${area}" class="hv-area"/><path d="${line}" class="hv-line"/>${dots}
+    <circle class="hv-end" cx="${X(L).toFixed(1)}" cy="${Y(L.v).toFixed(1)}" r="4.5"/>
+    <text x="${(X(L) - 7).toFixed(1)}" y="${(Y(L.v) - 9).toFixed(1)}" class="clabel" text-anchor="end">${hvKg(L.v)} kg</text>
+    <line class="ccross" x1="0" y1="${P.t}" x2="0" y2="${h - P.b}" style="opacity:0"/>
+    <rect x="${P.l}" y="${P.t}" width="${w - P.l - P.r}" height="${h - P.t - P.b}" fill="transparent"/></svg>`;
+  const svg = box.querySelector('svg'), cross = svg.querySelector('.ccross');
+  svg.addEventListener('pointermove', ev => {
+    const x = ev.clientX - svg.getBoundingClientRect().left;
+    let j = 0; pts.forEach((p, k) => { if (Math.abs(X(p) - x) < Math.abs(X(pts[j]) - x)) j = k; });
+    const p = pts[j]; cross.setAttribute('x1', X(p)); cross.setAttribute('x2', X(p)); cross.style.opacity = 1;
+    showTip(`<b>${hvD(p.d, { weekday: 'short', day: 'numeric', month: 'short' })}</b><span class="tipv">${hvKg(p.v)} kg e1RM</span>
+      <span class="tipd">${hvKg(p.w)} kg × ${p.r}</span>`, ev);
+  });
+  svg.addEventListener('pointerleave', () => { cross.style.opacity = 0; hideTip(); });
+}
+
+/* ---------- Render: Tabellen ---------- */
+function hvRenderTables() {
+  const st = HV.stats, core = st.ex.filter(e => e.pts.length >= 6).slice(0, 14);
+  document.getElementById('hvcore').innerHTML = core.map(e => {
+    const d = (e.best / e.first - 1) * 100;
+    return `<tr><td>${hvEsc(e.n)}</td><td class="pc">${e.pts.length}</td><td>${hvKg(e.first)}</td><td><b>${hvKg(e.best)}</b></td>
+      <td>${hvKg(e.last)}</td><td class="pc hvdelta ${d > 0.5 ? 'pos' : d < -0.5 ? 'neg' : ''}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(0)} %</td>
+      <td><span class="hvst ${e.st.k}">${e.st.l}</span></td></tr>`;
+  }).join('');
+  const sel = document.getElementById('hvex');
+  const opts = st.ex.filter(e => e.pts.length >= 3);
+  if (!HV.ex || !opts.some(e => e.n === HV.ex)) HV.ex = pref.get('hvex') || opts[0]?.n;
+  if (!opts.some(e => e.n === HV.ex)) HV.ex = opts[0]?.n;
+  sel.innerHTML = opts.map(e => `<option value="${hvEsc(e.n)}"${e.n === HV.ex ? ' selected' : ''}>${hvEsc(e.n)} · ${e.pts.length}</option>`).join('');
+  document.getElementById('hvvol').innerHTML = st.vol.filter(v => v.a > 0).map(v =>
+    `<tr><td>${v.m}</td><td>${v.r.toLocaleString('de-DE', { maximumFractionDigits: 1 })}</td>
+     <td>${v.a.toLocaleString('de-DE', { maximumFractionDigits: 1 })}</td></tr>`).join('');
+}
+
+function hvRenderLog() {
+  const S = [...HV.sessions].reverse(), list = HV.all ? S : S.slice(0, 12);
+  document.getElementById('hvcount').textContent = `${HV.sessions.length} gesamt`;
+  document.getElementById('hvlog').innerHTML = list.map(s => {
+    const meta = [s.min != null ? `${s.min} min` : null, s.kind === 'k' ? `${s.work} Sätze` : null].filter(Boolean).join(' · ');
+    const body = s.ex.map(e => `<div class="hvex"><b>${hvEsc(e.n)}</b><div class="hvsets">${e.sets.map(hvSet).join('<span class="x"> · </span>')}</div>
+      ${e.note ? `<div class="hvnote">${hvEsc(e.note).replace(/\n+/g, ' · ')}</div>` : ''}</div>`).join('');
+    return `<details class="hvs"><summary><span class="hvd">${hvD(s.start)}</span><span class="hvt">${hvEsc(s.title)}</span>
+      <span class="hvm">${meta}</span></summary><div class="hvbody">${body}</div></details>`;
+  }).join('');
+  const b = document.getElementById('hvall');
+  b.hidden = HV.sessions.length <= 12; b.textContent = HV.all ? 'Nur die letzten 12' : `Alle ${HV.sessions.length} anzeigen`;
+}
+
+/* ---------- Ablauf ---------- */
+const hvVisible = () => !document.getElementById('hvbody').hidden && !document.getElementById('t-training').hidden;
+function drawHevy() {
+  if (!HV.stats || !hvVisible()) return;
+  hvDrawFreq(); hvDrawProg();
+}
+
+async function initHevy() {
+  try {
+    const res = await fetch('hevy.csv', { cache: 'no-store' });
+    if (!res.ok) throw new Error('hevy.csv nicht gefunden (' + res.status + ')');
+    const { sessions, fixed } = hvBuild(hvParse(await res.text()));
+    if (!sessions.length) throw new Error('Der Export enthält keine Einheiten.');
+    HV.sessions = sessions; HV.stats = hvStats(sessions);
+    hvRenderHead(); hvRenderTables(); hvRenderLog();
+    document.getElementById('hvfix').textContent =
+      `Bereinigt: ${fixed} Klimmzug-Sätze mit über 30 kg Zusatzlast (Latzug-Werte) aus der Progression genommen; ` +
+      `Dauer unter 5 Minuten gilt als nachgetragen und wird nicht angezeigt.`;
+    drawHevy();
+  } catch (e) {
+    document.getElementById('hvstand').textContent = '';
+    document.getElementById('hvkpi').innerHTML = `<div class="empty">Der Hevy-Export konnte nicht geladen werden: ${hvEsc(e.message || e)}.
+      Lade die Seite neu; bleibt der Fehler, die CSV erneut an Claude schicken.</div>`;
+  }
+}
+
+function wireHevy() {
+  document.getElementById('hvex').addEventListener('change', e => { HV.ex = e.target.value; pref.set('hvex', HV.ex); hvDrawProg(); });
+  document.getElementById('hvall').addEventListener('click', () => { HV.all = !HV.all; hvRenderLog(); });
+  let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(drawHevy, 150); });
+}
+
+wireHevy(); initHevy();
 </script>
 </body></html>

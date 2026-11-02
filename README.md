@@ -9,9 +9,9 @@ lokal im Browser öffnen funktioniert ebenfalls.
 | Tab | Inhalt |
 |---|---|
 | **Heute** | Aura-Figur und Score (vier Säulen), Tagesaufgaben in zeitlicher Reihenfolge (Morgen ab Wecker, Tagsüber, Abend als Countdown zur Bettzeit), Gewohnheiten, Hobbys, Laster, 12-Wochen-Verlauf |
-| **Training** | Plan (Tagesansicht, startet auf heute) · Volumen (Sätze je Muskel vs. MAV) · Sporttest (Dead Hang, Stand and Reach) |
+| **Training** | Plan (Tagesansicht, startet auf heute) · Volumen (Sätze je Muskel vs. MAV) · Sporttest (Dead Hang, Stand and Reach) · Hevy (Verlauf aus dem CSV-Export `hevy.csv` neben der Seite) |
 | **Routinen** | Morgen · Abend (T-Minus mit Uhrzeiten für heute) · Mobility · Schlaf |
-| **Health** | Tageswerte, CSV-Import aus Google Takeout, 14-Tage-Verläufe |
+| **Health** | Tageswerte, CSV-Import aus Google Takeout, 14-Tage-Verläufe, Handy-Nutzung (Bildschirmzeit, „Handy weg“ je Nacht) |
 | **Geld** | Monat (Buchungen, Budgets, CSV-Import) · Vermögen (Verlauf, Zerlegung der Veränderung, Aufteilung) |
 | **Wissen** | Ernährung · Looks |
 
@@ -23,6 +23,7 @@ lokal im Browser öffnen funktioniert ebenfalls.
 - Erste Aufgabe ist „Um <Weckzeit> aufstehen“. Die Schlafdauer ist keine eigene Aufgabe, sie folgt aus der Bettzeit am Vorabend.
 - Sporttest-Testtag: jeder 2. Donnerstag (Ruhetag der Nicht-Badminton-Woche, wenig Muskelkater); der Freitags-Hang danach entfällt.
 - Beintag (Lower): direkt nach `Training` folgt „Intensives Beindehnen“, abends Mobility nur Oberkörper. Tag danach: Mobility mit Beinen nur leicht (Muskelkater, kein PNF).
+- „Handy weg“ ohne eigenen Haken entscheidet das Handy-Log (siehe unten), sobald die Nacht vorbei ist. Ein Tipp überstimmt es.
 - Gewohnheiten bekommen eine Tageszeit (Morgen, Tagsüber, Abend) und erscheinen dort in der Liste.
 
 ## Aura-Figur
@@ -52,13 +53,26 @@ berechnet; alte `resets` aus der Config werden mitgelesen.
 (Browser verlangen dafür eine Nutzeraktion). „Beenden“ oben rechts gilt nur für den aktuellen Aufruf.
 Wo die Umgebung kein Vollbild anbietet (iPhone-Safari, manche App-Ansichten), fehlt der Knopf.
 
+## Handy-Log
+
+MacroDroid (Android) schreibt bei Entsperren `U`, Bildschirm aus `S`, Flugmodus an `F` und aus `N`
+ein Token `<Code><Unixzeit>` in eine Warteschlange und sendet sie per POST an ein Google-Formular
+(offline wird gesammelt und später gesendet). Die verknüpfte Tabelle liest die Seite über den
+Google-Sheets-Connector (`mcp`-Capability, nur `get_values`, mit den Rechten des Betrachters).
+Die Seite sucht die Tokens per Muster, Spalten und Zeitstempel-Format spielen keine Rolle.
+
+- Nacht eingehalten: Flugmodus spätestens 30 Min nach T-30 an und bis 5 Min vor dem Wecker nicht
+  aus, keine Nutzung zwischen T-30 (+2 Min Kulanz) und 5 Min vor dem Wecker.
+- Kein Urteil ohne Ereignisse vor T-30 und nach dem Wecker; dann bleibt der Haken manuell.
+- Einrichtung: Health-Tab › Handy-Nutzung › „Einrichtung“. Tabellen-Link in `settings/phone`.
+
 ## Speicher
 
 Artifact-Datenbank (`db`-Capability), synchron auf allen Geräten:
 
 - `aura/config`, `aura/mYYYY-MM` – Gewohnheiten, Hobbys, Laster, Haken je Tag (`true`, `false`, `'x'` = entfällt, `v_<id>: true` = Rückfall)
 - `tests/main` – Sporttest
-- `health/<YYYY-MM-DD>`, `finance/<YYYY-MM>`, `settings/main`, `assets/<id>`, `wealth/<YYYY-MM>`
+- `health/<YYYY-MM-DD>`, `finance/<YYYY-MM>`, `settings/main`, `settings/phone`, `assets/<id>`, `wealth/<YYYY-MM>`
 
 Ist die Datenbank nicht erreichbar (z. B. Datei lokal geöffnet), läuft alles mit einem lokalen
 Speicher im Browser; der Punkt oben rechts zeigt gelb „nur dieses Gerät“.
@@ -68,5 +82,5 @@ Speicher im Browser; der Punkt oben rechts zeigt gelb „nur dieses Gerät“.
 `<style>` (Tokens in `:root`), Markup der sechs Tabs, dann ein `<script>` in dieser Reihenfolge:
 Plan-Daten (`WEEKPLAN`, `S`, `VOL_*`, `MEALS`, `SLEEP`, `EVE`, `MOR`, `GROOM` …) → Plan-Engine und
 Render-Funktionen → Vermögen → Speicher/Health/Finanzen → Heute (Aura) → Listen → Sporttest →
-Vollbild → Navigation und Start. Inhalte lassen sich in den Datenblöcken ändern, ohne die
+Handy-Log → Vollbild → Navigation und Start; danach ein zweites `<script>` für Training › Hevy. Inhalte lassen sich in den Datenblöcken ändern, ohne die
 Render-Funktionen anzufassen.
