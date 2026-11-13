@@ -1537,7 +1537,7 @@ s:'Glykogen-Superkompensation — Sportphysiologie-Standard'},
 t:'Bei 2,0–2,2 g/kg Körpergewicht: gleichmäßig über den Tag verteilen statt in ein bis zwei großen Portionen. Jede Mahlzeit sollte mindestens 2,5 g Leucin enthalten (Leucin-Schwellenwert für maximale Muskelproteinsynthese) — das entspricht etwa 30–40 g hochwertigem Protein. Dein Wochenplan deckt das abends gut ab; achte auf Frühstück und Mittagessen.',
 s:'Leucin-Schwellenwert · Moore et al., 2015'},
 {i:'🌙',n:'Casein vor dem Schlafen',
-t:'20–40 g Casein (Magerquark, Milch, Käse) 30–60 Min vor dem Einschlafen erhöht die Muskelproteinsynthese über Nacht signifikant. Casein wird langsam verdaut und liefert über 6–8 Stunden kontinuierlich Aminosäuren. In Kombination mit deinen 8,5–9h Schlaf ist das einer der effizientesten Hebel überhaupt.',
+t:'30–40 g Casein vor dem Schlaf erhöhen die nächtliche Muskelproteinsynthese messbar, weil Casein langsam verdaut wird. Ob daraus langfristig deutlich mehr Muskelmasse wird, ist schwächer belegt, wenn die Tagesmenge schon bei 2,0 g/kg liegt. Darum bei dir: kleine Dosis (20–30 g, etwa 200 g Magerquark oder ein Shake in Wasser) und nur, wenn der Magen es verträgt. Große Mengen (z. B. 450 g Skyr) belasten die Verdauung im Schlaf. Schlaf geht vor: Stört das Casein spürbar, entfällt es.',
 s:'Res et al., 2012 — Nächtliche Proteinsynthese'},
 {i:'📈',n:'Kalorienüberschuss: +300–500 kcal',
 t:'Für maximale Hypertrophie mit 18 Jahren ist ein moderater Überschuss nötig. Zu aggressiv (über +700) führt zu unverhältnismäßiger Fettzunahme. Wichtig: IGF-1 fällt bei Kaloriendefizit deutlich ab — Diäten sind in dieser Wachstumsphase kontraproduktiv. Kontrolliere über Körpergewicht: 0,25–0,5 % Zunahme pro Woche ist der Zielkorridor.',
@@ -1551,7 +1551,7 @@ const TIMING=[
 {t:'60–90 Min vor Training',c:'#c94535',d:'Komplexe Kohlenhydrate plus moderates Protein. Fett niedrig halten (verlangsamt die Magenentleerung). Kein Ballaststoff-Überschuss direkt vorher.'},
 {t:'Direkt nach Training',c:'#2e9e6a',d:'30–40 g schnelles Protein (Whey oder Milch) plus schnelle Kohlenhydrate. Das anabole Fenster ist breiter als früher angenommen, aber die Glykogen-Resynthese läuft in den ersten 2h am schnellsten.'},
 {t:'Hauptmahlzeit abends',c:'#3a7bbf',d:'Dein Wochenplan. Vollwertig mit Protein, Gemüse und Kohlenhydraten. 2–3h vor dem Schlafengehen, damit die Verdauung den Schlaf nicht stört.'},
-{t:'30–60 Min vor Schlaf',c:'#7a5ab5',d:'20–40 g Casein (Magerquark oder Milch). Leicht verdaulich, keine schweren Fette. Optional mit Magnesium kombinieren.'}];
+{t:'30–60 Min vor Schlaf',c:'#7a5ab5',d:'20–30 g Casein (ca. 200 g Magerquark oder 1 Shake in Wasser). Kleines Volumen, keine schweren Fette. Optional mit Magnesium kombinieren.'}];
 
 const SLEEP=[
 {d:'Montag',w:'06:45',tr:'Sharms',b:'22:00',s:'8h 45min',c:'#7a5ab5'},
@@ -1592,7 +1592,7 @@ const EVE=[
 {t:'T-120 Min',ti:'Spaziergang & Planung',c:'#7a5ab5',
 b:['<b>Spaziergang:</b> Raus, locker gehen, Handy nur für Notizen. Bewegung und Tageslicht-Reste setzen den Kopf zurück.','<b>Nächsten Tag planen:</b> Brain Dump und Kalender-Struktur im Gehen durchdenken, danach in den Kalender schreiben. Kontrolle minimiert Cortisol-Spitzen.','Zurück sein bis T-90: dann folgt das Casein.']},
 {t:'T-90 Min',ti:'Anaboler Input',c:'#c94535',
-b:['<b>Nährstoffversorgung:</b> 30–40g Casein. Sichert die Muskelproteinsynthese über Nacht.','<b>Flüssigkeitsstopp:</b> Keine weitere Hydratation, um nächtliche Weckreize zu eliminieren.']},
+b:['<b>Nährstoffversorgung:</b> 20–30 g Casein, kleines Volumen (ca. 200 g Magerquark oder 1 Shake). Bei Unruhe oder schwerem Magen auslassen, Schlaf geht vor.','<b>Flüssigkeitsstopp:</b> Keine weitere Hydratation, um nächtliche Weckreize zu eliminieren.']},
 {t:'T-85 Min',ti:'Wärme & Nervensystem',c:'#b8922e',
 b:['<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Kopfhaut ab jetzt lufttrocknen:</b> Minoxidil wurde bereits um 17:00 aufgetragen (eigener Fixpunkt im Tagesplan, rund 4 h Einwirkzeit vor der Dusche).']},
 {t:'T-60 Min',ti:'Dehnen & Dead Hang',c:'#2e9e6a',
@@ -3152,13 +3152,12 @@ function auTasksFor(iso) {
     { id:'protein', p:'body', t:'Protein 2,0–2,2 g/kg', s:'auf 4–5 Mahlzeiten verteilt, je ≥ 30 g', ...D(1080, '') },
 
     { id:'plan',    p:'mind', t:'Spaziergang + nächsten Tag planen', s:'Brain Dump im Gehen, danach in den Kalender', ...A(120) },
-    { id:'casein',  p:'body', t:'30–40 g Casein', s:'Magerquark oder Milch · danach Flüssigkeitsstopp', ...A(90) },
+    { id:'casein',  p:'body', t:'20–30 g Casein, kleines Volumen', s:'ca. 200 g Magerquark oder 1 Shake in Wasser · danach Flüssigkeitsstopp · bei Unruhe oder schwerem Magen mit „–“ auslassen', ...A(90) },
     { id:'breath',  p:'soul', t:'4-7-8-Atmung', s:'Einstieg in die Dehnroutine', ...A(60) },
     { id:'mob',     p:'body', ...mob, ...A(60) },
     ...hang,
     { id:'screen',  p:'mind', t:'Handy weg: Flugmodus + Schlafenszeit-Modus', s:'Fester Platz außer Reichweite vom Bett', ...A(30) },
     { id:'skinpm',  p:'pers', t:'Bad und Haut abends · 15 Min', s:'Cleanser · EpiDuo auf trockene Haut', ...A(30) },
-    { id:'grat',    p:'soul', t:'Dankbarkeit notieren', s:'Drei konkrete Dinge von heute', ...A(15) },
     { id:'read',    p:'mind', t:'Lesen auf Papier', s:'15 Min fest, warmes gedämpftes Licht', ...A(15) },
     { id:'bed',     p:'pers', t:`Um ${sp.bed} Uhr im Bett`, s:'Zimmer 16–18 °C, dunkel, Mundschutz', ...A(0) }
   ];
