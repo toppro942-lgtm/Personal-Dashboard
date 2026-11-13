@@ -3215,15 +3215,22 @@ function auFirstDay() {
   return first;
 }
 
+/* Gewichtung (Audit 10.11.2026): „im Bett“ und „Handy weg“ sind der groesste
+   Hebel und zaehlen in Saeule, Score, Serie und Verlauf dreifach. Der Chip
+   „heute d/n“ zaehlt weiter einzelne Aufgaben. */
+const AU_WEIGHT = { bed:3, screen:3 };
 function auDayStats(iso, infos) {
   const per = Object.fromEntries(PILLARS.map(p => [p.id, { d:0, n:0 }]));
+  let d = 0, n = 0;
   for (const t of auDayTasks(iso, infos)) {
     const st = auDone(iso, t);
     if (st.skip) continue;
-    per[t.p].n++; if (st.done) per[t.p].d++;
+    const w = AU_WEIGHT[t.id] || 1;
+    per[t.p].n += w; n++;
+    if (st.done) { per[t.p].d += w; d++; }
   }
-  const d = Object.values(per).reduce((a, x) => a + x.d, 0), n = Object.values(per).reduce((a, x) => a + x.n, 0);
-  return { per, d, n, rate: n ? d / n : 0 };
+  const wd = Object.values(per).reduce((a, x) => a + x.d, 0), wn = Object.values(per).reduce((a, x) => a + x.n, 0);
+  return { per, d, n, rate: wn ? wd / wn : 0 };
 }
 
 /* Score ueber ein Fenster [from..to]: je Saeule erledigt/gesamt, Mittel der
@@ -3726,7 +3733,7 @@ async function initAura() {
    ============================================================ */
 
 const LEVERS = [
-  { id:'bed', task:'bed', blk:'eve', prior:1, out:'next', of:'mor', fam:'sleep', loop:true,
+  { id:'bed', task:'bed', blk:'eve', prior:1, out:'next', of:'mor', fam:'sleep', loop:true, strict:true,
     name:'Pünktlich ins Bett',
     chain:['spät ins Bett', 'zu wenig Schlaf', 'schwächere Konzentration und Willenskraft', 'abends wieder spät'],
     todo: iso => { const sp = sleepPlan(auWd(iso)); return `Heute um ${sp.bed} im Bett. Rückwärts gerechnet: Handy um ${minClock(clockMin(sp.bed) - 30)} weg, Bad um ${minClock(clockMin(sp.bed) - 30)}.`; } },
@@ -3774,7 +3781,8 @@ function levTrigger(lv, iso, infos) {
   if (st.done) return true;
   /* Nur „nicht gemacht“, wenn im selben Abschnitt etwas eingetragen ist. */
   const seen = tasks.some(x => x.blk === t.blk && auRaw(iso, x.id) !== undefined);
-  return seen ? false : null;
+  /* strict: ein erfasster Tag ohne Abend-Eintrag gilt als verpasst (kein Verstecken). */
+  return seen || (lv.strict && levLogged(iso)) ? false : null;
 }
 
 /* Folge: Erledigungsquote am Folgetag bzw. im Rest desselben Tages -- wo der
