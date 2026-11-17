@@ -1597,7 +1597,7 @@ b:['<b>Spaziergang:</b> Raus, locker gehen, Handy nur für Notizen. Bewegung und
 {t:'T-90 Min',ti:'Flüssigkeitsstopp',c:'#c94535',
 b:['<b>Optional:</b> nur bei Hunger 20–30 g Casein (ca. 200 g Magerquark oder 1 Shake). Kein fester Punkt mehr, Schlaf geht vor.','<b>Flüssigkeitsstopp:</b> Keine weitere Hydratation, um nächtliche Weckreize zu eliminieren.']},
 {t:'T-85 Min',ti:'Wärme & Nervensystem',c:'#b8922e',
-b:['<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Magnesium-Einnahme:</b> Optimal Magnesium-Glycinat. Senkt die neuronale Erregbarkeit, verbessert die Schlafqualität, stützt die Testosteron-Optimierung.','<b>Kopfhaut ab jetzt lufttrocknen:</b> Minoxidil wurde bereits um 17:00 aufgetragen (eigener Fixpunkt im Tagesplan, rund 4 h Einwirkzeit vor der Dusche).']},
+b:['<b>Warme Dusche:</b> Initiiert Vasodilatation. Der anschließende rasche Abfall der Körperkerntemperatur signalisiert dem Gehirn: Zeit für Melatonin.','<b>Kopfhaut ab jetzt lufttrocknen:</b> Minoxidil wurde bereits um 17:00 aufgetragen (eigener Fixpunkt im Tagesplan, rund 4 h Einwirkzeit vor der Dusche).']},
 {t:'T-60 Min',ti:'Dehnen & Dead Hang',c:'#2e9e6a',
 b:['<b>Dehnen + Haltung (~25 Min):</b> deine PNF-Routine, eingeleitet durch 4-7-8-Atmung, thorakale Extension und Kinn-Retraktion. Hüftflexoren und Adduktoren kurz gehalten, Schwerpunkt auf Hamstrings für Stand and Reach.','<b>Beintag (FR):</b> Beine sind direkt nach dem Training intensiv gedehnt — abends nur Haltungsblock und Oberkörper. <b>Tag danach (SA):</b> Muskelkater, Beine nur leicht und statisch 20–30 s, kein PNF.','<b>Dead Hang (DI, FR, SO):</b> Sätze laut Training › Sporttest, direkt nach dem Dehnen. Der Hang braucht bis zu 10 Minuten — an diesen Tagen bei T-70 beginnen, damit alles bis T-30 fertig ist.','<b>Fertig bis T-30:</b> danach kommt Handy weg und das Bad.']},
 {t:'T-30 Min',ti:'Handy weg',c:'#c94535',
@@ -1621,7 +1621,7 @@ const MOR=[
 {t:'Hygiene + Haut',sub:[
  'Gel-Cleanser, lauwarm — derselbe wie abends',
  'Sonnenschutz LSF 50, chemisch-leicht oder Hybrid. Täglich, auch bewölkt — Pflicht, solange EpiDuo läuft, und der einzige Wirkstoff mit garantiertem Langzeiteffekt']},
-'Frühstück genießen + Supplements (Kreatin 3–5 g)',
+'Frühstück genießen + Supplements (Kreatin, D3/K2, Zink, Magnesium)',
 'Journaling — was ich glaube und warum, Zukunftsplanung, Dankbarkeit',
 {t:'Klo + Haare stylen',sub:[
  'Handtuchtrocken: Sea Salt Spray oder Volumenmousse in den Ansatz',
@@ -3142,10 +3142,9 @@ function auTasksFor(iso) {
     { id:'wake',    p:'pers', t:`Um ${sp.wake} aufstehen`, s:'Direkt raus, kein Snooze · Bett machen', ...M(0) },
     { id:'light',   p:'soul', t:'Wasser + Tageslicht', s:'Sonne oder helles Fenster', ...M(10) },
     { id:'release', p:'soul', t:'Nervous System Release', s:'Springen, schwingen, ausschütteln', ...M(15) },
-    { id:'skinam',  p:'pers', t:'Haut morgens', s:'Gel-Cleanser + LSF 50', ...M(30) },
-    { id:'creat',   p:'body', t:'Kreatin 3–5 g', s:'Monohydrat, zum Frühstück · Uhrzeit egal, jeden Tag zählt', ...M(40) },
+    { id:'skinam',  p:'pers', t:'Haut + Haare', s:'Gel-Cleanser + LSF 50 · Salt Spray oder Mousse, föhnen, Matte Clay', ...M(30) },
+    { id:'supps',   p:'body', t:'Supplements', s:'Kreatin 3–5 g · D3 2000 IE + K2 · Zink 10–15 mg · Magnesium 200–250 mg · zum Frühstück', ...M(40) },
     { id:'journal', p:'mind', t:'Journaling', s:'Was ich glaube und warum · Zukunftsplanung', ...M(45) },
-    { id:'hair',    p:'pers', t:'Haare stylen', s:'Salt Spray oder Mousse, föhnen, Matte Clay von hinten nach vorn', ...M(55) },
     { id:'outside', p:'soul', t:'Spaziergang oder Fahrrad draußen', s:'Bewegung ohne Leistungsziel', ...M(65) },
 
     { id:'water',   p:'body', t:'Hydration', s: school ? `${HYDRATION.mor} · ${HYDRATION.school}` : `${HYDRATION.mor} · ${HYDRATION.meal}`, ...D(720, 'bis 12') },
@@ -3156,8 +3155,7 @@ function auTasksFor(iso) {
     { id:'protein', p:'body', t:'Protein 2,0–2,2 g/kg', s:'auf 4–5 Mahlzeiten verteilt, je ≥ 30 g', ...D(1080, '') },
 
     { id:'plan',    p:'mind', t:'Spaziergang + nächsten Tag planen', s:'Brain Dump im Gehen, danach in den Kalender', ...A(120) },
-    { id:'breath',  p:'soul', t:'4-7-8-Atmung', s:'Einstieg in die Dehnroutine', ...A(60) },
-    { id:'mob',     p:'body', ...mob, ...A(60) },
+    { id:'mob',     p:'body', ...mob, s:'Start mit 4-7-8-Atmung · ' + mob.s, ...A(60) },
     ...hang,
     { id:'screen',  p:'mind', t:'Handy weg: Flugmodus + Schlafenszeit-Modus', s:'Fester Platz außer Reichweite vom Bett', ...A(30) },
     { id:'skinpm',  p:'pers', t:'Bad und Haut abends · 15 Min', s:'Cleanser · EpiDuo auf trockene Haut', ...A(30) },
