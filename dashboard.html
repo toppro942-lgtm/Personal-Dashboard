@@ -1039,8 +1039,8 @@ details.ex summary::-webkit-details-marker{display:none}
 
   <div data-pane="food">
     <h2 class="ptitle">Ernährung</h2>
-    <p class="lead" style="margin-bottom:14px">Auf Hypertrophie mit 18 ausgelegt: IGF-1 über Milchprotein, moderater Kalorienüberschuss,
-    Nährstoff-Timing um die Trainingstage.</p>
+    <p class="lead" style="margin-bottom:14px">Auf Hypertrophie mit 18 ausgelegt: Protein so hoch wie nötig, nicht höher; Fett für die Hormone halten;
+    der Rest kommt aus Kohlenhydraten für Training und Alltag. Dazu ein moderater Kalorienüberschuss.</p>
     <div class="stats" id="macros"></div>
     <div class="sechead"><h2>Wochenplan · Hauptmahlzeit</h2><span class="meta" id="mealmeta"></span></div>
     <div class="mgrid" id="mealgrid"></div>
@@ -1528,16 +1528,16 @@ o:'Solide Basis vor der neuen Trainingswoche. Nudelauflauf mit Käse liefert zus
 
 const FOODTIPS=[
 {i:'🥛',n:'Dairy-Protein täglich — der IGF-1-Hebel',
-t:'Milchprotein (Casein und Whey) stimuliert die körpereigene IGF-1-Produktion stärker als jede andere Proteinquelle. Hoppe et al. (2004) zeigten bei Jugendlichen einen direkten Zusammenhang zwischen Milchkonsum und IGF-1-Spiegel. In deinem Alter — mit noch offener medialer Clavicula-Epiphyse — ist das direkt relevant für Knochen- und Muskelwachstum. Praktisch: 500 g Magerquark oder 500 ml Milch täglich zusätzlich zum Essensplan.',
+t:'Milchprotein (Casein und Whey) stimuliert die körpereigene IGF-1-Produktion stärker als jede andere Proteinquelle. Hoppe et al. (2004) zeigten bei Jugendlichen einen direkten Zusammenhang zwischen Milchkonsum und IGF-1-Spiegel. In deinem Alter — mit noch offener medialer Clavicula-Epiphyse — ist das direkt relevant für Knochen- und Muskelwachstum. Praktisch: 250 g Quark oder 500 ml Milch täglich als Teil der 1,8 g/kg, nicht zusätzlich obendrauf.',
 s:'Hoppe et al., 2004 — Milchkonsum und IGF-1 bei Adoleszenten'},
-{i:'🍚',n:'Kohlenhydrat-Timing an schweren Tagen',
-t:'An den Upper-Tagen mit den schwersten Compound-Sätzen (Nicht-Badminton-Woche MI + SA, Badminton-Woche DI, DO, SA): 60–90 Min vor dem Training komplexe Kohlenhydrate (Haferflocken, Reis, Vollkornbrot). Direkt nach dem Training schnelle Kohlenhydrate plus Protein für maximale Glykogen-Resynthese. Der Montag (flexibler Tag) eignet sich gut für höhere Kohlenhydratmengen aus Pasta oder Schupfnudeln.',
-s:'Glykogen-Superkompensation — Sportphysiologie-Standard'},
-{i:'🥩',n:'Protein auf 4–5 Mahlzeiten verteilen',
-t:'Bei 2,0–2,2 g/kg Körpergewicht: gleichmäßig über den Tag verteilen statt in ein bis zwei großen Portionen. Jede Mahlzeit sollte mindestens 2,5 g Leucin enthalten (Leucin-Schwellenwert für maximale Muskelproteinsynthese) — das entspricht etwa 30–40 g hochwertigem Protein. Dein Wochenplan deckt das abends gut ab; achte auf Frühstück und Mittagessen.',
-s:'Leucin-Schwellenwert · Moore et al., 2015'},
+{i:'🍚',n:'Kohlenhydrate als Hauptenergie',
+t:'Kohlenhydrate sind der Treibstoff für schwere Sätze, Badminton und HIIT: 5–7 g/kg pro Tag, an Trainingstagen am oberen Ende. Bei Müdigkeit oder schwachen Einheiten zuerst hier erhöhen, nicht beim Protein. An den Upper-Tagen mit den schwersten Compound-Sätzen (Nicht-Badminton-Woche MI + SA, Badminton-Woche DI, DO, SA): 60–90 Min vor dem Training komplexe Kohlenhydrate (Haferflocken, Reis, Vollkornbrot). Direkt nach dem Training schnelle Kohlenhydrate plus Protein für maximale Glykogen-Resynthese. Der Montag (flexibler Tag) eignet sich gut für höhere Kohlenhydratmengen aus Pasta oder Schupfnudeln.',
+s:'Thomas et al., 2016 — ACSM-Position Ernährung im Sport'},
+{i:'🥩',n:'Protein: 1,8 g/kg reichen',
+t:'Der Zusatznutzen für den Muskelaufbau flacht ab etwa 1,6 g/kg ab; 1,8 g/kg lässt Puffer für individuelle Unterschiede. Mehr bringt kaum Muskeln, kostet aber Energie aus Kohlenhydraten und sättigt stark. Auf 3–4 Mahlzeiten verteilen statt in ein bis zwei großen Portionen. Jede Mahlzeit sollte mindestens 2,5 g Leucin enthalten (Leucin-Schwellenwert für maximale Muskelproteinsynthese) — das entspricht etwa 30–40 g hochwertigem Protein. Dein Wochenplan deckt das abends gut ab; achte auf Frühstück und Mittagessen.',
+s:'Morton et al., 2018 — Metaanalyse Proteinbedarf · Moore et al., 2015'},
 {i:'🌙',n:'Casein vor dem Schlafen (optional)',
-t:'30–40 g Casein vor dem Schlaf erhöhen die nächtliche Muskelproteinsynthese messbar, weil Casein langsam verdaut wird. Ob daraus langfristig deutlich mehr Muskelmasse wird, ist schwächer belegt, wenn die Tagesmenge schon bei 2,0 g/kg liegt. Darum bei dir: kleine Dosis (20–30 g, etwa 200 g Magerquark oder ein Shake in Wasser) und nur, wenn der Magen es verträgt. Große Mengen (z. B. 450 g Skyr) belasten die Verdauung im Schlaf. Schlaf geht vor: Stört das Casein spürbar, entfällt es.',
+t:'30–40 g Casein vor dem Schlaf erhöhen die nächtliche Muskelproteinsynthese messbar, weil Casein langsam verdaut wird. Ob daraus langfristig deutlich mehr Muskelmasse wird, ist schwächer belegt, wenn die Tagesmenge schon bei 1,8 g/kg liegt. Darum bei dir: kleine Dosis (20–30 g, etwa 200 g Magerquark oder ein Shake in Wasser) und nur, wenn der Magen es verträgt. Große Mengen (z. B. 450 g Skyr) belasten die Verdauung im Schlaf. Schlaf geht vor: Stört das Casein spürbar, entfällt es.',
 s:'Res et al., 2012 — Nächtliche Proteinsynthese'},
 {i:'💊',n:'Kreatin-Monohydrat 3–5 g täglich',
 t:'Das am besten belegte Sport-Supplement: mehr Kraft und fettfreie Masse im Krafttraining, zusätzlich etwas mehr Leistung bei kurzen Sprints, also auch im Badminton. Täglich 3–5 g, Uhrzeit egal; nach 3–4 Wochen sind die Speicher voll. Ein bis zwei Kilo mehr auf der Waage sind Wasser im Muskel, kein Fett. Die Sorge um Haarausfall stammt aus einer einzelnen Studie von 2009 (DHT-Anstieg), die nie bestätigt wurde. Nur reines Monohydrat, viel trinken. Unter 18: vorher mit Eltern oder Arzt absprechen.',
@@ -1546,7 +1546,7 @@ s:'Kreider et al., 2017 — ISSN Position Stand'},
 t:'Für maximale Hypertrophie mit 18 Jahren ist ein moderater Überschuss nötig. Zu aggressiv (über +700) führt zu unverhältnismäßiger Fettzunahme. Wichtig: IGF-1 fällt bei Kaloriendefizit deutlich ab — Diäten sind in dieser Wachstumsphase kontraproduktiv. Kontrolliere über Körpergewicht: 0,25–0,5 % Zunahme pro Woche ist der Zielkorridor.',
 s:'Slater & Phillips, 2011 — Energiebilanz und Hypertrophie'},
 {i:'🥬',n:'Mikronährstoff-Lücken schließen',
-t:'Dein Plan ist proteinreich und ausgewogen, aber achte auf: Zink (15 mg/Tag — Testosteronsynthese, in Fleisch und Nüssen), Magnesium (Schlafqualität, in Vollkorn und Nüssen), Vitamin D3 (2000–4000 IE, besonders Winter). Gemüsemenge: mindestens 400 g täglich für Mikronährstoffdichte und Ballaststoffe.',
+t:'Dein Plan ist ausgewogen, aber achte auf: Zink (15 mg/Tag — Testosteronsynthese, in Fleisch und Nüssen), Magnesium (Schlafqualität, in Vollkorn und Nüssen), Vitamin D3 (2000–4000 IE, besonders Winter). Gemüsemenge: mindestens 400 g täglich für Mikronährstoffdichte und Ballaststoffe.',
 s:'Prasad, 2013 — Zink und Testosteron'}];
 
 const TIMING=[
@@ -1924,9 +1924,9 @@ const tipHtml=t=>`<article class="tip"><h3>${t.n}</h3><p>${t.t}</p>${t.s?`<div c
 /* ---------------- Wissen ---------------- */
 function renderFood(){
   document.getElementById('macros').innerHTML=[
-    {v:'2,0–2,2',l:'g Protein/kg',c:'var(--red-t)',s:'4–5 Mahlzeiten'},
-    {v:'4–6',l:'g KH/kg',c:'var(--yel-t)',s:'Trainingstage höher'},
-    {v:'0,8–1,0',l:'g Fett/kg',c:'var(--grn-t)',s:'Testosteron-Basis'},
+    {v:'1,8',l:'g Protein/kg',c:'var(--red-t)',s:'Plateau ab ~1,6 · 3–4 Mahlzeiten'},
+    {v:'5–7',l:'g KH/kg',c:'var(--yel-t)',s:'Rest der Energie · Trainingstage oben'},
+    {v:'0,8–1,0',l:'g Fett/kg',c:'var(--grn-t)',s:'Hormone · nicht unter 0,8'},
     {v:'+300–500',l:'kcal Überschuss',c:'var(--blu-t)',s:'0,25–0,5 %/Woche'}
   ].map(m=>`<div class="stat" style="--c:${m.c}"><div class="statv">${m.v}</div><div class="statl">${m.l}</div><div class="meta">${m.s}</div></div>`).join('');
 
@@ -3152,7 +3152,7 @@ function auTasksFor(iso) {
     { id:'train',   p:'body', ...train, ...D(900, '') },
     ...(leg ? [{ id:'legstr', p:'body', t:'Intensives Beindehnen direkt nach dem Training', s:'Hamstrings, Hüftbeuger, Adduktoren, Waden · PNF 8 s an, 30 s halten × 3', ...D(901, '') }] : []),
     { id:'minox',   p:'pers', t:'Minoxidil auftragen', s:'Fester Zeitpunkt 17:00 · trockene Kopfhaut · vor dem Abendessen', ...D(1020, '17:00') },
-    { id:'protein', p:'body', t:'Protein 2,0–2,2 g/kg', s:'auf 4–5 Mahlzeiten verteilt, je ≥ 30 g', ...D(1080, '') },
+    { id:'protein', p:'body', t:'Protein 1,8 g/kg, Rest Kohlenhydrate', s:'3–4 Mahlzeiten, je 30–40 g Protein · Beilage großzügig: Reis, Pasta, Kartoffeln, Brot', ...D(1080, '') },
 
     { id:'plan',    p:'mind', t:'Spaziergang + nächsten Tag planen', s:'Brain Dump im Gehen, danach in den Kalender', ...A(120) },
     { id:'mob',     p:'body', ...mob, s:'Start mit 4-7-8-Atmung · ' + mob.s, ...A(60) },
