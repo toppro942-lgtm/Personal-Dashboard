@@ -1621,7 +1621,7 @@ const MOR=[
 {t:'Hygiene + Haut',sub:[
  'Gel-Cleanser, lauwarm — derselbe wie abends',
  'Sonnenschutz LSF 50, chemisch-leicht oder Hybrid. Täglich, auch bewölkt — Pflicht, solange EpiDuo läuft, und der einzige Wirkstoff mit garantiertem Langzeiteffekt']},
-'Frühstück genießen + Supplements (Kreatin, D3/K2, Zink, Magnesium)',
+'Frühstück genießen',
 'Journaling — was ich glaube und warum, Zukunftsplanung, Dankbarkeit',
 {t:'Klo + Haare stylen',sub:[
  'Handtuchtrocken: Sea Salt Spray oder Volumenmousse in den Ansatz',
@@ -3143,10 +3143,10 @@ function auTasksFor(iso) {
     { id:'light',   p:'soul', t:'Wasser + Tageslicht', s:'Sonne oder helles Fenster', ...M(10) },
     { id:'release', p:'soul', t:'Nervous System Release', s:'Springen, schwingen, ausschütteln', ...M(15) },
     { id:'skinam',  p:'pers', t:'Haut + Haare', s:'Gel-Cleanser + LSF 50 · Salt Spray oder Mousse, föhnen, Matte Clay', ...M(30) },
-    { id:'supps',   p:'body', t:'Supplements', s:'Kreatin 3–5 g · D3 2000 IE + K2 · Zink 10–15 mg · Magnesium 200–250 mg · zum Frühstück', ...M(40) },
     { id:'journal', p:'mind', t:'Journaling', s:'Was ich glaube und warum · Zukunftsplanung', ...M(45) },
     { id:'outside', p:'soul', t:'Spaziergang oder Fahrrad draußen', s:'Bewegung ohne Leistungsziel', ...M(65) },
 
+    { id:'supps',   p:'body', t:'Supplements', s:'Kreatin 3–5 g · D3 2000 IE + K2 · Zink 10–15 mg · Magnesium 200–250 mg · zum Mittagessen', ...D(750, 'mittags') },
     { id:'water',   p:'body', t:'Hydration', s: school ? `${HYDRATION.mor} · ${HYDRATION.school}` : `${HYDRATION.mor} · ${HYDRATION.meal}`, ...D(720, 'bis 12') },
     { id:'caff',    p:'mind', t:'Kein Koffein nach 14 Uhr', s:'Halbwertszeit 5–7 h', ...D(840, 'ab 14') },
     { id:'train',   p:'body', ...train, ...D(900, '') },
