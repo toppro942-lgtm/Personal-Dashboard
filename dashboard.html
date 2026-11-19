@@ -1633,7 +1633,7 @@ b:['<b>Flugmodus + Schlafenszeit-Modus:</b> beides aktivieren — keine Benachri
 {t:'T-30 Min',ti:'Bad, Haut & Lüften · 15 Min',c:'#3a7bbf',
 b:['<b>Fenster auf:</b> Stoßlüften startet, bevor du ins Bad gehst — der Raum kühlt, während du ohnehin beschäftigt bist. Beim Rauskommen schließen, Ziel 16–18 °C.','<b>Zahnhygiene:</b> inkl. Zahnseide für systemische Entzündungsminimierung, Toilettengang.','<b>Haut — Cleanser:</b> Gel-Cleanser, danach vollständig trocken tupfen.','<b>Haut — EpiDuo:</b> erbsengroß aufs ganze Gesicht, ausdrücklich erst auf trockene Haut. Feucht aufgetragen steigt die Reizung deutlich.','<b>Bei Trockenheit:</b> Feuchtigkeitscreme mit Ceramiden + Niacinamid dünn davor und danach (Sandwich-Methode).']},
 {t:'T-15 Min',ti:'Lesen & bettfertig · 15 Min fest',c:'#7a5ab5',
-b:['<b>Bettfertig:</b> Wecker prüfen, Wasser und Kleidung für morgen bereitlegen, Licht dämpfen.','<b>Journaling:</b> Tag abschließen, offene Gedanken auslagern.','<b>Lesen:</b> Papier statt Bildschirm, warmes gedämpftes Licht.','<b>Die 15 Minuten sind fest:</b> Das Bad dauert 15 Minuten und beginnt deshalb bei T-30. Läuft es länger, verschiebt sich das Bad nach vorn, nicht das Lesen nach hinten.','Kein Planen mehr — das lief bereits bei T-120. Hier geht es ausschließlich ums Runterfahren.']},
+b:['<b>Bettfertig:</b> Wecker prüfen, Wasser und Kleidung für morgen bereitlegen, Licht dämpfen.','<b>Journaling:</b> Tag abschließen, offene Gedanken auslagern.','<b>Lesen (10 Min):</b> Papier statt Bildschirm, warmes gedämpftes Licht.','<b>Dankbarkeit (2 Min):</b> drei konkrete Dinge von heute notieren. Das senkt das Grübeln vor dem Einschlafen.','<b>Die 15 Minuten sind fest:</b> Das Bad dauert 15 Minuten und beginnt deshalb bei T-30. Läuft es länger, verschiebt sich das Bad nach vorn, nicht das Lesen nach hinten.','Kein Planen mehr — das lief bereits bei T-120. Hier geht es ausschließlich ums Runterfahren.']},
 {t:'T-0 Min',ti:'Regeneration',c:'#2e9e6a',
 b:['<b>Licht-Eliminierung:</b> Absolute Dunkelheit, Raum auf 16–18 °C. Kühle Umgebung essentiell für die Testosteron-Ausschüttung.','<b>Zahnschutz:</b> Boxer-Mundschutz einsetzen — letzter Handgriff.','<b>Schlaf:</b> Vollständige Systemabschaltung. Wachstum und Hormonproduktion laufen auf Hochtouren.']}];
 
@@ -3187,7 +3187,7 @@ function auTasksFor(iso) {
     ...hang,
     { id:'screen',  p:'mind', t:'Handy weg: Flugmodus + Schlafenszeit-Modus', s:'Fester Platz außer Reichweite vom Bett', ...A(30) },
     { id:'skinpm',  p:'pers', t:'Bad und Haut abends · 15 Min', s:'Cleanser · EpiDuo auf trockene Haut', ...A(30) },
-    { id:'read',    p:'mind', t:'Lesen auf Papier', s:'15 Min fest, warmes gedämpftes Licht', ...A(15) },
+    { id:'read',    p:'mind', t:'Lesen + Dankbarkeit · 12 Min', s:'10 Min Papier lesen, danach 2 Min drei konkrete Dinge von heute notieren · gedämpftes Licht', ...A(15) },
     { id:'bed',     p:'pers', t:`Um ${sp.bed} Uhr im Bett`, s:'Zimmer 16–18 °C, dunkel, Mundschutz', ...A(0) }
   ];
 }
