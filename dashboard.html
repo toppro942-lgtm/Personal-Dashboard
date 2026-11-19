@@ -669,8 +669,11 @@ details.ex summary::-webkit-details-marker{display:none}
 
   <details class="explain">
     <summary>So entsteht der Score</summary>
-    <p class="lead">Der Score misst, was du tust: je Säule der Anteil erledigter Aufgaben der letzten 14 abgeschlossenen
-    Tage, gemittelt über alle vier Säulen, skaliert auf 0–1000. Tage vor deinem ersten Eintrag zählen nicht. Heute fließt
+    <p class="lead">Der Score misst, was du tust: der gewichtete Anteil erledigter Aufgaben der letzten 14 abgeschlossenen
+    Tage, skaliert auf 0–1000. Gewichte: im Bett 5, Handy weg 4, Training 4, Aufstehen 3, Koffein-Cutoff, Protein,
+    Mobility und Dead Hang je 2, alles andere 1. Ein Rückfall bei einem Laster zählt wie ein verpasster Posten mit
+    Gewicht 4, bei den Fallen Scrolling und P X mit 10. Die Säulen-Balken zeigen dieselbe Quote je Säule.
+    Tage vor deinem ersten Eintrag zählen nicht. Heute fließt
     erst mit Tagesende ein; der Chip „mit heute“ zeigt, wohin sich der Score mit dem aktuellen Stand bewegt. Aufgaben, die
     du mit „–“ als entfallen markierst (krank, Gips, Termin), zählen an diesem Tag gar nicht. Die Aufgaben kommen aus deinem
     Plan: Trainingstag (Wochentyp und Mesozyklus), Schlafzeiten, Morgen-, Abend- und Mobility-Routine, Sporttest.
@@ -3216,13 +3219,16 @@ function auFirstDay() {
   return first;
 }
 
-/* Gewichtung (Audit 10.11.2026): „im Bett“ und „Handy weg“ sind der groesste
-   Hebel und zaehlen in Saeule, Score, Serie und Verlauf dreifach. Der Chip
-   „heute d/n“ zaehlt weiter einzelne Aufgaben. */
-const AU_WEIGHT = { bed:3, screen:3 };
+/* Gewichtung: Schlaf und Training tragen den Tag, Kleinkram zaehlt 1.
+   Ein Rueckfall bei einem Laster zaehlt als verpasster Posten mit eigenem
+   Gewicht (v.w, Standard AU_VICE_W) in seiner Saeule; „Fallen“ wie
+   Scrolling tragen w:10 in aura/config. Saubere Tage bringen keinen Bonus.
+   Der Chip „heute d/n“ zaehlt weiter einzelne Aufgaben. */
+const AU_WEIGHT = { bed:5, screen:4, train:4, wake:3, caff:2, protein:2, mob:2, hang:2 };
+const AU_VICE_W = 4;
 function auDayStats(iso, infos) {
   const per = Object.fromEntries(PILLARS.map(p => [p.id, { d:0, n:0 }]));
-  let d = 0, n = 0;
+  let d = 0, n = 0, rel = 0;
   for (const t of auDayTasks(iso, infos)) {
     const st = auDone(iso, t);
     if (st.skip) continue;
@@ -3230,21 +3236,30 @@ function auDayStats(iso, infos) {
     per[t.p].n += w; n++;
     if (st.done) { per[t.p].d += w; d++; }
   }
+  for (const v of AU.cfg.vices) {
+    if (iso < v.start || !viceRelapsed(v, iso)) continue;
+    const p = PILLARS.some(x => x.id === v.p) ? v.p : 'mind';
+    per[p].n += +v.w > 0 ? +v.w : AU_VICE_W; rel++;
+  }
   const wd = Object.values(per).reduce((a, x) => a + x.d, 0), wn = Object.values(per).reduce((a, x) => a + x.n, 0);
-  return { per, d, n, rate: wn ? wd / wn : 0 };
+  return { per, d, n, rel, wd, wn, rate: wn ? wd / wn : 0 };
 }
 
-/* Score ueber ein Fenster [from..to]: je Saeule erledigt/gesamt, Mittel der
-   Saeulen x 1000. Nichts erfasst -> null (kein kuenstliches 0). */
+/* Score ueber ein Fenster [from..to]: gewichtet erledigt / gewichtet gesamt
+   ueber alle Aufgaben x 1000 -- jede Aufgabe zaehlt nach ihrem Gewicht, egal
+   wie voll ihre Saeule ist. Die Saeulen-Balken zeigen dieselbe Quote je
+   Saeule. Nichts erfasst -> null (kein kuenstliches 0). */
 function auScore(from, to, infos) {
   if (!from || from > to) return null;
   const acc = Object.fromEntries(PILLARS.map(p => [p.id, { d:0, n:0 }]));
+  let wd = 0, wn = 0;
   for (let d = from; d <= to; d = auAdd(d, 1)) {
     const st = auDayStats(d, infos);
     for (const p of PILLARS) { acc[p.id].d += st.per[p.id].d; acc[p.id].n += st.per[p.id].n; }
+    wd += st.wd; wn += st.wn;
   }
   const pil = Object.fromEntries(PILLARS.map(p => [p.id, acc[p.id].n ? acc[p.id].d / acc[p.id].n * 100 : 0]));
-  const score = Math.round(PILLARS.reduce((a, p) => a + pil[p.id], 0) / PILLARS.length * 10);
+  const score = wn ? Math.round(wd / wn * 1000) : 0;
   return { score, pil };
 }
 const auLevel = s => AU_LEVELS.reduce((a, l) => s >= l[0] ? l : a, AU_LEVELS[0]);
@@ -3627,7 +3642,7 @@ function renderAuHeat(infos, first) {
       if (iso > today) { h += '<span class="auc fut"></span>'; continue; }
       if (!first || iso < first) { h += `<span class="auc none${iso === today ? ' today' : ''}" data-tip="${iso}|–|vor dem ersten Eintrag"></span>`; continue; }
       const s = auDayStats(iso, infos);
-      h += `<span class="auc${iso === today ? ' today' : ''}" style="background:${shade(s.rate)}" data-tip="${iso}|${Math.round(s.rate * 100)} %|${s.d} von ${s.n} Aufgaben"></span>`;
+      h += `<span class="auc${iso === today ? ' today' : ''}" style="background:${shade(s.rate)}" data-tip="${iso}|${Math.round(s.rate * 100)} %|${s.d} von ${s.n} Aufgaben${s.rel ? ` · ${s.rel} Rückfall` : ''}"></span>`;
     }
   });
   auMorph(box, h);
