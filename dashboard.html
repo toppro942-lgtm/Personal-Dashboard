@@ -545,6 +545,19 @@ details.ex summary::-webkit-details-marker{display:none}
 .gqt{font:400 16px/1.65 var(--srf);color:var(--wh);margin-top:6px}
 .gwarn{margin-top:12px;background:#1a0e0c;border-left:2px solid var(--red);border-radius:0 6px 6px 0;padding:9px 12px;font-size:12.5px;color:#e5a69c;line-height:1.7}
 .gnote{margin-top:9px;background:#17140b;border-left:2px solid var(--yel);border-radius:0 6px 6px 0;padding:9px 12px;font-size:12.5px;color:#d9bd7c;line-height:1.7}
+.autrend{margin-top:14px}
+.autrh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.autrh h2{font:500 10px/1.4 var(--mono);letter-spacing:1.8px;text-transform:uppercase;color:var(--mut)}
+.autrseg{display:flex;gap:4px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:3px}
+.autrseg button{background:none;border:0;border-radius:6px;color:var(--mut);cursor:pointer;font:500 10px/1 var(--mono);letter-spacing:1px;padding:7px 9px}
+.autrseg button[aria-pressed="true"]{background:var(--s3);color:var(--wh)}
+.autrkpi{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.autrnote{margin-top:6px}
+.autr-line{fill:none;stroke:var(--red-t);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.autr-proj{fill:none;stroke:var(--red-t);stroke-width:2;stroke-dasharray:4 4;opacity:.7}
+.autr-area{fill:var(--red);fill-opacity:.10}
+.autr-lvl{stroke:#2c2c2c;stroke-width:1;stroke-dasharray:2 4}
+.autr-end{fill:var(--wh);stroke:var(--s1);stroke-width:2}
 .refs{margin-top:28px;font:10.5px/1.7 var(--mono);color:var(--dim)}
 /* ---------- Training › Hevy ---------- */
 .hv-k{fill:var(--blu)}.hv-s{fill:var(--grn)}
@@ -615,6 +628,18 @@ details.ex summary::-webkit-details-marker{display:none}
     </div>
     <div class="aumeta" id="aumeta"></div>
   </div>
+
+  <section class="autrend" aria-labelledby="autr-h">
+    <div class="autrh">
+      <h2 id="autr-h">Score-Verlauf</h2>
+      <div class="autrseg" role="group" aria-label="Zeitraum">
+        <button type="button" data-trd="30">30 T</button><button type="button" data-trd="90">90 T</button><button type="button" data-trd="0">Alles</button>
+      </div>
+    </div>
+    <div class="autrkpi" id="autrkpi"></div>
+    <div class="chart" id="autrchart"><div class="empty">Verlauf erscheint nach dem ersten Eintrag.</div></div>
+    <p class="meta autrnote">14-Tage-Score je Tag · gestrichelt: heute mit aktuellem Stand · Linien: Stufen</p>
+  </section>
 
   <div class="dayhead" id="dayhead">
     <div class="daynav">
@@ -3564,6 +3589,7 @@ function renderAura() {
     renderLevers(infos, first);
     renderAuTimeline(infos);
     renderAuHeat(infos, first);
+    try { renderAuTrend(infos, first); } catch (e) { console.error('Verlauf:', e); }
     renderMe(infos);
     renderSt();
   } finally { AU.tc = null; }
@@ -3624,6 +3650,77 @@ function renderAuTimeline(infos) {
         </div>`;
       }).join('')}</div></section>`;
   }).join(''));
+}
+
+/* Score-Verlauf: 14-Tage-Score fuer jeden Tag des Zeitraums, aus einmal
+   berechneten Tageswerten aufsummiert. Heute nur als gestrichelte Prognose. */
+const AUTR = { days: 30, wired: false };
+function auTrendSeries(infos, first, days) {
+  const today = AU.today, from = days ? auAdd(today, -(days - 1)) : first;
+  /* Die ersten 6 Tage nach dem Start haben ein zu kurzes Fenster und springen. */
+  const min = auAdd(first, 6), start = from < min ? min : from, calc = auAdd(start, -(AU_WINDOW - 1)), day = new Map();
+  for (let d = calc < first ? first : calc; d <= today; d = auAdd(d, 1)) day.set(d, auDayStats(d, infos));
+  const out = [];
+  for (let d = start; d <= today; d = auAdd(d, 1)) {
+    let wd = 0, wn = 0;
+    for (let k = 0; k < AU_WINDOW; k++) { const s = day.get(auAdd(d, -k)); if (s) { wd += s.wd; wn += s.wn; } }
+    if (wn) out.push({ d, v: Math.round(wd / wn * 1000), rate: day.get(d).rate, proj: d === today });
+  }
+  return out;
+}
+function renderAuTrend(infos, first) {
+  const box = document.getElementById('autrchart'), kpi = document.getElementById('autrkpi');
+  if (!box) return;
+  if (!AUTR.wired) {
+    AUTR.wired = true;
+    try { const v = localStorage.getItem('dash-autr'); if (v != null) AUTR.days = +v; } catch {}
+    document.querySelector('.autrseg').addEventListener('click', e => {
+      const b = e.target.closest('[data-trd]'); if (!b) return;
+      AUTR.days = +b.dataset.trd; try { localStorage.setItem('dash-autr', AUTR.days); } catch {}
+      renderAura();
+    });
+    let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { try { renderAura(); } catch {} }, 150); });
+  }
+  document.querySelectorAll('.autrseg [data-trd]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.trd === AUTR.days)));
+  const pts = first ? auTrendSeries(infos, first, AUTR.days) : [];
+  const done = pts.filter(p => !p.proj);
+  if (done.length < 2) { box.innerHTML = '<div class="empty">Der Verlauf erscheint, sobald zwei Tage abgeschlossen sind.</div>'; kpi.innerHTML = ''; return; }
+  const last = done[done.length - 1], at = n => done.length > n ? done[done.length - 1 - n] : null;
+  const best = done.reduce((a, p) => p.v >= a.v ? p : a, done[0]);
+  const ch = (n, l) => { const p = at(n); if (!p) return ''; const dv = last.v - p.v;
+    return `<span class="auchip ${dv > 0 ? 'up' : dv < 0 ? 'down' : ''}">${l} ${dv > 0 ? '+' : dv < 0 ? '−' : '±'}${Math.abs(dv)}</span>`; };
+  kpi.innerHTML = ch(7, '7 Tage') + ch(30, '30 Tage') + `<span class="auchip">Bestwert ${best.v} · ${dmy(best.d).slice(0, 6)}</span>`;
+
+  const w = innerW(box), h = 190, P = { l: 34, r: 14, t: 14, b: 22 };
+  const lo = Math.max(0, Math.floor((Math.min(...pts.map(p => p.v)) - 40) / 100) * 100), hi = 1000;
+  const X = i => P.l + (pts.length > 1 ? i / (pts.length - 1) : 0) * (w - P.l - P.r), Y = v => P.t + (1 - (v - lo) / (hi - lo)) * (h - P.t - P.b);
+  const grid = niceTicks(lo, hi, 4).filter(v => v >= lo && v <= hi).map(v => `<line x1="${P.l}" y1="${Y(v).toFixed(1)}" x2="${w - P.r}" y2="${Y(v).toFixed(1)}" class="cgrid"/>
+    <text x="${P.l - 6}" y="${(Y(v) + 3.5).toFixed(1)}" class="ctick" text-anchor="end">${v}</text>`).join('');
+  const lvls = AU_LEVELS.filter(l => l[0] > lo && l[0] < hi).map(l => `<line x1="${P.l}" y1="${Y(l[0]).toFixed(1)}" x2="${w - P.r}" y2="${Y(l[0]).toFixed(1)}" class="autr-lvl"/>
+    <text x="${P.l + 4}" y="${(Y(l[0]) - 4).toFixed(1)}" class="ctick">${l[1]}</text>`).join('');
+  const n = done.length, path = done.map((p, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(p.v).toFixed(1)}`).join(' ');
+  const area = `${path} L${X(n - 1).toFixed(1)},${Y(lo)} L${X(0).toFixed(1)},${Y(lo)} Z`;
+  const pr = pts[pts.length - 1].proj ? pts[pts.length - 1] : null;
+  const proj = pr ? `<path d="M${X(n - 1).toFixed(1)},${Y(last.v).toFixed(1)} L${X(n).toFixed(1)},${Y(pr.v).toFixed(1)}" class="autr-proj"/>` : '';
+  let pm = '';
+  const xl = done.map((p, i) => { const m = p.d.slice(0, 7); if (m === pm) return ''; pm = m; if (i === 0 && n > 20) return '';
+    return `<text x="${X(i).toFixed(1)}" y="${h - 6}" class="ctick">${auDate(p.d).toLocaleDateString('de-DE', { month:'short' })}</text>`; }).join('');
+  box.innerHTML = `<svg width="${w}" height="${h}" role="img" aria-label="14-Tage-Score über ${n} Tage, zuletzt ${last.v}, Bestwert ${best.v}">
+    ${grid}${lvls}${xl}<path d="${area}" class="autr-area"/><path d="${path}" class="autr-line"/>${proj}
+    <circle class="autr-end" cx="${X(n - 1).toFixed(1)}" cy="${Y(last.v).toFixed(1)}" r="4.5"/>
+    <text x="${(X(n - 1) - 8).toFixed(1)}" y="${(Y(last.v) - 9).toFixed(1)}" class="clabel" text-anchor="end">${last.v}</text>
+    <line class="ccross" x1="0" y1="${P.t}" x2="0" y2="${h - P.b}" style="opacity:0"/>
+    <rect x="${P.l}" y="${P.t}" width="${w - P.l - P.r}" height="${h - P.t - P.b}" fill="transparent"/></svg>`;
+  const svg = box.querySelector('svg'), cross = svg.querySelector('.ccross');
+  const show = ev => {
+    const x = ev.clientX - svg.getBoundingClientRect().left;
+    const i = Math.max(0, Math.min(pts.length - 1, Math.round((x - P.l) / ((w - P.l - P.r) / Math.max(1, pts.length - 1)))));
+    const p = pts[i]; cross.setAttribute('x1', X(i)); cross.setAttribute('x2', X(i)); cross.style.opacity = 1;
+    showTip(`<b>${auLabel(p.d)}${p.proj ? ' · Prognose' : ''}</b><span class="tipv">${p.v} Punkte · ${auLevel(p.v)[1]}</span>
+      <span class="tipd">Tag selbst: ${Math.round(p.rate * 100)} %</span>`, ev);
+  };
+  svg.addEventListener('pointermove', show); svg.addEventListener('pointerdown', show);
+  svg.addEventListener('pointerleave', () => { cross.style.opacity = 0; hideTip(); });
 }
 
 function renderAuHeat(infos, first) {
